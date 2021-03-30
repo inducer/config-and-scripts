@@ -1,0 +1,8 @@
+#! /bin/bash
+
+unset PYTHONWARNINGS
+if test -x "$HOME/pack/kitty"; then
+  exec python3 ~/pack/kitty "$@"
+else
+  exec /usr/bin/kitty "$@"
+fi
