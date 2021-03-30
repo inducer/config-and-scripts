@@ -1,0 +1,47 @@
+#! /bin/bash
+
+set -e
+
+function debuglog()
+{
+  echo "$@"
+}
+
+function unsnooze()
+{
+  current_snoozefile="$1"
+  last_snoozefile="$2"
+  snoozetag="$3"
+
+  if test -f "$current_snoozefile"; then
+    debuglog "$current_snoozefile exists, not unsnoozing $snoozetag"
+  else
+    debuglog "$current_snoozefile does not exist, unsnoozing $snoozetag"
+    touch "$current_snoozefile"
+    rm -f "$last_snoozefile"
+
+    debuglog "deleting $last_snoozefile"
+    notmuch tag +wassnoozed -$snoozetag +inbox tag:$snoozetag
+  fi
+}
+
+SNOOZEDIR="$HOME/.cache"
+mkdir -p $SNOOZEDIR
+
+TODAY_SNOOZEFILE="$SNOOZEDIR/unsnoozed-$(date +%Y-%m-%d)"
+YESTERDAY_SNOOZEFILE="$SNOOZEDIR/unsnoozed-$(date +%Y-%m-%d --date=yesterday)"
+
+unsnooze "$TODAY_SNOOZEFILE" "$YESTERDAY_SNOOZEFILE" snoozed
+
+hour=$(date +"%-H")
+if [[ "$hour" -ge 20 ]]; then
+  EVE_TODAY_SNOOZEFILE="$SNOOZEDIR/unsnoozed-eve-$(date +%Y-%m-%d)"
+  EVE_YESTERDAY_SNOOZEFILE="$SNOOZEDIR/unsnoozed-eve-$(date +%Y-%m-%d --date=yesterday)"
+
+  unsnooze "$EVE_TODAY_SNOOZEFILE" "$EVE_YESTERDAY_SNOOZEFILE" evesnoozed
+fi
+
+THIS_WEEK_SNOOZEFILE="$SNOOZEDIR/unsnoozed-week-$(date +%G-%V)"
+LAST_WEEK_SNOOZEFILE="$SNOOZEDIR/unsnoozed-week-$(date +%G-%V --date='7 days ago')"
+
+unsnooze "$THIS_WEEK_SNOOZEFILE" "$LAST_WEEK_SNOOZEFILE" weeksnoozed

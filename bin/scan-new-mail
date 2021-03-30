@@ -1,0 +1,4 @@
+#! /bin/sh
+
+notmuch new
+$HOME/bin/autotag-mail
