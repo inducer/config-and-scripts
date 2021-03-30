@@ -1,0 +1,140 @@
+# -------------------------------------------------------------------------
+# aliases
+# -------------------------------------------------------------------------
+
+alias ls='ls --color=tty'
+alias l='ls -alF'
+alias 1='cd ..'
+alias 2='cd ../..'
+alias 3='cd ../../..'
+alias grep='grep --color'
+alias egrep='egrep --color'
+alias fgrep='fgrep --color'
+alias unix2dos='recode latin1..ibmpc'
+alias dos2unix='recode ibmpc..latin1'
+alias unix2win='recode latin1..ms-ansi/crlf'
+alias win2unix='recode ms-ansi/crlf..latin1'
+alias homer='ssh kloeckner@homer.dam.brown.edu'
+alias beast='ssh root@192.168.77.1'
+alias vodka='ssh root@192.168.77.2'
+alias vodka_maint='ssh root@192.168.1.1'
+alias vodka_n='ssh root@vodka.sherwood.tiker.net'
+alias eltern='ssh andreas@ueberlingen.parents.tiker.net'
+alias reltern='ssh root@ueberlingen.parents.tiker.net'
+alias vlog='vi `baz make-log`'
+alias secrets='secret_edit ~/own/doc/text/txt/keys.gpg'
+alias cw=clockwork
+alias vim='DISPLAY= vim -X'
+alias vi='DISPLAY= vim -X'
+alias pt='python `which py.test`'
+#alias open="kioclient exec"
+alias open="xdg-open"
+alias lab="ipython --pylab"
+alias bat='watch -n 1 laptop-stats'
+alias ipy3='BROWSER="chromium" python3 $(which jupyter) notebook'
+alias mv='mv -i'
+alias cp='cp -i'
+alias eow='~andreas/src/env/bin/eow -k vim -p snarf13 -H 0.0.0.0 --wrap-lines --hide-save-button --font-family="Droid Sans Mono"'
+alias em='GPG_AGENT_INFO= emacs -nw -f notmuch'
+alias toplev='python2 ~/shared/pack/pmu-tools/toplev.py'
+alias repo="PYTHONWARNINGS= repo"
+
+fb()
+{
+  xdg-open $(pwd)
+}
+reloc()
+{
+  source ~/local-src/env-3.9/bin/activate
+}
+re3()
+{
+  source ~/shared/src/env-3.9/bin/activate
+}
+
+clcache()
+{
+  rm -Rf ~/.pocl
+  rm -Rf ~/.cache/pocl
+  rm -Rf ~/.cache/pytools
+  rm -Rf ~/.cache/pyopencl/
+  rm -Rf ~/.nv/ComputeCache/
+}
+
+poclfix()
+{
+  export POCL_WORK_GROUP_METHOD=loops
+}
+llvmdev()
+{
+  export LD_LIBRARY_PATH=$HOME/pack/llvm-build/lib:$LD_LIBRARY_PATH
+}
+llvmdev-release()
+{
+  export LD_LIBRARY_PATH=$HOME/pack/llvm-build-release/lib:$LD_LIBRARY_PATH
+}
+
+reipy()
+{
+  re
+  cd ~/own/dev/ipython
+  ipy
+}
+ipy3serv() {
+  ssh -R 9988:localhost:9988 -N andreas@weasel.tiker.net &
+  python3 $(which ipython) notebook --profile=nbserver
+}
+condaenv()
+{
+  source $HOME/pack/miniconda3/bin/activate inteq
+}
+
+vims()
+{
+  DIRNAME=$(pwd)
+  DIRNAME=$(dirname $DIRNAME)
+  /usr/bin/vim --servername $DIRNAME "$@"
+}
+
+pycl()
+{
+  PYOPENCL_TEST="port:pthread" python "$@"
+}
+
+export MANPATH=~/pool/share/man:$MANPATH
+export INDEXSTYLE=~/work/aufschrieb
+export EDITOR=vim
+
+export LD_LIBRARY_PATH=$HOME/pool/lib:$HOME/pack/barvinok/lib
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/pack/pocl-build/lib
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/pack/llvm-build/lib
+
+export PYTHONWARNINGS=default
+export BROWSER=xdg-open
+#export SSH_ASKPASS=ksshaskpass
+export ETS_TOOLKIT=qt4
+
+# for XDG stuff
+#export KDE_FULL_SESSION=kde
+
+function ocamldebug() {
+  ledit -h ~/.ocamldebug-history -x /usr/bin/ocamldebug -I ~/work/ocaml_lib "$@"
+  }
+
+function mcd()
+{
+  mkdir "$1"; cd "$1"
+}
+
+if test "$TERM" = "xterm"; then
+  export TERM="xterm-256color"
+fi
+
+export OCCA_DIR=$HOME/src/occa
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OCCA_DIR/lib
+
+export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$PATH
+
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$HOME/shared/pool/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/shared/pool/lib
+export PYTHONPATH=$PYTHONPATH:$HOME/shared/src/HPX-Python/source
