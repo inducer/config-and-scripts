@@ -1,0 +1,8 @@
+#! /bin/bash
+hostname="$(hostname)"
+crflags=""
+if [[ "$hostname" == "blitz" || "$hostname" == "flash" ]]; then
+  crflags="--force-device-scale-factor=2"
+fi
+
+chromium $crflags --incognito "$@"

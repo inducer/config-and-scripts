@@ -1,0 +1,3 @@
+#! /bin/sh
+
+xterm -e 'bash -c "offlineimap -q -u blinkenlights"'

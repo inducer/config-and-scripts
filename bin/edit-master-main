@@ -1,0 +1,20 @@
+#! /bin/bash
+
+set -eo pipefail
+
+if ! [ -z "$(git status --porcelain)" ]; then
+  echo "Uncommitted changes. Aborting."
+  exit 1
+fi
+
+git checkout main
+sed -i s/master/main/g README.rst
+sed -i s/master/main/g .gitlab-ci.yml
+sed -i s/master/main/g .github/workflows/*.yml
+git switch -c master-to-main
+git add README.rst .gitlab-ci.yml .github/workflows/*.yml
+git diff --cached HEAD
+echo "-------------------------------------------------------------"
+git grep master
+echo "-------------------------------------------------------------"
+git status

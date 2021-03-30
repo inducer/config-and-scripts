@@ -1,0 +1,40 @@
+#! /bin/bash
+
+set -eo pipefail
+
+if [ "$(git branch --list main)" ]; then
+     echo "Branch name main already exists, nothing to do."
+     exit 1
+fi
+
+function get_remote_for_host()
+{
+  site="$1"
+  for r in $(git remote); do
+    url="$(git remote get-url "$r")"
+    if ! [[ $url == *"inducer"* ]]; then
+      continue
+    fi
+    if [[ $url == *"$site"* ]]; then
+      echo "$r"
+      return
+    fi
+  done
+}
+
+GH_REMOTE="$(get_remote_for_host github.com)"
+GL_REMOTE="$(get_remote_for_host gitlab.tiker.net)"
+
+if test "$GH_REMOTE"; then
+  REMOTE="$GH_REMOTE"
+elif test "$GL_REMOTE"; then
+  REMOTE="$GH_REMOTE"
+else
+  echo "No valid remote found."
+fi
+
+git branch -m master main
+git fetch "$REMOTE"
+git branch -u "$REMOTE/main" main
+
+# vim: set sw=2

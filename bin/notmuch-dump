@@ -1,0 +1,4 @@
+#! /bin/sh
+
+notmuch dump > ~/backup/notmuch-dump
+gzip -f ~/backup/notmuch-dump

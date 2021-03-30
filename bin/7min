@@ -1,0 +1,32 @@
+#! /bin/bash
+
+do_beep()
+{
+  beep "$@" 2> /dev/null
+}
+
+
+for exercise in JJACK WALLSIT PUSHUP CRUNCH STEPCHAIR SQUAT TRICEPS PLANK HIGHKNEE LUNGE PUSHROT SIDEPLANK; do
+#for exercise in PLANK HIGHKNEE LUNGE PUSHROT SIDEPLANK; do
+  for i in $(seq 10); do
+    do_beep 440 0.2 &
+    clear
+    figlet REST
+    figlet -f small "NEXT: $exercise"
+    figlet $i
+    sleep 1
+  done
+  for i in $(seq 30); do
+    if test "$i" = "16"; then
+      do_beep 660 0.4 &
+    elif test "$i" = "30"; then
+      do_beep 440 0.6 &
+    else
+      do_beep 880 0.1 &
+    fi
+    clear
+    figlet $exercise
+    figlet $i
+    sleep 1
+  done
+done

@@ -1,0 +1,59 @@
+#! /bin/bash
+
+set -eo pipefail
+
+if [ "$(git branch --list main)" ]; then
+     echo "Branch name main already exists, nothing to do."
+     exit 1
+fi
+
+PROJNAME="$(basename "$(pwd)")"
+GH_REPO_URL="https://github.com/inducer/$PROJNAME"
+GL_REPO_URL="https://gitlab.tiker.net/inducer/$PROJNAME"
+
+function get_remote_for_host()
+{
+  site="$1"
+  for r in $(git remote); do
+    url="$(git remote get-url "$r")"
+    if ! [[ $url == *"inducer"* ]]; then
+      continue
+    fi
+    if [[ $url == *"$site"* ]]; then
+      echo "$r"
+      return
+    fi
+  done
+  echo "No remote for $site"
+  exit 1
+}
+
+GH_REMOTE="$(get_remote_for_host github.com)"
+GL_REMOTE="$(get_remote_for_host gitlab.tiker.net)"
+
+# check that these are valid
+curl -s -S -f -L "$GL_REPO_URL" > /dev/null
+curl -s -S -f -L "$GH_REPO_URL" > /dev/null
+
+gio open "$GH_REPO_URL/branches"
+echo -n "rename master on Github, enter when done:"
+read -r ENTER
+
+echo "renaming locally:"
+git branch -m master main
+git fetch "$GH_REMOTE"
+git branch -u "$GH_REMOTE/main" main
+
+echo "pushing main to gitlab:"
+git push "$GL_REMOTE" main
+
+gio open "$GL_REPO_URL/-/settings/repository"
+echo -n "switch default branch on gitlab to main, hit enter when done:"
+read -r ENTER
+echo -n "switch branch protection on gitlab to main, hit enter when done:"
+read -r ENTER
+
+echo "deleting master on gitlab:"
+git push "$GL_REMOTE" :master
+
+# vim: set sw=2

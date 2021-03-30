@@ -1,0 +1,19 @@
+#! /bin/bash
+
+find . -maxdepth 1 \
+  \( -name '*.vtk' \
+  -o -name '*.vtu' \
+  -o -name '*.vts' \
+  -o -name '*.pvtu' \
+  -o -name '*.pvts' \
+  -o -name '*.pvd' \
+  -o -name '*.silo' \
+  -o -name '*.eps' \
+  -o -name '*.dat' \
+  -o -name '*.dot' \
+  -o -name '*.dat-rank*' \
+  -o -name '*completed' \
+  -o -name '*.dat-journal' \
+  -o -name '*.visit' \
+  -o -name '*.png' \)\
+  -print0 | xargs -0 -r rm

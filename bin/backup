@@ -1,0 +1,46 @@
+#! /bin/bash
+
+set -e
+
+echo "notmuch dumped?"
+echo -n "[ENTER]"
+read ENTER
+
+echo -n "reindex ? [y]/n: "
+read REINDEX
+
+eval `ssh-agent`
+ssh-add ~andreas/.ssh/id_rsa_backup
+
+#DESTDIR="andreas@192.168.77.2:backup/laptop-bup"
+#DESTDIR="/media/andreas/Backup/laptop-bup"
+DESTDIR="/media/andreas/akstorage/laptop-bup"
+#DESTDIR="andreas@192.168.1.201:backup/laptop-bup"
+
+function with_echo()
+{
+  echo "$@"
+  "$@"
+}
+
+BACKUP_DIRS=(/home/andreas /etc /media/andreas/lightning-bulk1/bulk-andreas/)
+for src in "${BACKUP_DIRS[@]}"; do
+  bn=$(basename "$src")
+  if test "$REINDEX" != "n"; then
+      with_echo bup index \
+        --exclude-rx='/no_backup/$' \
+        --exclude-rx='/.cache/$' \
+        --exclude-rx='/.local/share/Steam/$' \
+        "$src" || true
+  fi
+
+  if ! with_echo bup save -r "$DESTDIR" -n "$bn" "$src"; then
+    echo "--------------------------------------------------------------------------"
+    echo "ERRORS OCCURRED DURING SAVE, CHECK AND HIT ENTER"
+    echo "--------------------------------------------------------------------------"
+    echo -n "[ENTER]"
+    read ENTER
+  fi
+done
+
+echo "COMPLETED"

@@ -1,0 +1,30 @@
+#! /usr/bin/env python3
+
+try:
+    import twisted.web.server
+except ImportError:
+    HAVE_TWISTED = False
+else:
+    HAVE_TWISTED = True
+
+PORT = 3000
+
+print("serving at port", PORT)
+if HAVE_TWISTED:
+    from twisted.web.server import Site
+    from twisted.web.static import File
+    from twisted.internet import reactor
+
+    import os
+    resource = File(os.getcwd())
+    factory = Site(resource)
+    reactor.listenTCP(PORT, factory)
+    reactor.run()
+else:
+    import SimpleHTTPServer
+    import SocketServer
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+
+    httpd = SocketServer.ThreadingTCPServer(("", PORT), Handler)
+
+    httpd.serve_forever()

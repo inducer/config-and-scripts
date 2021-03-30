@@ -1,0 +1,18 @@
+#! /bin/bash
+set -e
+
+if test "$1" = ""; then
+  echo "usage: $0 texfile"
+  exit 1
+fi
+
+texfile="$1"
+tempdir=$(mktemp -d)
+pdflatex -output-directory=$tempdir --interaction=nonstopmode $texfile
+texbase="$(basename "$texfile")"
+uncroppedfile="$tempdir/${texbase%.tex}.pdf"
+croppedfile="$tempdir/${texbase%.tex}-crop.pdf"
+pdfcrop "$uncroppedfile" "$croppedfile"
+pngfile="${texfile%.tex}.png"
+gs -dBATCH -dNOPAUSE -sDEVICE=pngalpha -r150 -sOutputFile="$pngfile" "$croppedfile"
+

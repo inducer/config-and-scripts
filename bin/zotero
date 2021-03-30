@@ -1,0 +1,4 @@
+#! /bin/bash
+
+cd ~/pack/Zotero_linux-x86_64
+./zotero "$@"

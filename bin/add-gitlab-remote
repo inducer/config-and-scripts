@@ -1,0 +1,5 @@
+#! /bin/bash
+
+set -e
+pname=$(basename $(pwd))
+git remote add gitlab git@gitlab.tiker.net:inducer/$pname.git

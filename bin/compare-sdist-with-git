@@ -1,0 +1,8 @@
+#! /bin/bash
+
+set -e
+trap "rm -f .tmp-sdist .tmp-git" EXIT
+
+python3 setup.py sdist | grep "copying" | cut -d' ' -f2 | sort > .tmp-sdist
+git ls-files | sort > .tmp-git
+vimdiff .tmp-sdist .tmp-git

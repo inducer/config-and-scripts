@@ -1,0 +1,3 @@
+#! /bin/bash
+
+exec delta --$TERMINAL_LIGHTNESS "$@"

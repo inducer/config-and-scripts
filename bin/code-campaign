@@ -1,0 +1,73 @@
+#! /bin/bash
+
+set -e
+
+for prj in \
+        relate \
+        pudb \
+        \
+        pytools \
+        pymbolic \
+        \
+        codepy \
+        genpy \
+        cgen \
+        pycparserext \
+        \
+        islpy \
+        pyopencl \
+        pycuda \
+        loopy \
+        pytato \
+        \
+        pyvisfile \
+        gmsh_interop \
+        pymetis \
+        \
+        modepy \
+        meshmode \
+        leap \
+        dagrt \
+        \
+        pyfmmlib \
+        sumpy \
+        pytential \
+        grudge \
+        \
+        logpyle \
+        mirgecom \
+        ; do
+    if test "$prj" = "mirgecom" || test "$prj" = "logpyle"; then
+        REPO_SITE="https://github.com"
+        PRJ_PATH="illinois-ceesd/$prj"
+    else
+        REPO_SITE="https://gitlab.tiker.net"
+        PRJ_PATH="inducer/$prj"
+    fi
+
+    if test "$prj" = "relate" ; then
+        CHECKOUT_PATH="$HOME/work/django/relate"
+    else
+        CHECKOUT_PATH="$HOME/src/$prj"
+        if ! test -d "$CHECKOUT_PATH"; then
+            CHECKOUT_PATH="$HOME/work/$prj"
+            if ! test -d "$CHECKOUT_PATH"; then
+                echo "No checkout path found for $prj!"
+                exit 1
+            fi
+        fi
+    fi
+
+    if [[ $REPO_SITE == *github* ]]; then
+        EDIT_URL='${REPO_SITE}/${PRJ_PATH}/edit/master/${FILENAME}'
+    else
+        EDIT_URL='${REPO_SITE}/-/ide/project/${PRJ_PATH}/tree/master/-/${FILENAME}/'
+    fi
+
+    echo "$prj: $CHECKOUT_PATH"
+    #FILENAME="doc/conf.py"
+    #MYURL="$(eval echo "${EDIT_URL}")"
+    #gio open "$MYURL"
+done
+
+# vim: sw=4

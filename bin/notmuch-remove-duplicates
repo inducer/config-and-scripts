@@ -1,0 +1,97 @@
+#!/usr/bin/env python
+# from http://permalink.gmane.org/gmane.mail.notmuch.general/12324
+
+import sys
+
+IGNORED_HEADERS = [ "Received:" ]
+
+if len(sys.argv) != 1:
+    print "Usage: %s" % sys.argv[0]
+    print
+    print "The script removes duplicate message files.  Takes no options."
+    print "Requires notmuch python module."
+    print
+    print "Files are assumed duplicates if their content is the same"
+    print "except for the following headers: %s." % ", ".join(IGNORED_HEADERS)
+    exit(1)
+
+import notmuch
+import os
+import time
+
+class MailComparator:
+    """Checks if mail files are duplicates."""
+    def __init__(self, filename):
+        self.filename = filename
+        self.mail = self.readFile(self.filename)
+
+    def isDuplicate(self, filename):
+        return self.mail == self.readFile(filename)
+
+    @staticmethod
+    def readFile(filename):
+        with open(filename) as f:
+            data = ""
+            while True:
+                line = f.readline()
+                for header in IGNORED_HEADERS:
+                    if line.startswith(header):
+                        # skip header continuation lines
+                        while True:
+                            line = f.readline()
+                            if len(line) == 0 or line[0] not in [" ", "\t"]:
+                                break
+                        break
+                else:
+                    data += line
+                    if line == "\n":
+                        break
+            data += f.read()
+            return data
+
+db = notmuch.Database()
+query = db.create_query('*')
+print "Number of messages: %s" % query.count_messages()
+
+files_count = 0
+for root, dirs, files in os.walk(db.get_path()):
+    if not root.startswith(os.path.join(db.get_path(), ".notmuch/")):
+        files_count += len(files)
+print "Number of files: %s" % files_count
+print "Estimated number of duplicates: %s" % (files_count - query.count_messages())
+
+msgs = query.search_messages()
+msg_count = 0
+suspected_duplicates_count = 0
+duplicates_count = 0
+timestamp = time.time()
+for msg in msgs:
+    msg_count += 1
+    if len(msg.get_filenames()) > 1:
+        filenames = msg.get_filenames()
+        comparator = MailComparator(filenames.next())
+        for filename in filenames:
+            if os.path.realpath(comparator.filename) == os.path.realpath(filename):
+                print "Message '%s' has filenames pointing to the same file: '%s' '%s'" % (msg.get_message_id(),
+omparator.filename, filename)
+            elif comparator.isDuplicate(filename):
+                os.remove(filename)
+                duplicates_count += 1
+            else:
+                #print "Potential duplicates: %s" % msg.get_message_id()
+                suspected_duplicates_count += 1
+
+    new_timestamp = time.time()
+    if new_timestamp - timestamp > 1:
+        timestamp = new_timestamp
+        sys.stdout.write("\rProcessed %s messages, removed %s duplicates..." % (msg_count, duplicates_count))
+        sys.stdout.flush()
+
+print "\rFinished. Processed %s messages, removed %s duplicates." % (msg_count, duplicates_count)
+if duplicates_count > 0:
+    print "You might want to run 'notmuch new' now."
+
+if suspected_duplicates_count > 0:
+    print
+    print "Found %s messages with duplicate IDs but different content." % suspected_duplicates_count
+    print "Perhaps we should ignore more headers."

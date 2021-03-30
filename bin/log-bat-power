@@ -1,0 +1,17 @@
+#! /usr/bin/env python
+from __future__ import division
+
+def get_cur_value():
+    inf = open("/sys/class/power_supply/BAT0/power_now", "r")
+    resut = int(inf.read()) / 10**6
+    inf.close()
+
+    return resut
+
+import sys
+from time import time, sleep
+while True:
+    value = get_cur_value()
+    print "%f\t%f" % (time(), value)
+    sleep(1)
+    sys.stdout.flush()

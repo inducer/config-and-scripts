@@ -1,0 +1,45 @@
+#! /bin/bash
+
+set -e
+#set -x
+
+#notmuch tag +spam -inbox tag:inbox folder:spam
+notmuch tag +spam -inbox tag:inbox "Haartooi Guy"
+notmuch tag +draft -inbox tag:inbox path:"offlineimap-weasel/Drafts/**"
+notmuch tag +sent -inbox -unread tag:inbox path:"offlineimap-weasel/Sent/**"
+#notmuch tag -inbox "mail delivery failed" from:mailer-daemon@gmx.de +tag:inbox
+notmuch tag +gmx tag:inbox path:"offlineimap-gmx/**"
+notmuch tag +uillinois tag:inbox path:"uillinois2/**"
+notmuch tag +python -inbox tag:inbox 'python-dev.python.org'
+notmuch tag +cron tag:inbox '('from:"cron daemon"')'
+notmuch tag +tuck -inbox anacron tag:inbox tag:cron root@tuck
+notmuch tag +cron tag:inbox '('from:"anacron"')'
+notmuch tag +numpy tag:inbox '"numpy-discussion.scipy.org"'
+notmuch tag +visit -inbox tag:inbox '"visit-users.email.ornl.gov"'
+notmuch tag +boost -inbox tag:inbox '"boost-users.lists.boost.org"'
+notmuch tag +distutils -inbox tag:inbox '"distutils-sig.python.org"'
+notmuch tag +pycuda tag:inbox '"pycuda.tiker.net"'
+notmuch tag +pyopencl tag:inbox '"pyopencl.tiker.net"'
+notmuch tag +ublas tag:inbox '"ublas.lists.boost.org"'
+notmuch tag +spam -inbox tag:inbox to:members@gmx.net
+notmuch tag +sympy -inbox tag:inbox '""sympy.googlegroups.com"'
+notmuch tag +piazza -- tag:inbox from:no-reply@piazza.com
+notmuch tag +uptime -- tag:inbox from:alert@pingdom.com
+notmuch tag +uptime -- tag:inbox from:alert@uptimerobot.com
+notmuch tag -inbox +archived -- invalid http_host fanqiangti django tag:inbox
+notmuch tag -inbox +archived --  "code question execution failed" badstatusline tag:inbox
+notmuch tag -inbox +dam -- tag:inbox -tag:flagged kloeckner@dam.brown.edu
+notmuch tag -inbox +spam -- tag:inbox sportsdirect.com@enews.sportsdirect.com
+notmuch tag -inbox +spam -- 'tag:inbox to:ttfaculty@cs.uiuc.edu (not from:edu)'
+notmuch tag -inbox +spam -- nieuwsbrief dagaanbieding
+notmuch tag -inbox +archived -- 'tag:inbox  cnsba e-learning webmaster'
+notmuch tag -inbox +archived -- "mail delivery failed" relate.cs from:mailer-daemon@illinois.edu welcome tag:inbox
+notmuch tag -inbox +archived -- tag:inbox delivery returned '"if this was not you"' relate
+notmuch tag -inbox +archived -- "reminder" tag:inbox "computer-based testing" illinois
+
+~/bin/unsnooze-mail
+
+# expire spam
+if test -d ~/no_backup/spam ; then
+  find ~/no_backup/spam -mtime +7 -delete
+fi

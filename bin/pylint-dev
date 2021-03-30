@@ -1,0 +1,12 @@
+#! /bin/bash
+
+set -e
+
+EXTRA_ARGS=""
+if test -f .pylintrc-local.yml; then
+  EXTRA_ARGS="--yaml-rcfile=.pylintrc-local.yml"
+fi
+
+exec python ~/work/ci-support/run-pylint.py \
+  --yaml-rcfile=/home/andreas/work/ci-support/.pylintrc-default.yml \
+  $EXTRA_ARGS "$@"

@@ -1,0 +1,37 @@
+#! /usr/bin/env python3
+
+import matplotlib.pyplot as pt
+
+x_points = []
+y_points = []
+
+
+def update_plot():
+    pt.clf()
+    pt.xlim([0, 5])
+    pt.ylim([0, 5])
+    pt.gca().set_autoscale_on(False)
+    pt.grid()
+    pt.plot(x_points, y_points, 'o-')
+
+
+def click(event):
+    """If the left mouse button is pressed: draw a little square. """
+    tb = pt.get_current_fig_manager().toolbar
+    if event.button == 1 and event.inaxes and tb.mode == '':
+        x_points.append(event.xdata)
+        y_points.append(event.ydata)
+        update_plot()
+        pt.draw()
+
+    elif event.button == 2 and event.inaxes and tb.mode == '':
+        for i, (x, y) in enumerate(zip(x_points, y_points)):
+            # print "\\coordinate (pt%d) at (%.2f, %.2f) ;" % (i, x, y)
+            print("(%.2f, %.2f)" % (x, y))
+        import sys
+        sys.exit()
+
+
+update_plot()
+pt.connect('button_press_event', click)
+pt.show()

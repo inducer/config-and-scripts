@@ -1,0 +1,5 @@
+#! /bin/sh
+if ! encfs ~/.mahjongg-raw ~/mnt/mahjongg --extpass=$HOME/bin/encfs-askpass -i 30; then
+  zenity --error --text="mount failed"
+fi
+

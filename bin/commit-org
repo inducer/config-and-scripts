@@ -1,0 +1,27 @@
+#! /bin/bash
+
+set -e
+
+function debuglog()
+{
+  echo "$@"
+}
+
+MARKERDIR="$HOME/.cache"
+mkdir -p $MARKERDIR
+
+TODAY_MARKERFILE="$MARKERDIR/orgcommitted-$(date +%Y-%m-%d)"
+YESTERDAY_MARKERFILE="$MARKERDIR/orgcommitted-$(date +%Y-%m-%d --date=yesterday)"
+
+if test -f "$TODAY_MARKERFILE"; then
+  debuglog "$TODAY_MARKERFILE exists, not committing"
+else
+  debuglog "$TODAY_MARKERFILE does not exist, committing"
+  touch "$TODAY_MARKERFILE"
+  rm -f "$YESTERDAY_MARKERFILE"
+
+  debuglog "deleting $YESTERDAY_MARKERFILE"
+  cd ~/org
+  git add -A
+  git commit -m "Automatic commit: $(date)"
+fi

@@ -1,0 +1,26 @@
+#! /usr/bin/env python
+
+def get_mem_use():
+    inf = open("/proc/meminfo", "r")
+    lines = inf.readlines()
+    inf.close()
+
+    import re
+    mem_re = re.compile(r"^([a-zA-Z ()0-9_]+):\s+([0-9]+) ")
+    result = {}
+    for l in lines:
+        match = mem_re.match(l)
+        if match is not None:
+            result[match.group(1)] = int(match.group(2))
+
+    return result
+
+import sys
+from time import time, sleep
+while True:
+    mem = get_mem_use()
+    avail_mem = mem["MemFree"] + mem["Buffers"] + mem["Cached"]
+    used_mem = mem["MemTotal"] - avail_mem
+    print "%f\t%d" % (time(), used_mem)
+    sleep(1)
+    sys.stdout.flush()

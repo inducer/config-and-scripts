@@ -1,0 +1,42 @@
+#! /bin/bash
+
+if test -f .draft-id; then
+  PAPER_NAME=$(cat .draft-id)
+else
+  PAPER_NAME=$(basename $(pwd))
+fi
+
+if test "$1" = "--name" || test "$1" = "-n"; then
+  PAPER_NAME="$2"
+  shift
+  shift
+fi
+
+PDF_NAME="$1"
+if test "$PDF_NAME" = ""; then
+  echo "usage: $0 [--name NAME] paper.pdf"
+  exit 1
+fi
+if ! test -f "$PDF_NAME"; then
+  echo "$PDF_NAME does not exist"
+  exit 1
+fi
+
+PDF_NAME_STRIPPED="${PDF_NAME%.pdf}"
+PDF_NAME_STRIPPED="$(basename "$PDF_NAME_STRIPPED")"
+
+DRAFT_FOLDER="$HOME/nc/drafts/$PAPER_NAME"
+
+DRAFT_SUFFIX="$(date "+%Y-%m-%d-%H%M")"
+
+if git rev-parse --short HEAD > /dev/null; then
+  GIT_REV="$(git rev-parse --short HEAD)"
+  DRAFT_SUFFIX="$DRAFT_SUFFIX-$GIT_REV"
+fi
+
+DRAFT_NAME="$DRAFT_FOLDER/$PDF_NAME_STRIPPED-$DRAFT_SUFFIX.pdf"
+
+mkdir -p "$DRAFT_FOLDER"
+echo "$DRAFT_NAME"
+cp "$PDF_NAME" "$DRAFT_NAME"
+xournalpp "$DRAFT_NAME"

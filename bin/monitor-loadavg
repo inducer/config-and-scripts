@@ -1,0 +1,13 @@
+#! /usr/bin/env python
+from __future__ import with_statement, division
+
+from time import sleep, time
+
+while True:
+    with open("/proc/loadavg", "r") as loadavg_file:
+        loadavg = float(loadavg_file.read().split()[0])
+
+    with open("loadlog.txt", "a") as outf:
+        outf.write("%d %r\n" % (time(), loadavg))
+
+    sleep(60)

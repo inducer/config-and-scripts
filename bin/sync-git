@@ -1,0 +1,9 @@
+#! /bin/bash
+
+set -e
+add-gitlab-remote || true
+git checkout main
+git pull --ff gitlab main
+git pull --ff github main
+push-git .
+

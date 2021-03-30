@@ -1,0 +1,8 @@
+#! /bin/bash
+hostname="$(hostname)"
+crflags=""
+if [[ "$hostname" == "blitz" ]]; then
+  crflags="--force-device-scale-factor=1"
+fi
+
+chromium $crflags "$@"

@@ -1,0 +1,19 @@
+#! /usr/bin/env python
+from __future__ import with_statement, division
+
+from time import sleep, time
+from subprocess import Popen, PIPE
+
+while True:
+    try:
+        with open("/proc/loadavg", "r") as loadavg_file:
+            ping = float(Popen(
+                    ["httping", "-c", "1", "-m", "http://mathema.tician.de"], 
+                    stdout=PIPE).communicate()[0])
+    except:
+        ping = "ERROR"
+
+    with open("pinglog.txt", "a") as outf:
+        outf.write("%d %s\n" % (time(), ping))
+
+    sleep(60)

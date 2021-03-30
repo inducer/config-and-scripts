@@ -1,0 +1,34 @@
+#! /bin/bash
+
+set -e
+set -x
+
+#PAD_DEV="Wacom Intuos PT S Finger pad"
+PAD_DEV="Wacom Intuos PT S Pad pad"
+
+#xsetwacom --set "Wacom Intuos PT S Finger touch" Touch off
+#xsetwacom --set "Wacom Intuos PT S Finger touch" ZoomDistance 180
+#xsetwacom --set "Wacom Intuos PT S Finger touch" ScrollDistance 70
+#xsetwacom --set "Wacom Intuos PT S Finger touch" TapTime 220
+
+#xsetwacom --set "Wacom Intuos PT S Pen stylus" Button 3 "button 2"
+#xsetwacom --set "Wacom Intuos PT S Pen stylus" Button 2 "button 3"
+
+for i in 1 3 8 9; do
+  xsetwacom --set "$PAD_DEV" Button $i ""
+done
+
+#xsetwacom --set "Wacom Intuos PT S Finger pad" Button 1 "key +ctrl +shift l -ctrl -shift"
+#xsetwacom --set "Wacom Intuos PT S Finger pad" Button 3 "key +ctrl +alt +shift t -ctrl -alt -shift"
+#xsetwacom --set "Wacom Intuos PT S Finger pad" Button 8 "key +ctrl z -ctrl"
+#xsetwacom --set "Wacom Intuos PT S Finger pad" Button 9 "key XF86Back"
+
+
+xsetwacom --set "$PAD_DEV" Button 3 "key +ctrl +shift p -ctrl -shift"  # xournalpp: pen
+xsetwacom --set "$PAD_DEV" Button 1 "key +ctrl +shift h -ctrl -shift"  # xournalpp: highlighter
+xsetwacom --set "$PAD_DEV" Button 9 "key +ctrl 6 -ctrl" # xournalpp: ruler
+xsetwacom --set "$PAD_DEV" Button 8 "key +ctrl z -ctrl"
+
+notify-send "Tablet setup successful"
+
+#~/bin/input-fix

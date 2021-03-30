@@ -1,0 +1,6 @@
+#! /usr/bin/python
+import subprocess
+who_output_lines = subprocess.check_output(
+        ["who", "-q"], stderr=subprocess.STDOUT).split("\n")
+users = who_output_lines[0].split()
+print len([u for u in users if u != "(unknown)"])

@@ -1,0 +1,37 @@
+#! /bin/bash
+
+set -e
+
+HOUR=$(date +%H)
+
+HOUR=${HOUR#0}
+
+if [[ ($HOUR -ge 6 && $HOUR -lt 18) && ! -e $HOME/.force-dark-terminal ]]; then
+  prof="Daytime Default"
+  export TERMINAL_LIGHTNESS="light"
+  TERMCOLORS=brewer-light
+else
+  prof="Nighttime Default"
+  export TERMINAL_LIGHTNESS="dark"
+  TERMCOLORS=solarized-dark
+fi
+
+# (~/.config/alacritty/gen.sh)
+
+#exec konsole -p colors=$prof
+#exec gnome-terminal --profile="$prof" "$@"
+#alacritty "$@"
+
+KITTY_CONF_PATH=$HOME/.config/kitty
+
+KITTY_HOST_CONF_FILE="$KITTY_CONF_PATH/kitty-$(hostname).conf"
+KITTY_EXTRA_CONF=""
+
+if test -f "$KITTY_HOST_CONF_FILE"; then
+  KITTY_EXTRA_CONF="--config=$KITTY_HOST_CONF_FILE"
+fi
+
+exec python3 -X faulthandler ~/pack/kitty \
+  --config=$KITTY_CONF_PATH/kitty.conf \
+  --config=$KITTY_CONF_PATH/$TERMCOLORS.conf \
+  $KITTY_EXTRA_CONF
