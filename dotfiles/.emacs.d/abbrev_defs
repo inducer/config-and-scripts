@@ -1,0 +1,331 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table '\(O '())
+
+(define-abbrev-table 'Buffer-menu-mode-abbrev-table '())
+
+(define-abbrev-table 'Info-edit-mode-abbrev-table '())
+
+(define-abbrev-table 'Truth '())
+
+(define-abbrev-table 'bibtex-mode-abbrev-table '())
+
+(define-abbrev-table 'calendar-mode-abbrev-table '())
+
+(define-abbrev-table 'comint-mode-abbrev-table '())
+
+(define-abbrev-table 'completion-list-mode-abbrev-table '())
+
+(define-abbrev-table 'diary-fancy-display-mode-abbrev-table '())
+
+(define-abbrev-table 'diary-mode-abbrev-table '())
+
+(define-abbrev-table 'diff-mode-abbrev-table '())
+
+(define-abbrev-table 'dig-mode-abbrev-table '())
+
+(define-abbrev-table 'edebug-eval-mode-abbrev-table '())
+
+(define-abbrev-table 'edit-abbrevs-mode-abbrev-table '())
+
+(define-abbrev-table 'elisp-byte-code-mode-abbrev-table '())
+
+(define-abbrev-table 'emacs-lisp-byte-code-mode-abbrev-table '())
+
+(define-abbrev-table 'emacs-lisp-mode-abbrev-table '())
+
+(define-abbrev-table 'epa-info-mode-abbrev-table '())
+
+(define-abbrev-table 'epa-key-list-mode-abbrev-table '())
+
+(define-abbrev-table 'epa-key-mode-abbrev-table '())
+
+(define-abbrev-table 'evil-command-window-mode-abbrev-table '())
+
+(define-abbrev-table 'evil-list-view-mode-abbrev-table '())
+
+(define-abbrev-table 'fundamental-mode-abbrev-table '())
+
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ("ugrad" "Thanks for your interest! Could you send a CV? What is your preparation
+in terms of math, and in terms of programming? Are you more interested
+in high performance, or in numerics? Do you have any code on Github that
+I could look at?
+
+Something that would certainly get my attention would be to send a pull
+request (on Github) that solves an outstanding issue in one of the
+pieces of software I maintain:
+
+https://gitlab.tiker.net/inducer/pytential/issues
+https://gitlab.tiker.net/inducer/loopy/issues
+https://github.com/inducer/pyopencl/issues
+
+(Gitlab projects have a corresponding mirror under
+https://github.com/inducer/)
+
+Best,
+Andreas
+" nil 0)
+    ("hid" "#+LATEX: \\begin{hidden}
+
+#+LATEX: \\end{hidden}
+" nil 0)
+    ("tconflict" "I am in principle happy to allow you to do what you suggest.  Lecture
+recordings will be available. That said, I cannot promise you that you
+can be successful in 450 while missing parts of the lecture--the class
+is not designed that way. Please state in your reply that you are
+assuming all risk for poor outcomes that may be the result of this.  You
+will be held to the same standard as anyone else in the class, with no
+expectation of lenience with grading or assignments or anything else.
+
+In addition, 450 will offer frequent ungraded in-class activities which
+I highly recommend you work through as you watch the lecture recordings.
+
+If you would still like to proceed, please let me know how I would go
+about entering that override.
+
+Andreas" nil 1)
+    ("msgriot" "Could you take a look at my recent message on Riot?
+
+Thanks,
+Andreas" nil 1)
+    ("extrawurst" "Thank you for your message. I would very much like to offer what you are
+requesting, but from a standpoint of fairness, I unfortunately
+cannot. The problem is that if I were to offer you extra 'private office
+hours', I would have to offer everyone else in the class (a few hundred
+of them!) the same to convincingly say that I am not treating you
+preferentially (which I am not allowed to do).
+
+Therefore, the best I can suggest is to try and get help through
+Piazza. Sorry, and thanks for understanding!
+
+Andreas" nil 1)
+
+    ("examsick" "Sorry to hear that you are sick. Please do the following:
+
+(1) Take the attached letter to the CBTF on Monday or Tuesday to take 
+the exam or reschedule a new appointment on one of those days. (As in, 
+you must have taken the exam by Tuesday night or contact me again if you 
+have not gotten better.)
+
+(2) Present me with a dated note from a health care provider (McKinley 
+or other) by Wednesday night at the latest.
+
+If you fail to do one or both of these things, your exam will be counted 
+with a grade of zero.
+
+Hope you get better soon,
+
+Andreas" nil 1)
+    ("adm" "
+Thank you for your message! I am almost always looking for promising PhD
+students, and this year is no exception. I have funding available for a variety
+of projects.
+
+For now, the most important thing is for you to get your application submitted.
+Here's the starting point for that:
+
+http://cs.illinois.edu/admissions/graduate
+
+When you submit your application, please make sure to specify 'Scientific
+Computing' as one of your fields of interest, and that you mention my name as a
+possible research advisor. This ensures that your application gets handled
+efficiently.
+
+If you have any questions, please let me know.
+
+Andreas" nil 1)
+
+    ("ms2phd" "Thank you for your interest in working with me. It sounds like you have experience that has relevance to the type of research I do. From your message, it sounds like you would be wanting to pursue a PhD in CS in the area of Scientific Computing, correct? If so, the best first step to take is to fire off an application to the CS PhD program. I've heard that this is still a substantial hurdle even if you are applying from on-campus, but I don't know the exact specifics. The academic office can help you there--they're in 1210 Siebel. I unfortunately can't help you in gaining admission to the program--who gets in is solely the admission committee's decision.
+
+All the best with your application, and thank you for your understanding.
+
+Andreas" nil 1)
+
+    ("ujob" "Thank you for your interest in working with me. I unfortunately do not have any openings at this time. All the best with your search.
+
+Andreas" nil 1)
+    ("reclet" "I'd be happy to write a letter of recommendation for you. To help me
+do my job, please provide me with the following pieces of information:
+
+- What precisely are you applying for?
+
+- When is the letter due?
+
+- How will I be submitting the letter? Email/web/regular mail?
+  Please provide detailed instructions, and if I need to watch for an
+  email notification, please ping me when it is supposed to arrive.
+  
+- Is there anything specific (qualities/experiences/knowledge) that
+  you'd like me to highlight that would enhance the narrative of your
+  application?
+  
+In addition to the above, please provide me with:
+
+- Your curriculum vitae
+
+- Your statement of purpose for this application
+
+- An unofficial transcript or grade overview
+
+I would also appreciate it if you could send me a brief reminder a few
+days before the letter is due. I will send you an email confirming
+that I've submitted my letter once I've done so.
+
+All the best with your application!
+Andreas" nil 2)
+    ("classreg" "Thank you you for your interest in CS450. Registration is closed for the course because it has reached its room capacity. My recommendation would be to go talk to the academic office in 1210 Siebel Center. They will be able to help you more directly than I can. In addition, I'd recommend that you continue to watch for slots as we're headed towards the beginning of the semester. Definitely try showing up for the class and see if there are seats available. A large class such as this hardly ever runs at full capacity all the way to the end of the term, so you will likely have a good chance at securing a spot, given enough time. If the course is a requirement for you, please let the academic office know so that they can accommodate you. This page has more info on CS course restrictions:
+
+https://wiki.illinois.edu/wiki/display/undergradProg/Computer+Science+Course+Restriction+and+Enrollment+Cap+Information
+
+You are welcome to take part in course activities such as homework and quizzes as the class begins. These activities will count towards your grade if you end up securing a spot, and if you have kept up with course work, I would be happy to discuss letting you into the class even after the add deadline.
+
+Hope that helps,
+Andreas" nil 4)
+    ("reglater" "Thanks you for your interest in CS450. Registration is closed for the course because it has reached its room capacity. My recommendation would be to go talk to the academic office in 1210 Siebel Center. They will be able to help you more directly than I can. In addition, I'd recommend that you continue to watch for slots as we're headed towards the beginning of the semester. Definitely try showing up for the class and see if there are seats available. A large class such as this hardly ever runs at full capacity all the way to the end of the term, so you will likely have a good chance at securing a spot, given enough time. If the course is a requirement for you, please let the academic office know so that they can accommodate you.
+
+In the meantime, you are welcome to take part in course activities such as homework and quizzes, which will count towards your grade if you end up securing a spot. To do so, go to the class web page:
+
+https://relate.cs.illinois.edu/course/cs450-s16/
+
+and follow the sign-up instructions.
+
+Hope that helps,
+Andreas" nil 4)
+
+    ("ovr" "Thanks you for your interest in CS357. To obtain an override of the majors-only registration requirement or get on the waitlist if there is one, please contact the Academic Office in the computer science department at undergrad@cs.illinois.edu or in person in 1210 Siebel. They can help you more directly than I can.\n\nBeyond that, my recommendation would be to watch for slots opening up towards the beginning of the semester. Definitely try showing up for the class and see if there are seats available--there usually are. A large class such as this hardly ever runs at full capacity all the way to the end of the term, so you will likely have a good chance at securing a spot, given enough time.
+
+Hope that helps,
+Andreas" nil 4)
+    ("missment" "Hi there,
+
+I'm Andreas Kloeckner, your Computer Science faculty mentor. It appears as
+though you have just missed an appointment for our advising session, scheduled
+for XX:XX Xm today. Please make another appointment using the online system at
+http://my.cs.illinois.edu/ .
+
+Looking forward to seeing you soon,
+Andreas" nil 4)
+    ("toprivate" "Please use private questions on Piazza for requests of this nature.
+The TAs should be able to help you right away. Thanks for understanding.
+
+Best,
+Andreas" nil 4)
+    ("topiazza" "Please ask questions like this on Piazza. By asking there,
+you stand a much better chance of a quick reply since many more people can
+see your question. In addition, other students can see and learn from your
+concern and the associated discussion.
+
+Thanks!
+Andreas" nil 4)
+    ("tolist" "Please send requests like this to the appropriate mailing list.
+
+Thanks!
+Andreas" nil 4)
+    ("enrollreq" "Hi there,
+
+You are receiving this email because you requested to enroll in CS450 on its
+course webpage, but I did not see your name on the university roster. I am
+usually happy to let you into the class, but before I do, I'd like to
+understand your case a bit better. Can you please explain the background to
+your request? (Also note that there's a delay in the way my roster updates,
+so if you're actually officially registered, just say that.)
+
+Thanks!
+Andreas" nil 4)
+    ("reimb" "Dana,
+
+I recently spoke at FACM 2018 and would like to request reimbursement
+for related expenses. Click here:
+
+https://m.njit.edu/Events/FACM18/program.html
+
+and search for my last name to confirm my participation.
+
+You can find all related receipts in this folder:
+
+https://ssl.tiker.net/nextcloud/index.php/s/495d43fcf900d90e43437fee9fed04b4?path=%2F2018-facm
+
+I have physical receipts for gas, hotel, and rental car that duplicate those
+in the folder.  I'll bring those by on Wednesday morning. Breakfast was
+included at the hotel, lunch was covered at the conference, and there
+was a conference dinner Friday night. If possible, I would like to
+request a per-diem reimbursement for the remaining meals from Thursday
+dinner through Sunday.
+
+Please fund this out of my ICR startup account.
+
+Thank you in advance for your help!
+Andreas" nil 4)
+   ))
+
+(define-abbrev-table 'gnus-article-edit-mode-abbrev-table '())
+
+(define-abbrev-table 'gnus-article-mode-abbrev-table '())
+
+(define-abbrev-table 'gnus-group-mode-abbrev-table '())
+
+(define-abbrev-table 'gnus-sticky-article-mode-abbrev-table '())
+
+(define-abbrev-table 'helm-grep-mode-abbrev-table '())
+
+(define-abbrev-table 'helm-major-mode-abbrev-table '())
+
+(define-abbrev-table 'helm-occur-mode-abbrev-table '())
+
+(define-abbrev-table 'help-mode-abbrev-table '())
+
+(define-abbrev-table 'lisp-mode-abbrev-table '())
+
+(define-abbrev-table 'message-mode-abbrev-table '())
+
+(define-abbrev-table 'messages-buffer-mode-abbrev-table '())
+
+(define-abbrev-table 'notmuch-hello-mode-abbrev-table '())
+
+(define-abbrev-table 'notmuch-message-mode-abbrev-table '())
+
+(define-abbrev-table 'notmuch-search-mode-abbrev-table '())
+
+(define-abbrev-table 'notmuch-show-mode-abbrev-table '())
+
+(define-abbrev-table 'notmuch-tree-mode-abbrev-table '())
+
+(define-abbrev-table 'occur-edit-mode-abbrev-table '())
+
+(define-abbrev-table 'occur-mode-abbrev-table '())
+
+(define-abbrev-table 'org-export-stack-mode-abbrev-table '())
+
+(define-abbrev-table 'org-mode-abbrev-table '())
+
+(define-abbrev-table 'outline-mode-abbrev-table '())
+
+(define-abbrev-table 'package-menu-mode-abbrev-table '())
+
+(define-abbrev-table 'process-menu-mode-abbrev-table '())
+
+(define-abbrev-table 'prog-mode-abbrev-table '())
+
+(define-abbrev-table 'right- '())
+
+(define-abbrev-table 'select-tags-table-mode-abbrev-table '())
+
+(define-abbrev-table 'shell-mode-abbrev-table '())
+
+(define-abbrev-table 'smime-mode-abbrev-table '())
+
+(define-abbrev-table 'special-mode-abbrev-table '())
+
+(define-abbrev-table 'tabulated-list-mode-abbrev-table '())
+
+(define-abbrev-table 'text-mode-abbrev-table '())
+
+(define-abbrev-table 'vc-git-log-edit-mode-abbrev-table '())
+
+(define-abbrev-table 'vc-git-log-view-mode-abbrev-table '())
+
+(define-abbrev-table 'vc-git-region-history-mode-abbrev-table '())
+
+(define-abbrev-table 'xref--xref-buffer-mode-abbrev-table '())
+
