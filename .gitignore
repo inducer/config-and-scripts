@@ -1,0 +1,4 @@
+*~
+.*.sw[op]
+dotfiles/.vim/spell
+dotfiles/.ssh/id_*
