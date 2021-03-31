@@ -1,0 +1,38 @@
+#! /bin/bash
+
+set -e
+set -x
+
+do_wake()
+{
+    sudo etherwake -i eth0 "$1"
+    sudo etherwake -i wlan0 "$1"
+}
+
+SSH_TGT="$1"
+case "$1" in
+  tuck )
+    ssh sprout "./wake tuck"
+    SSH_TGT=tuck
+    ;;
+  tuck.d* )
+    ssh sprout.d.tiker.net "./wake tuck"
+    SSH_TGT=tuck.d.tiker.net
+    ;;
+  rakete )
+    do_wake 00:1C:C0:2F:E8:AC
+    ;;
+  inkling )
+    ssh sprout "./wake inkling"
+    ;;
+  frontend1 )
+    do_wake 00:30:05:15:15:68
+    SSH_TGT=192.168.2.102
+    ;;
+  * )
+    echo "unknown host: $1"
+    exit 1
+    ;;
+esac
+
+ssh $SSH_TGT

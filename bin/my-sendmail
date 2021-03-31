@@ -1,0 +1,4 @@
+#!/bin/bash
+unset GNOME_KEYRING_CONTROL
+unset GNOME_KEYRING_PID
+exec /usr/sbin/sendmail "$@"
