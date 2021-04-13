@@ -22,6 +22,11 @@ def link_dotfiles(src, tgt):
     for child in list_recursively(src):
         assert not child.is_dir()
 
+        if (child.name.endswith("~")
+                or (child.name.startswith(".")
+                    and child.name.endswith(".swp"))):
+            continue
+
         tgt_child = tgt.joinpath(child.relative_to(src))
 
         if tgt_child.is_symlink():
@@ -33,7 +38,7 @@ def link_dotfiles(src, tgt):
             tgt_child.unlink()
 
         if tgt_child.exists():
-            raise RuntimeError("target '{}' already exists", tgt_child)
+            raise RuntimeError(f"target '{tgt_child}' already exists")
 
         # iterates backward
         for p in tgt_child.parents:
