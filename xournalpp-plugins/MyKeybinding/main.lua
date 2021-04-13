@@ -12,7 +12,7 @@ end
 -- https://github.com/xournalpp/xournalpp/blob/master/src/control/Control.cpp#L368
 function select_pen()
     app.uiAction({["action"]="ACTION_TOOL_PEN"})
-    app.uiAction({["action"]="ACTION_TOOL_DEFAULT"})
+    app.uiAction({["action"]="ACTION_RULER", ["enabled"]=false})
 end
 function toggle_line()
     app.uiAction({["action"]="ACTION_RULER"})
