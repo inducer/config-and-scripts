@@ -335,7 +335,7 @@ let g:limelight_conceal_ctermfg = 'gray'
 let g:limelight_conceal_guifg = 'DarkGray'
 "let g:limelight_conceal_guifg = '#777777'
 "
-if exists('$TMUX')
+if exists('$TMUX') && (stridx($TMUX, 'tmate') == -1)
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
 else
   " let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
