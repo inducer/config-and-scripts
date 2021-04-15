@@ -1,0 +1,43 @@
+#! /usr/bin/env python3
+
+from os.path import expanduser
+
+# pip install 'git+https://github.com/PyGithub/PyGithub.git#egg=pygithub'
+
+PROJECTS = """
+pudb
+ci-support config-and-scripts aksetup compyte
+pytools pymbolic gmsh_interop pyvisfile cgen genpy pycparserext
+islpy pyfmmlib meshpy pymetis
+pyopencl pycuda
+codepy loopy pytato
+dagrt leap modepy meshmode grudge boxtree sumpy pytential
+relate""".split()
+
+
+def read_github_api_token():
+    with open(expanduser("~/.github-api-token")) as inf:
+        return inf.read().strip()
+
+
+def read_github_autopush_secret_key():
+    with open(expanduser("~/.ssh/id_rsa_github_autopush-v2")) as inf:
+        return inf.read().strip()
+
+
+def main():
+    from github import Github
+    gh = Github(read_github_api_token())
+    push_secret_key = read_github_autopush_secret_key()
+    for p in PROJECTS:
+        print(p)
+        gh_repo = gh.get_repo(f"inducer/{p}")
+        gh_repo.delete_secret("GITLAB_AUTOPUSH_KEY")
+        gh_repo.create_secret("GITLAB_AUTOPUSH_KEY", push_secret_key)
+    # gio open "https://gitlab.tiker.net/inducer/$proj/-/settings/repository#js-deploy-keys-settings"
+    # gio open "https://github.com/inducer/$proj/settings/secrets/actions"
+
+
+main()
+
+# vim: sw=4
