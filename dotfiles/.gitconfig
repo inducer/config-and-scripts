@@ -1,0 +1,36 @@
+[core]
+      pager = /home/andreas/bin/delta-wrapper
+  #--plus-color="#012800" --minus-color="#340001" --theme="base16-ocean.dark"
+[user]
+        name = Andreas Kloeckner
+        email = inform@tiker.net
+        signingkey = CA171145
+[color]
+        ui = auto
+[push]
+        default = simple
+[alias]
+        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
+        g = grep --break --heading --line-number
+	l = log --stat
+        diffwords = -c core.pager=less diff --color-words
+[grep]
+        extendRegexp = true
+        lineNumber = true
+[merge]
+	conflictstyle = diff3
+[gpg]
+	program = gpg2
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[pull]
+	ff = only
+[github]
+	user = inducer
+[gitlab "gitlab.tiker.net/api"]
+	user = inducer
+[init]
+	defaultBranch = main
