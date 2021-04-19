@@ -37,9 +37,6 @@ def link_dotfiles(src, tgt):
             logger.info("target '%s' is a symlink, replacing", tgt_child)
             tgt_child.unlink()
 
-        if tgt_child.exists():
-            raise RuntimeError(f"target '{tgt_child}' already exists")
-
         # iterates backward
         for p in tgt_child.parents:
             if p.is_symlink():
@@ -48,6 +45,10 @@ def link_dotfiles(src, tgt):
 
             if p == tgt:
                 break
+
+        if tgt_child.exists():
+            raise RuntimeError(f"target '{tgt_child}' already exists")
+
         tgt_child.parent.mkdir(parents=True, exist_ok=True)
         tgt_child.symlink_to(child)
 
