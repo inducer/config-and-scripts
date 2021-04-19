@@ -25,7 +25,7 @@ Plug 'scrooloose/nerdtree'
 " endif
 " Plug 'Shougo/deoplete.nvim'
 if $AK_IS_TERMUX != "1"
-  Plug 'Valloric/YouCompleteMe'
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
   " Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarnpkg install --frozen-lockfile'}
 endif
 
