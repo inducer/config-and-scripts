@@ -2,7 +2,7 @@
 // @name        Github font changer
 // @namespace   local.greasemonkey.githubfontchanger
 // @include     https://github.com/*
-// @version     1
+// @version     2
 // ==/UserScript==
 
 // https://stackoverflow.com/questions/7372428/changing-the-default-github-code-font
