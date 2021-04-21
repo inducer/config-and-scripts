@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        Gitlab font changer
 // @namespace   local.greasemonkey.gitlabfontchanger
-// @include     https://gitlab.tiker.net.com/*,https://gitlab.com/*
-// @version     2
+// @include     https://gitlab.tiker.net.com/*
+// @include     https://gitlab.com/*
+// @version     3
 // ==/UserScript==
 
 // https://stackoverflow.com/questions/7372428/changing-the-default-github-code-font
