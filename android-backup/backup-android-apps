@@ -1,0 +1,49 @@
+#! /bin/bash
+
+# This looked promising, but it produces 47-byte (i.e. very likely useless) backup
+# files for about half the apps. It seems that these apps declare themselves
+# "ineligible for backup" (what?).
+
+sort packages.list \
+        | grep -v com.android \
+        | grep -v ^org.lineageos \
+        | grep -v ^com.qualcomm \
+        | grep -v ^lineageos.platform \
+        | grep -v ^android.ext \
+        | grep -v ^com.qti \
+        | grep -v ^com.oneplus \
+        | grep -v ^vendor.qti \
+        | grep -v ^android \
+        | grep -v ^android \
+        | grep -v ^org.codeaurora \
+        | grep -v ^com.dsi \
+        | grep -v ^com.tencent \
+        | grep -v ^de.blau.android \
+        | grep -v ^org.calyxos \
+        | grep -v ^com.stevesoltys.seedvault \
+        | grep -v ^org.protonaosp.deviceconfig \
+        | grep -v ^com.aurora.store \
+        | grep -v ^com.spotify.music \
+        | grep -v ^com.nextcloud.client \
+        | grep -v ^de.zeit \
+        | grep -v ^org.mozilla.firefox \
+        | grep -v ^com.termux \
+        | grep -v ^de.marmaro.krt.ffupdater \
+        | cut -d ' ' -f1 > packages.list.filtered
+
+# tv.vhx.mhzchoice causes backup service to crash (?)
+
+rm -Rf backups
+mkdir -p backups
+
+adb root
+
+npkgs=$(wc -l packages.list.filtered)
+i=0
+for pkg in $(cat packages.list.filtered); do
+    echo "$i/$npkgs: $pkg"
+    adb backup -f "backups/app-$pkg.ab" -apk -obb "$pkg"
+    i=$((i+1))
+done
+
+# vim: foldmethod=marker:sw=4
