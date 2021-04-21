@@ -2,7 +2,7 @@
 // @name        Gitlab font changer
 // @namespace   local.greasemonkey.gitlabfontchanger
 // @include     https://gitlab.tiker.net.com/*,https://gitlab.com/*
-// @version     1
+// @version     2
 // ==/UserScript==
 
 // https://stackoverflow.com/questions/7372428/changing-the-default-github-code-font
@@ -22,5 +22,6 @@ function addGlobalStyle(css)
 
 // Apply the font-family definition to code styles.
 addGlobalStyle(
-  '.diff-td { font-family: ' + fontdef + '; font-size: 100% !important; } ' +
+  '.diff-table.code { font-family: ' + fontdef + '; } ' +
+  '.diff-td { font-size: 100% !important; } ' +
   '');
