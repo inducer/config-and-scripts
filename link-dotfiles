@@ -54,8 +54,18 @@ def link_dotfiles(src, tgt):
 
 
 def main():
+    import json
+    import socket
     basedir = os.path.dirname(os.path.abspath(__file__))
+
     link_dotfiles(os.path.join(basedir, "dotfiles"), os.path.expanduser("~"))
+
+    with open(os.path.join(basedir, "hostnames-to-subdirs.json")) as inf:
+        hostnames_to_subdirs = json.load(inf)
+
+    for subdir in hostnames_to_subdirs.get(socket.gethostname(), ()):
+        link_dotfiles(os.path.join(basedir, subdir), os.path.expanduser("~"))
+
 
 if __name__ == "__main__":
     logging.basicConfig(level="INFO")

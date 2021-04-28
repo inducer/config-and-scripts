@@ -1,0 +1,10 @@
+{
+        "dunkel": ["dotfiles-shop"],
+        "porter": ["dotfiles-shop"],
+        "stout": ["dotfiles-shop"],
+        "koelsch": ["dotfiles-shop"],
+        "lager": ["dotfiles-shop"],
+        "tripel": ["dotfiles-shop"],
+        "bock": ["dotfiles-shop"],
+        "commas_at_the_end": []
+}
