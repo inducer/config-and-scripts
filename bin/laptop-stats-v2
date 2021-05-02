@@ -1,0 +1,196 @@
+#! /usr/bin/env python3
+
+import os
+import errno
+from os.path import exists, join, basename
+import sys
+
+
+def get_text(fn):
+    with open(fn) as inf:
+        return inf.read()
+
+
+def get_float(fn):
+    return float(get_text(fn))
+
+
+def get_floats(ptn):
+    from glob import glob
+    fns = glob(ptn)
+    for fn in fns:
+        with open(fn) as inf:
+            try:
+                yield float(inf.read())
+            except OSError as e:
+                if e.errno == errno.ENODATA:
+                    pass
+                else:
+                    raise
+
+
+
+
+class BatteryMonitor:
+    def __init__(self, path):
+        self.path = path
+
+        self.bat_name = basename(path)
+
+        from time import time
+        self.start_time = time()
+
+        self.charge_start = self.charge()
+        self.voltages = []
+
+    def get_float(self, name):
+        return get_float(join(self.path, name))
+
+    def current(self):
+        return self.get_float("current_now") / 1e6
+
+    def voltage(self):
+        u = self.get_float("voltage_now") / 1e6
+        self.voltages.append(u)
+        return u
+
+    def charge(self):
+        # Ah
+        return self.get_float("charge_now") / 1e6
+
+    def charge_full(self):
+        # Ah
+        return self.get_float("charge_full") / 1e6
+
+    def charge_full_design(self):
+        # Ah
+        return self.get_float("charge_full_design") / 1e6
+
+    def current_avg(self):
+        from time import time
+        t_elapsed_h = (time()-self.start_time)/3600
+        result = (self.charge_start - self.charge())/t_elapsed_h
+
+        if result == 0:
+            return self.current()
+        else:
+            return result
+
+    def power_avg(self):
+        # FIXME: This should be a proper integral
+        from statistics import mean
+        return mean(self.voltages)*self.current_avg()
+
+    def __call__(self, do_print):
+        i_now = self.current()
+        u_now = self.voltage()
+        p_now = u_now*i_now
+        p_avg = self.power_avg()
+
+        q_consumed = (self.charge_start - self.charge())
+
+        do_print(
+                f"{self.bat_name}: Power: {p_now:5.1f} W current, "
+                f"{p_avg:5.1f} W avg, "
+                f"charge consumed: {q_consumed*1e3:5.1f} mAh")
+
+        q_design = self.charge_full_design()
+        q_full = self.charge_full()
+        q = self.charge()
+
+        do_print(
+                "%s: Charge:\n  %5.1f mAh = %2.1f %% of\n"
+                "  %5.1f mAh last full = %2.1f %% of\n  "
+                "  %5.1f mAh design capacity"
+                % (self.bat_name, q*1e3, 100*q/q_full, q_full*1e3,
+                    100*q_full/q_design, q_design*1e3))
+
+
+def update(monitors, do_print):
+    for mon in monitors:
+        mon(do_print=do_print)
+
+    current_avg = sum(mon.current_avg() for mon in monitors)
+    # now in As instead of Ah
+    total_charge_full = sum(mon.charge_full() for mon in monitors) * 3600
+    total_charge = sum(mon.charge() for mon in monitors) * 3600
+
+    if current_avg > 0:
+        secs_to_go = total_charge/current_avg
+
+        print()
+        from time import time, asctime, localtime
+        do_print("Battery out at: %s -- %3.2f h from now" % (
+                asctime(localtime(time() + secs_to_go)), secs_to_go/3600))
+    elif current_avg < 0:
+        secs_to_go = (total_charge-total_charge_full)/current_avg
+
+        print()
+        from time import time, asctime, localtime
+        do_print("Battery full at: %s -- %3.2f h from now" % (
+                asctime(localtime(time() + secs_to_go)), secs_to_go/3600))
+
+    do_print()
+    hwmon_base = "/sys/class/hwmon"
+    for hwmon in os.listdir(hwmon_base):
+        hwmon_dir = join(hwmon_base, hwmon)
+        hwmon_name = get_text(join(hwmon_dir, "name"))
+        temps = list(get_floats(join(hwmon_dir, "temp*_input")))
+        if temps:
+            temp_summary = ", ".join("%.1f C" % (t/1000) for t in temps)
+            do_print(f"{hwmon} {hwmon_name.strip()} {temp_summary}")
+
+    fan_file = "/sys/devices/platform/thinkpad_hwmon/fan1_input"
+    if exists(fan_file):
+        print()
+        fan_rpm = get_float(fan_file)
+        do_print("Fan: %.1f rpm" % fan_rpm)
+
+    do_print()
+    cpu_mhzs = [
+            f/1000 for f in
+            get_floats("/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq")]
+    do_print("CPU: %s MHz" % (", ".join("%.1f" % f for f in cpu_mhzs)))
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+            description="Monitor laptop runtime parameters")
+    parser.add_argument("-l", "--loop", type=float, metavar="SECONDS")
+
+    args = parser.parse_args()
+
+    monitors = []
+    for bat in [0, 1]:
+        bat_name = "BAT%d" % bat
+        bat_path = "/sys/class/power_supply/%s" % bat_name
+
+        if exists(join(bat_path, "capacity")):
+            monitors.append(BatteryMonitor(bat_path))
+
+    if args.loop:
+        lines = []
+
+        def do_print(*args, sep=" "):
+            lines.append(sep.join(str(arg) for arg in args))
+
+        from time import sleep
+        while True:
+            update(monitors, do_print=do_print)
+
+            # clear terminal
+            sys.stderr.write("\x1b[2J\x1b[H")
+            sys.stderr.flush()
+            for l in lines:
+                print(l)
+            del lines[:]
+
+            sleep(args.loop)
+    else:
+        update(monitors, do_print=print)
+
+
+if __name__ == "__main__":
+    main()
