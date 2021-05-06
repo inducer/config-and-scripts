@@ -10,7 +10,7 @@ ci-support config-and-scripts aksetup compyte
 pytools pymbolic gmsh_interop pyvisfile cgen genpy pycparserext
 islpy pyfmmlib meshpy pymetis
 pyopencl pycuda
-codepy loopy pytato
+codepy loopy pytato arraycontext
 dagrt leap modepy meshmode grudge boxtree sumpy pytential
 relate""".split()
 
