@@ -1,5 +1,5 @@
 [core]
-      pager = /home/andreas/bin/delta-wrapper
+      pager = $HOME/bin/delta-wrapper
   #--plus-color="#012800" --minus-color="#340001" --theme="base16-ocean.dark"
 [user]
         name = Andreas Kloeckner
