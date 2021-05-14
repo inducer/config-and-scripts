@@ -1,7 +1,7 @@
 #! /bin/bash
 
 if ! command -v delta &> /dev/null; then
-    exec less "$"
+    exec less "$@"
 else
     exec delta "--$TERMINAL_LIGHTNESS" "$@"
 fi
