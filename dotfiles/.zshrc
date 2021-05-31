@@ -38,25 +38,26 @@ source_if_exists $MY_FZF_PATH/shell/key-bindings.zsh
 
 
 # shell options ---------------------------------------------------------------
-setopt -o AUTO_CD
-setopt -o NO_MENU_COMPLETE
-setopt -o AUTO_MENU
-setopt -o CORRECT
-setopt -o MULTIOS
-setopt -o PATH_DIRS
-setopt -o AUTO_PUSHD
-setopt -o EXTENDED_GLOB
-setopt -o NO_HUP
-setopt -o NO_CHECK_JOBS
-setopt -o HIST_IGNORE_DUPS
-setopt -o NO_NOMATCH
-setopt -o COMPLETEINWORD
-setopt -o LISTTYPES
+setopt auto_cd
+setopt no_menu_complete
+setopt auto_menu
+setopt correct
+setopt multios
+setopt path_dirs
+setopt auto_pushd
+setopt extended_glob
+setopt no_hup
+setopt no_check_jobs
+setopt hist_ignore_dups
+setopt no_nomatch
+setopt completeinword
+setopt listtypes
 
-setopt -o LONG_LIST_JOBS
-setopt -o NOTIFY
-setopt -o SHAREHISTORY
+setopt long_list_jobs
+setopt notify
+setopt sharehistory
 
+setopt prompt_subst
 
 HISTFILE=~/.zshhistory
 HISTSIZE=10000
@@ -69,21 +70,27 @@ SCREEN_TITLE_BEGIN=`echo "\033k"`
 SCREEN_TITLE_END=`echo "\033\\\\"`
 SCREEN_HARDSTATUS_BEGIN=`echo "\033_"`
 SCREEN_HARDSTATUS_END=`echo "\033\\\\"`
-BLUE=`echo "\033[34;1m"`
-WHITE=`echo "\033[1m"`
-NORMAL=`echo "\033[0m"`
-
-
-
 
 # set up the prompt -----------------------------------------------------------
-PROMPT="%B%~%b "
-RPROMPT="%{$BLUE%}%n@%m %{$NORMAL$WHITE%}%T%{$NORMAL%}"
+
+# https://arjanvandergaag.nl/blog/customize-zsh-prompt-with-vcs-info.html
+# vcs_info: https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#Version-Control-Information
+# colors: https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#Other-Functions
+
+autoload -Uz vcs_info
+autoload -U colors && colors
+
+zstyle ':vcs_info:*' enable git
+
+zstyle ':vcs_info:git*' formats " [%s: %{$fg_bold[blue]%}%b%{$reset_color%} %{$fg_bold[red]%}%a%m%u%c%{$reset_color%}]"
+zstyle ':vcs_info:git:*' check-for-changes 'true'
+
+# runs vcs_info (to populate variables) before showing the prompt
+precmd() { vcs_info }
+
+PROMPT='%B%~%b${vcs_info_msg_0_} '
+RPROMPT=' %{$fg_bold[blue]%}%n@%m %{$reset_color$fg_bold[gray]%}%T%{$reset_color%}'
 PROMPT="$PROMPT%{$XTERM_TITLE_BEGIN%n@%m - %~$XTERM_TITLE_END%}"
-if test "$TERM" = "screen"; then
-  PROMPT="$PROMPT%{$SCREEN_TITLE_BEGIN%~$SCREEN_TITLE_END%}"
-  PROMPT="$PROMPT%{${SCREEN_HARDSTATUS_BEGIN}%n@%m - %~$SCREEN_HARDSTATUS_END%}"
-fi
 
 # -------------------------------------------------------------------------
 # common shell setup stuff
