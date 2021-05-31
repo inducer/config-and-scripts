@@ -82,14 +82,54 @@ autoload -U colors && colors
 
 zstyle ':vcs_info:*' enable git
 
-zstyle ':vcs_info:git*' formats " [%s: %{$fg_bold[blue]%}%b%{$reset_color%} %{$fg_bold[red]%}%a%m%u%c%{$reset_color%}]"
+zstyle ':vcs_info:git*' formats " [%b %{$fg_bold[red]%}%a%m%u%c%{$reset_color%}]"
 zstyle ':vcs_info:git:*' check-for-changes 'true'
+zstyle ':vcs_info:git*:*' get-revision true
+
+zstyle ':vcs_info:git*+set-message:*' hooks git-st git-stash
+
+# {{{ vcs_info enhancers
+#
+# Show remote ref name and number of commits ahead-of or behind
+# https://www.eseth.org/2010/git-in-zsh.html
+function +vi-git-stash() {
+    local -a stashes
+
+    if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
+        stashes=$(git stash list 2>/dev/null | wc -l)
+        hook_com[misc]+=" (${stashes} sta)"
+    fi
+}
+
+# Show remote ref name and number of commits ahead-of or behind
+# https://www.eseth.org/2010/git-in-zsh.html
+function +vi-git-st() {
+    local ahead behind remote
+    local -a gitstatus
+
+    # Are we on a remote-tracking branch?
+    remote=${$(git rev-parse --verify ${hook_com[branch]}@{upstream} \
+        --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
+
+    if [[ -n ${remote} ]] ; then
+        ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
+        (( $ahead )) && gitstatus+=( "${c3}+${ahead}${c2}" )
+
+        behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+        (( $behind )) && gitstatus+=( "${c4}-${behind}${c2}" )
+
+        hook_com[branch]="%{$fg_bold[blue]%}${hook_com[branch]}%{$reset_color%}=${remote}${(j:/:)gitstatus}"
+    fi
+}
+
+# }}}
+
 
 # runs vcs_info (to populate variables) before showing the prompt
 precmd() { vcs_info }
 
 PROMPT='%B%~%b${vcs_info_msg_0_} '
-RPROMPT=' %{$fg_bold[blue]%}%n@%m %{$reset_color$fg_bold[gray]%}%T%{$reset_color%}'
+RPROMPT=' %{$fg_bold[blue]%}%n@%m %{$reset_color$fg_bold[black]%}%T%{$reset_color%}'
 PROMPT="$PROMPT%{$XTERM_TITLE_BEGIN%n@%m - %~$XTERM_TITLE_END%}"
 
 # -------------------------------------------------------------------------
