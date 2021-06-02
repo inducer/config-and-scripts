@@ -82,7 +82,7 @@ autoload -U colors && colors
 
 zstyle ':vcs_info:*' enable git
 
-zstyle ':vcs_info:git*' formats " [%b %{$fg_bold[red]%}%a%m%u%c%{$reset_color%}]"
+zstyle ':vcs_info:git*' formats "[%b %{$fg_bold[red]%}%a%m%u%c%{$reset_color%}] "
 zstyle ':vcs_info:git:*' check-for-changes 'true'
 zstyle ':vcs_info:git*:*' get-revision true
 
@@ -128,7 +128,7 @@ function +vi-git-st() {
 # runs vcs_info (to populate variables) before showing the prompt
 precmd() { vcs_info }
 
-PROMPT='%B%~%b${vcs_info_msg_0_} '
+PROMPT='${vcs_info_msg_0_}%B%~%b '
 RPROMPT=' %{$fg_bold[blue]%}%n@%m %{$reset_color$fg_bold[black]%}%T%{$reset_color%}'
 PROMPT="$PROMPT%{$XTERM_TITLE_BEGIN%n@%m - %~$XTERM_TITLE_END%}"
 
