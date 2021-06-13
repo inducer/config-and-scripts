@@ -129,7 +129,7 @@ function +vi-git-st() {
 precmd() { vcs_info }
 
 PROMPT='${vcs_info_msg_0_}%B%~%b '
-RPROMPT=' %{$fg_bold[blue]%}%n@%m %{$reset_color$fg_bold[black]%}%T%{$reset_color%}'
+RPROMPT=' %{$fg_bold[blue]%}%n@%m %{$reset_color%}%B%T%{$reset_color%}'
 PROMPT="$PROMPT%{$XTERM_TITLE_BEGIN%n@%m - %~$XTERM_TITLE_END%}"
 
 # -------------------------------------------------------------------------
