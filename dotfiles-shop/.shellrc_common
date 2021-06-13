@@ -133,7 +133,7 @@ fi
 export OCCA_DIR=$HOME/src/occa
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OCCA_DIR/lib
 
-export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$PATH
+export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$HOME/shared/pack/gh-cli/bin:$PATH
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$HOME/shared/pool/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/shared/pool/lib
