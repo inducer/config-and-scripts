@@ -165,15 +165,22 @@ if [ $commands[gh] ]; then
   compdef _gh gh
 fi
 
-ZSHHL_SCRIPT=$HOME/syncbox/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-if test -f $ZSHHL_SCRIPT; then
-  source $ZSHHL_SCRIPT
+if test -d $HOME/pack/zsh-syntax-highlighting; then
+  . $HOME/pack/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif test -d $HOME/shared/pack/zsh-syntax-highlighting; then
+  . $HOME/shared/pack/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+  echo "zsh syntax highlighting is missing: https://github.com:zsh-users/zsh-syntax-highlighting.git"
 fi
 
 if test -d $HOME/pack/zsh-completions; then
   fpath=($HOME/pack/zsh-completions $fpath)
 elif test -d $HOME/shared/pack/zsh-completions; then
   fpath=($HOME/shared/pack/zsh-completions $fpath)
+else
+  echo "zsh completions is missing: https://github.com/zsh-users/zsh-completions.git"
 fi
 
 export PATH="$HOME/.poetry/bin:$PATH"
+
+# vim: sw=2
