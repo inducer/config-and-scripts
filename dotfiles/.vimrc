@@ -315,7 +315,6 @@ let g:ale_linter_aliases = {'pyopencl': 'python'}
 let g:ale_linters = {'python': ['flake8'], 'pyopencl': ['flake8']}
 "let g:ale_linters = {'python': ['flake8', 'pylint'], 'pyopencl': ['flake8']}
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_cpp_gcc_options = '-std=c++14 -Wall -I$HOME/src/env-3.6/include/site/python3.6 -I/usr/lib/python3/dist-packages/numpy/core/include/ -I/usr/include/python3.6 -DPYGPU_PACKAGE=pyopencl'
 "let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 "let g:ale_python_pylint_executable = expand("$HOME/bin/pylint-dev")
 
