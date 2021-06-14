@@ -7,6 +7,19 @@ if test -f .pylintrc-local.yml; then
   EXTRA_ARGS="--yaml-rcfile=.pylintrc-local.yml"
 fi
 
-exec python ~/work/ci-support/run-pylint.py \
-  --yaml-rcfile=/home/andreas/work/ci-support/.pylintrc-default.yml \
+CI_SUPPORT=""
+for f in ~/work/ci-support ~/shared/work/ci-support; do
+  if test -d "$f"; then
+    CI_SUPPORT="$f"
+  fi
+done
+if test "$CI_SUPPORT" = ""; then
+  echo "ci-support not found"
+  exit 1
+fi
+
+exec python "$CI_SUPPORT/run-pylint.py" \
+  --yaml-rcfile="$CI_SUPPORT/.pylintrc-default.yml" \
   $EXTRA_ARGS "$@"
+
+# vim: sw=2
