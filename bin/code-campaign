@@ -30,6 +30,7 @@ for prj in \
         dagrt \
         \
         pyfmmlib \
+        boxtree \
         sumpy \
         pytential \
         grudge \
