@@ -6,7 +6,7 @@ call plug#begin('~/.vim/plugged')
 
 " file type stuff
 Plug 'Glench/Vim-Jinja2-Syntax'
-Plug 'jceb/vim-orgmode'
+" Plug 'jceb/vim-orgmode'
 "Plug 'plasticboy/vim-markdown'
 " Plug 'nelstrom/vim-markdown-folding'
 Plug 'lark-parser/vim-lark-syntax'
