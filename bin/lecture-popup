@@ -1,0 +1,7 @@
+#! /bin/sh
+
+~/work/xmpp-popup/xmpp-popup \
+  -j lecture@tiker.net -p nocWoyriOl \
+  --reg-db ~/work/xmpp-popup/cs450.sqlite \
+  --required-email-suffix=@illinois.edu \
+  "$@"
