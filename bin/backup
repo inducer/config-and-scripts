@@ -30,6 +30,8 @@ for src in "${BACKUP_DIRS[@]}"; do
       with_echo bup index \
         --exclude-rx='/no_backup/$' \
         --exclude-rx='/.cache/$' \
+        --exclude-rx='/tmp/$' \
+        --exclude-rx='/oldtmp-[-0-9]+/$' \
         --exclude-rx='/.local/share/Steam/$' \
         "$src" || true
   fi
