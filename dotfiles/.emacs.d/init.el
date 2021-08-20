@@ -176,7 +176,8 @@ SCHEDULED: %t DEADLINE: %t
  '(org-src-preserve-indentation t)
  '(package-archives
    '(("gnu" . "https://elpa.gnu.org/packages/")
-     ("melpa" . "https://stable.melpa.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")
+     ("melpa-stable" . "https://stable.melpa.org/packages/")
      ("org" . "https://orgmode.org/elpa/")))
  '(package-enable-at-startup nil)
  '(package-selected-packages
@@ -378,7 +379,8 @@ SCHEDULED: %t DEADLINE: %t
 (require 'ox-extra)
 (ox-extras-activate '(ignore-headlines))
 
-; (evilem-default-keybindings "C-m") 
+; Evil easymotion
+(evilem-default-keybindings "C-m")
 
 ; (server-mode 1)
 ; (global-auto-revert-mode t)
