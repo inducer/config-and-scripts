@@ -24,5 +24,5 @@ function select_rect_sel()
     app.uiAction({["action"]="ACTION_TOOL_SELECT_RECT"})
 end
 function select_highlighter()
-    app.uiAction({["action"]="ACTION_TOOL_HILIGHTER"})
+    app.uiAction({["action"]="ACTION_TOOL_HIGHLIGHTER"})
 end
