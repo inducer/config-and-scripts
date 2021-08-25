@@ -32,18 +32,15 @@
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(fci-rule-color "#383838")
  '(global-auto-revert-mode t)
- '(gnus-personalities
-   '(("default" "Andreas Kloeckner <andreask@illinois.edu>" "" "Andreas Kloeckner
+ '(gnus-alias-default-identity "uofi")
+ '(gnus-alias-identity-alist
+   '(("uofi" "" "\"Andreas Kloeckner\" <andreask@illinois.edu>" "University of Illinois" nil "" "Andreas Kloeckner
 Room 4318 (Siebel Center), University of Illinois at Urbana-Champaign
-https://andreask.cs.illinois.edu/aboutme/
+https://andreask.cs.illinois.edu/aboutme
 +1-217-244-6401")
-     ("tician" "Andreas Kloeckner <mathem@tician.de>" "" "")
-     ("de" "Andreas Klöckner <mathem@tiker.net>" "" "")
-     ("gmx" "Andreas Kloeckner <ak-spam@gmx.net>" "" "")
-     ("lists" "Andreas Kloeckner <lists@informa.tiker.net>" "" "")
-     ("informatiker" "Andreas Kloeckner <inform@tiker.net>" "" "")
-     ("familie" "Familie Kloeckner <familie-kloeckner@tiker.net>" "" "")
-     ("andreas" "Andreas Kloeckner <andreas@tiker.net>" "" "")))
+     ("tician" "" "\"Andreas Kloeckner\" <mathem@tician.de>" "" nil "" "")
+     ("de" "" "\"Andreas Kloeckner\" <mathem@tiker.net>" "" nil "" "")
+     ("lists" "" "\"Andreas Kloeckner\" <lists@informa.tiker.net>" "" nil "" "")))
  '(hl-sexp-background-color "#efebe9")
  '(ispell-dictionary "en_US")
  '(ispell-highlight-face 'flyspell-incorrect)
@@ -254,10 +251,13 @@ SCHEDULED: %t DEADLINE: %t
   )
 
 (require 'gnus-art)
-(require 'gnus-pers)
+(require 'gnus-alias)
 (require 'zoom-frm)
 (require 'helm-config)
-(gnus-personality-init)
+
+(autoload 'gnus-alias-determine-identity "gnus-alias" "" t)
+(add-hook 'message-setup-hook 'gnus-alias-determine-identity)
+
 (setq inhibit-splash-screen t)
 
 ;(require 'atomic-chrome)
@@ -301,7 +301,6 @@ SCHEDULED: %t DEADLINE: %t
 (setq mm-sign-option 'guided)
 
 ; }}}
-
 
 (ispell-change-dictionary "american")
 
@@ -447,6 +446,8 @@ SCHEDULED: %t DEADLINE: %t
 (define-key global-map [f12]     'browse-url-at-point)
 (define-key global-map [(control ?')]     'org-cycle-agenda-files)
 (define-key global-map [(control ?.)]     'browse-url)
+
+(define-key notmuch-message-mode-map (kbd "C-c C-i")  'gnus-alias-select-identity)
 
 (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
 (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
