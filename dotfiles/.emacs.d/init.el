@@ -326,11 +326,45 @@ SCHEDULED: %t DEADLINE: %t
 (evil-set-initial-state 'notmuch-tree-mode 'emacs)
 ; (evil-collection-init)
 
+; {{{ org-related
+
 (require 'evil-org)
 (add-hook 'org-mode-hook 'evil-org-mode)
 (evil-org-set-key-theme '(navigation insert textobjects additional))
 (setq org-latex-prefer-user-labels t)
 
+(setq org-fontify-whole-heading-line t)
+
+; https://emacs.stackexchange.com/questions/38184/org-mode-ignore-heading-when-exporting-to-latex
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+
+; }}}
+
+; {{{ sync-org-to-git 
+
+(defun sync-org-to-git ()
+  (interactive)
+  (let (bufs-to-delete
+        (orgdir (expand-file-name "~/org/")))
+    (dolist (buf (buffer-list) bufs-to-delete)
+      (let (fn dn)
+        (setq fn (buffer-file-name buf))
+        (setq dn
+              (if fn
+                  (file-name-directory fn)
+                nil))
+        (if (equal dn orgdir)
+            (setq bufs-to-delete (cons buf bufs-to-delete)))
+        ))
+    (dolist (buf bufs-to-delete)
+      (with-current-buffer buf (save-buffer))
+      (kill-buffer buf)
+      )
+    (shell-command "cd ~/org && git sync &")
+    ))
+
+; }}}
 
 (quietly-read-abbrev-file)
 (setq default-abbrev-mode t)
@@ -372,42 +406,11 @@ SCHEDULED: %t DEADLINE: %t
 
 (setq-default indent-tabs-mode nil)
 
-(setq org-fontify-whole-heading-line t)
-
-; https://emacs.stackexchange.com/questions/38184/org-mode-ignore-heading-when-exporting-to-latex
-(require 'ox-extra)
-(ox-extras-activate '(ignore-headlines))
-
 ; Evil easymotion
 (evilem-default-keybindings "C-m")
 
 ; (server-mode 1)
 ; (global-auto-revert-mode t)
-
-; {{{ sync-org-to-git 
-
-(defun sync-org-to-git ()
-  (interactive)
-  (let (bufs-to-delete
-        (orgdir (expand-file-name "~/org/")))
-    (dolist (buf (buffer-list) bufs-to-delete)
-      (let (fn dn)
-        (setq fn (buffer-file-name buf))
-        (setq dn
-              (if fn
-                  (file-name-directory fn)
-                nil))
-        (if (equal dn orgdir)
-            (setq bufs-to-delete (cons buf bufs-to-delete)))
-        ))
-    (dolist (buf bufs-to-delete)
-      (with-current-buffer buf (save-buffer))
-      (kill-buffer buf)
-      )
-    (shell-command "cd ~/org && git sync &")
-    ))
-
-; }}}
 
 ; {{{ disable doc-view-mode
 
