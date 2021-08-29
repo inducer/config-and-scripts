@@ -1,6 +1,6 @@
 #! /bin/bash
 
-code=$(ykman oath code -s uiuc) || fail=1
+code=$(ykman oath accounts code -s uiuc) || fail=1
 if test "$fail" = 1; then
         notify-send "Failed to get code"
         exit
