@@ -7,13 +7,11 @@ HOUR=$(date +%H)
 HOUR=${HOUR#0}
 
 if [[ ($HOUR -ge 6 && $HOUR -lt 19) && ! -e $HOME/.force-dark-terminal ]]; then
-  prof="Daytime Default"
   export TERMINAL_LIGHTNESS="light"
-  TERMCOLORS=brewer-light
+  TERMCOLORS=theme-material
 else
-  prof="Nighttime Default"
   export TERMINAL_LIGHTNESS="dark"
-  TERMCOLORS=solarized-dark
+  TERMCOLORS=theme-solarized-dark
 fi
 
 # (~/.config/alacritty/gen.sh)
@@ -32,6 +30,6 @@ if test -f "$KITTY_HOST_CONF_FILE"; then
 fi
 
 exec python3 -X faulthandler ~/pack/kitty \
-  --config=$KITTY_CONF_PATH/kitty.conf \
-  --config=$KITTY_CONF_PATH/$TERMCOLORS.conf \
+  --config="$KITTY_CONF_PATH/kitty.conf" \
+  --config="$KITTY_CONF_PATH/$TERMCOLORS.conf" \
   $KITTY_EXTRA_CONF
