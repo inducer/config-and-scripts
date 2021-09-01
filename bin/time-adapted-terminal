@@ -8,7 +8,7 @@ HOUR=${HOUR#0}
 
 if [[ ($HOUR -ge 6 && $HOUR -lt 19) && ! -e $HOME/.force-dark-terminal ]]; then
   export TERMINAL_LIGHTNESS="light"
-  TERMCOLORS=theme-material
+  TERMCOLORS=theme-brewer-light-v2
 else
   export TERMINAL_LIGHTNESS="dark"
   TERMCOLORS=theme-solarized-dark
