@@ -35,7 +35,6 @@ notmuch tag -inbox +spam -- nieuwsbrief dagaanbieding
 notmuch tag -inbox +archived -- 'tag:inbox  cnsba e-learning webmaster'
 notmuch tag -inbox +archived -- "mail delivery failed" relate.cs from:mailer-daemon@illinois.edu welcome tag:inbox
 notmuch tag -inbox +archived -- tag:inbox delivery returned '"if this was not you"' relate
-notmuch tag -inbox +archived -- "reminder" tag:inbox "computer-based testing" illinois
 
 ~/bin/unsnooze-mail
 
