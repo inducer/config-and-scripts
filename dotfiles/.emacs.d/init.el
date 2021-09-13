@@ -55,6 +55,7 @@ https://andreask.cs.illinois.edu/aboutme
  '(message-send-mail-function 'message-send-mail-with-sendmail)
  '(message-send-mail-partially-limit nil)
  '(message-sendmail-envelope-from 'header)
+ '(mm-text-html-renderer 'w3m)
  '(mml-secure-key-preferences
    '((OpenPGP
       (sign
@@ -178,7 +179,7 @@ SCHEDULED: %t DEADLINE: %t
      ("org" . "https://orgmode.org/elpa/")))
  '(package-enable-at-startup nil)
  '(package-selected-packages
-   '(ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme org-plus-contrib olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
+   '(w3m ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme org-plus-contrib olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(printer-name "PDF")
  '(ps-paper-type 'letter)
