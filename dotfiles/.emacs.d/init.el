@@ -79,6 +79,22 @@ https://andreask.cs.illinois.edu/aboutme
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-indent-messages-width 0)
  '(notmuch-show-text/html-blocked-images ".*")
+ '(notmuch-tag-formats
+   '(("unread"
+      (propertize tag 'face 'notmuch-tag-unread))
+     ("flagged"
+      (notmuch-tag-format-image-data tag
+                                     (notmuch-tag-star-icon))
+      (propertize tag 'face 'notmuch-tag-flagged))
+     ("uillinois"
+      (notmuch-apply-face tag
+                          '(:foreground "dark blue")))
+     ("github"
+      (notmuch-apply-face tag
+                          '(:foreground "deep sky blue")))
+     ("teaching"
+      (notmuch-apply-face tag
+                          '(:foreground "magenta")))))
  '(notmuch-tagging-keys
    '(("a" notmuch-archive-tags "Archive")
      ("u" notmuch-show-mark-read-tags "Mark read")
