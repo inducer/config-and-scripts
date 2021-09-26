@@ -1,0 +1,3 @@
+#! /bin/sh
+
+scp -r "$@" andreas@tiker.net:public_html/tmp
