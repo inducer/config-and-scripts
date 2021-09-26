@@ -211,12 +211,18 @@ The TAs should be able to help you right away. Thanks for understanding.
 
 Best,
 Andreas" nil 4)
-    ("topiazza" "Please ask questions like this on Piazza. By asking there,
-you stand a much better chance of a quick reply since many more people can
-see your question. In addition, other students can see and learn from your
-concern and the associated discussion.
+    ("toforum" "Thank you for your question. Unfortunately, neither I nor the TAs are able to answer subject matter questions sent privately (say via DM or email).
+
+Please rephrase your question (if necessary) and re-ask it on the public forum. By asking there, you stand a much better chance of a quick reply since many more people can see your question. In addition, other students can see and learn from your concern and the associated discussion.
+
+Note that you are able to change your username via the forum's profile settings if you would like additional privacy.
 
 Thanks!
+Andreas" nil 4)
+    ("tohelp" "Please send a message to the help desk at
+
+https://discourse.tiker.net/u/andreask/messages/group/cs450-f21-help
+
 Andreas" nil 4)
     ("tolist" "Please send requests like this to the appropriate mailing list.
 
