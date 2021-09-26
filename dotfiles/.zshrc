@@ -170,7 +170,7 @@ if test -d $HOME/pack/zsh-syntax-highlighting; then
 elif test -d $HOME/shared/pack/zsh-syntax-highlighting; then
   . $HOME/shared/pack/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 else
-  echo "zsh syntax highlighting is missing: https://github.com:zsh-users/zsh-syntax-highlighting.git"
+  echo "zsh syntax highlighting is missing: https://github.com/zsh-users/zsh-syntax-highlighting.git"
 fi
 
 if test -d $HOME/pack/zsh-completions; then
