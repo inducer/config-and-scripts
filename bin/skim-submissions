@@ -1,0 +1,24 @@
+#! /bin/bash
+
+set -eo pipefail
+
+function list_submissions()
+{
+        dir="$1"
+        for fname in "$dir"/*.py; do
+
+                echo "--------------------------------------------------------------------"
+                echo "$fname"
+                echo "--------------------------------------------------------------------"
+                pygmentize "$fname"
+        done
+}
+
+for i in $(find . -type d -name 'submissions_*'); do
+        list_submissions "$i" | less -r
+        echo -n "Send to trash? [ny]"
+        read -r TRASHEM
+        if test "$TRASHEM" = "y"; then
+                gio trash "$i"
+        fi
+done
