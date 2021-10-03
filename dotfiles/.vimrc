@@ -6,7 +6,7 @@ call plug#begin('~/.vim/plugged')
 
 " file type stuff
 Plug 'Glench/Vim-Jinja2-Syntax'
-" Plug 'jceb/vim-orgmode'
+Plug 'jceb/vim-orgmode'
 "Plug 'plasticboy/vim-markdown'
 " Plug 'nelstrom/vim-markdown-folding'
 Plug 'lark-parser/vim-lark-syntax'
@@ -18,6 +18,7 @@ if $AK_IS_TERMUX != "1"
   Plug 'w0rp/ale'
 endif
 Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-speeddating'
 
 " if !has('nvim')
 "   Plug 'roxma/nvim-yarp'
