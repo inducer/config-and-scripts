@@ -186,6 +186,7 @@ SCHEDULED: %t DEADLINE: %t
    '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(org-loop-over-headlines-in-active-region t)
+ '(org-pretty-entities t)
  '(org-preview-latex-default-process 'imagemagick)
  '(org-src-preserve-indentation t)
  '(package-archives
