@@ -97,6 +97,9 @@ au FileType yaml setlocal indentkeys=
 au FileType tex setlocal indentexpr=
 au FileType tex setlocal indentkeys=
 au FileType mail setlocal spell
+au FileType javascript setlocal shiftwidth=2
+au FileType html setlocal shiftwidth=2
+au FileType jinja.html setlocal shiftwidth=2
 au BufRead,BufNewFile *.tex setlocal textwidth=70
 au BufRead,BufNewFile *.tex setlocal formatoptions+=tcql
 au BufRead,BufNewFile *.tex setlocal spell
