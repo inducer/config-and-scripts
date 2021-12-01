@@ -40,6 +40,7 @@ https://andreask.cs.illinois.edu/aboutme
 +1-217-244-6401")
      ("tician" "" "\"Andreas Kloeckner\" <mathem@tician.de>" "" nil "" "")
      ("de" "" "\"Andreas Kloeckner\" <mathem@tiker.net>" "" nil "" "")
+     ("inform" "" "\"Andreas Kloeckner\" <inform@tiker.net>" "" nil "" "")
      ("lists" "" "\"Andreas Kloeckner\" <lists@informa.tiker.net>" "" nil "" "")))
  '(hl-sexp-background-color "#efebe9")
  '(ispell-dictionary "en_US")
