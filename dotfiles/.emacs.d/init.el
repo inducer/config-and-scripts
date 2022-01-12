@@ -187,6 +187,7 @@ SCHEDULED: %t DEADLINE: %t
                  ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(org-loop-over-headlines-in-active-region t)
  '(org-pretty-entities t)
+ '(org-pretty-entities-include-sub-superscripts nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(org-src-preserve-indentation t)
  '(package-archives
