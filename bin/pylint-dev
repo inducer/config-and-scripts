@@ -2,6 +2,8 @@
 
 set -e
 
+unset PYTHONWARNINGS
+
 EXTRA_ARGS=""
 if test -f .pylintrc-local.yml; then
   EXTRA_ARGS="--yaml-rcfile=.pylintrc-local.yml"
