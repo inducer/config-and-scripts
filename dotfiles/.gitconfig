@@ -35,3 +35,6 @@
 	user = inducer
 [init]
 	defaultBranch = main
+[diff]
+        colorMoved = dimmed-zebra
+        colorMovedWS = allow-indentation-change
