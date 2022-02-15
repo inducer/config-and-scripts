@@ -19,6 +19,8 @@
         extendRegexp = true
         lineNumber = true
 [merge]
+        # https://github.blog/2022-01-24-highlights-from-git-2-35/
+        #conflictstyle = zdiff3
 	conflictstyle = diff3
 [gpg]
 	program = gpg2
