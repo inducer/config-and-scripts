@@ -131,7 +131,7 @@ https://andreask.cs.illinois.edu/aboutme
        (org-agenda-skip-function
         '(org-agenda-skip-entry-if 'deadline))))))
  '(org-agenda-files
-   '("/home/andreas/org/todo.org" "/home/andreas/org/journal.org" "/home/andreas/org/notes.org" "/home/andreas/org/ideas.org"))
+   '("/home/andreas/org/todo.org" "/home/andreas/org/notes.org" "/home/andreas/org/ideas.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-sticky t)
