@@ -226,13 +226,24 @@ endif
 " https://github.com/kovidgoyal/kitty#using-a-color-theme-with-a-background-color-does-not-work-well-in-vim
 let &t_ut=''
 
-if has("persistent_undo") && isdirectory(expand("$HOME/.vim-undodir"))
-  set undodir=~/.vim-undodir
+" {{{ undo dir
+
+if has("nvim")
+  let my_undodir = $HOME. "/.nvim-undodir"
+else
+  let my_undodir = $HOME. "/.vim-undodir"
+endif
+if has("persistent_undo")
+  if !isdirectory(my_undodir)
+    call mkdir(my_undodir)
+  endif
+
+  let &undodir=my_undodir
   set undofile
   set undoreload=10000 "maximum number lines to save for undo on a buffer reload
-else
-  echo "~/.vim-undodir not present; maybe create it?"
 endif
+
+" }}}
 
 set grepprg=git\ grep\ -n
 set foldtext=getline(v:foldstart)
