@@ -759,4 +759,4 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " }}}
 
-" vim: foldmethod=marker
+" vim: foldmethod=marker:sw=2
