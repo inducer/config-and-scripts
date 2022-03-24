@@ -3,16 +3,24 @@
 set -eo pipefail
 
 envname="$1"
-if [[ "$envname" = "prod" ]]; then
+if [[ "$envname" = "parlazy" ]]; then
+    declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
+        [loopy]=kaushikcfd/pytato-array-context-transforms
+        [meshmode]=kaushikcfd/pytato-array-context-transforms
+        [grudge]=github/main
+        [mirgecom]=github/distributed-parallel-lazy
+    )
+elif [[ "$envname" = "prod" ]]; then
     declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
         [loopy]=kaushikcfd/pytato-array-context-transforms
         [meshmode]=kaushikcfd/pytato-array-context-transforms
         [grudge]=github/boundary_lazy_comm_v2
-        [mirgecom]=github/distributed-parallel-lazy
+        [mirgecom]=github/production
     )
 elif [[ "$envname" = "main" ]]; then
     declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
         [loopy]=github/main
+        [arraycontext]=github/main
         [meshmode]=github/main
         [grudge]=github/main
         [mirgecom]=github/main
@@ -26,7 +34,9 @@ for pkg in "${!PACKAGE_TO_REMOTE_AND_BRANCH[@]}"; do
     remote="$(dirname "$remote_and_branch")"
     branch="$(basename "$remote_and_branch")"
 
+    echo "-------------------------------------------------------------------"
     echo "Updating $pkg to $branch..."
+    echo "-------------------------------------------------------------------"
 
     cd "$HOME/src/$pkg"
     git fetch "$remote"
