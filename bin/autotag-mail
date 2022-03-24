@@ -3,8 +3,6 @@
 set -e
 #set -x
 
-notmuch search --output=files anacron tuck cron.daily rdiff-backup tag:tuck from:root@tiker.net "date:..four_weeks" | xargs rm
-
 notmucn new
 
 #notmuch tag +spam -inbox tag:inbox folder:spam
@@ -51,3 +49,5 @@ notmuch tag -inbox +cron +ceesd +archived -- tag:inbox cron mtcampbe lassen
 if test -d ~/no_backup/spam ; then
   find ~/no_backup/spam -mtime +7 -delete
 fi
+
+notmuch search --output=files anacron tuck cron.daily rdiff-backup tag:tuck from:root@tiker.net "date:..four_weeks" | xargs --no-run-if-empty rm
