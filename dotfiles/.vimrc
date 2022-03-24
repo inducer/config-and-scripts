@@ -29,7 +29,7 @@ Plug 'tpope/vim-speeddating'
 " endif
 " Plug 'Shougo/deoplete.nvim'
 
-Plug 'bling/vim-airline'
+Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/Mark'
 " Plug 'simnalamburt/vim-mundo'
@@ -67,8 +67,6 @@ Plug 'kevinoid/vim-jsonc'
 call plug#end()
 
 " }}}
-
-" #set rtp+=~/pack/powerline/powerline/bindings/vim
 
 " {{{ autocmds
 
@@ -325,6 +323,18 @@ let g:syntastic_always_populate_loc_list=1
 let g:syntastic_check_on_open=1
 " let g:syntastic_auto_loc_list=1
 let g:syntastic_loc_list_height=5
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' , 'cocstatus'] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead',
+      \   'cocstatus': 'coc#status'
+      \ },
+      \ }
 
 let g:LatexBox_quickfix=2
 "let g:LatexBox_latexmk_preview_continuously=1
@@ -712,7 +722,9 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+"
+"
 
 " Mappings for CoCList
 " Show all diagnostics.
