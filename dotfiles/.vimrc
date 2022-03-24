@@ -62,6 +62,8 @@ Plug 'easymotion/vim-easymotion'
 Plug 'matze/vim-tex-fold'
 Plug 'kevinoid/vim-jsonc'
 
+Plug 'Yggdroot/indentLine'
+
 " Plug 'majutsushi/tagbar'
 
 call plug#end()
