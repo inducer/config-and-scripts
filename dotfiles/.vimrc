@@ -564,6 +564,11 @@ autocmd FileAppendPost      *.xopp  call gzip#write("gzip -S .xopp")
 
 " {{{ coc
 
+" :CocInstall coc-pyright
+" :CocInstall coc-tsserver
+" :CocInstall coc-json
+" :CocInstall coc-diagnostic
+
 " Some servers have issues with backup files, see #649.
 " set nobackup
 " set nowritebackup
