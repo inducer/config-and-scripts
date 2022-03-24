@@ -1,0 +1,21 @@
+#! /bin/bash
+set -exo pipefail
+
+NAME="$1"
+
+if test "$NAME" = ""; then
+  echo "usage: $0 PRINTER_NAME"
+  exit 1
+fi
+
+PPD=/etc/cups/ppd/ricoh-im-5000.ppd 
+curl -o "$PPD" https://answers.uillinois.edu/images/group356/shared/Ricoh-IM_5000-Postscript-Ricoh.ppd
+/usr/sbin/lpadmin \
+        -p $NAME -P "$PPD" \
+        -o printer-is-shared=false \
+        -o job-sheets-default=none \
+        -o wrap=true -o prettyprint=true \
+        -v socket://$NAME.cs.illinois.edu 
+
+cupsenable $NAME
+cupsaccept $NAME

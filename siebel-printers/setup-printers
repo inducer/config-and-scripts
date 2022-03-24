@@ -1,0 +1,7 @@
+#! /bin/bash
+
+set -eo pipefail
+
+./setup-printer siebl-4323-copier
+./setup-printer siebl-4203-copier
+./setup-printer siebl-2203-copier
