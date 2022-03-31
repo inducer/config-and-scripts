@@ -31,6 +31,8 @@ Plug 'tpope/vim-speeddating'
 
 Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim'
+
 Plug 'vim-scripts/Mark'
 " Plug 'simnalamburt/vim-mundo'
 Plug 'junegunn/limelight.vim'
@@ -57,6 +59,7 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/vim-slash'
 
 " Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'matze/vim-tex-fold'
