@@ -17,6 +17,15 @@ elif [[ "$envname" = "prod" ]]; then
         [grudge]=github/boundary_lazy_comm_v2
         [mirgecom]=github/production
     )
+elif [[ "$envname" = "factx" ]]; then
+    declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
+        [loopy]=kaushikcfd/main
+        [arraycontext]=kaushikcfd/main
+        [meshmode]=kaushikcfd/main
+        [grudge]=kaushikcfd/main
+        [pytato]=kaushikcfd/main
+        [mirgecom]=github/fusion_actx
+    )
 elif [[ "$envname" = "main" ]]; then
     declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
         [loopy]=github/main
