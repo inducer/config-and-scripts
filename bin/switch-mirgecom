@@ -43,7 +43,7 @@ for pkg in "${!PACKAGE_TO_REMOTE_AND_BRANCH[@]}"; do
     remote="$(dirname "$remote_and_branch")"
     remote_branch="$(basename "$remote_and_branch")"
 
-    if [[ "$remote_branch" == "main" ]]; then
+    if [[ "$remote_branch" == "main" && "$remote" != "github" ]]; then
         local_branch="$remote-$remote_branch"
     else
         local_branch="$remote_branch"
