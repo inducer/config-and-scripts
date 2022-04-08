@@ -59,7 +59,7 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'easymotion/vim-easymotion'
-Plug 'junegunn/vim-slash'
+" Plug 'junegunn/vim-slash'
 
 " Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'matze/vim-tex-fold'
