@@ -32,6 +32,7 @@ elif [[ "$envname" = "main" ]]; then
         [arraycontext]=github/main
         [meshmode]=github/main
         [grudge]=github/main
+        [pytato]=github/main
         [mirgecom]=github/main
     )
 else
