@@ -181,6 +181,4 @@ else
   echo "zsh completions is missing: https://github.com/zsh-users/zsh-completions.git"
 fi
 
-export PATH="$HOME/.poetry/bin:$PATH"
-
 # vim: sw=2
