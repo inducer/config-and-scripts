@@ -1,0 +1,29 @@
+#! /bin/bash
+
+set -eo pipefail
+
+if ! [ -z "$(git status --untracked-files=no --porcelain)" ]; then 
+    echo "This utility needs a clean working directory."
+    exit 1
+fi
+
+curbranch="$(git branch --show-current)"
+if [ "$curbranch" != "main" ] && [ "$curbranch" != "master" ]; then
+    echo "Not on master/main branch. Refusing to continue."
+    exit 1
+fi
+
+newbranch="$1"
+if [ "$newbranch" = "" ]; then
+    echo "usage: $0 NEW_BRANCH OTHER_BRANCH_1 OTHER_BRANCH_2"
+fi
+
+git switch -c "$newbranch"
+shift
+
+for i in "$@"; do
+    git merge --squash "$i"
+    git commit -m "SQUASHED: $i"
+done
+
+# vim: sw=4
