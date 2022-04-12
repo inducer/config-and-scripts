@@ -55,6 +55,12 @@ for pkg in "${!PACKAGE_TO_REMOTE_AND_BRANCH[@]}"; do
     echo "-------------------------------------------------------------------"
 
     cd "$HOME/src/$pkg"
+    if ! git remote get-url "$remote" ; then
+        if [ "$remote" != "github" ]; then
+            git remote add "$remote" "git@github.com:$remote/$pkg.git"
+        fi
+    fi
+
     git fetch "$remote"
 
     if ! git checkout -t "$remote/$remote_branch" -b "$local_branch"; then
