@@ -204,6 +204,13 @@ set colorcolumn=85
 set mps+=<:>
 
 set backup
+
+silent execute "!mkdir -p ~/.vim/backupdir"
+set backupdir=~/.vim/backupdir//
+
+silent execute "!mkdir -p ~/.vim/swapdir"
+set directory=~/.vim/swapdir
+
 set hidden
 set confirm
 set winaltkeys=no
