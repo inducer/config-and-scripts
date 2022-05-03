@@ -52,6 +52,20 @@ re3()
   source ~/shared/src/env-3.10/bin/activate
 }
 
+aconda()
+{
+  local shell_type="$(ps o command= $$)"
+  shell_type="${shell_type##-}"
+  shell_type="$(basename "$shell_type")"
+  eval "$(PYTHONWARNINGS= $HOME/shared/pack/miniforge3/bin/conda shell.${shell_type} hook)"
+}
+ce3()
+{
+  aconda
+  PYTHONWARNINGS= conda activate ceesd
+}
+
+
 clcache()
 {
   rm -Rf ~/.pocl
