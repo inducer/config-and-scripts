@@ -45,11 +45,11 @@ fb()
 }
 reloc()
 {
-  source ~/local-src/env-3.9/bin/activate
+  source ~/local-src/env-3.10/bin/activate
 }
 re3()
 {
-  source ~/shared/src/env-3.9/bin/activate
+  source ~/shared/src/env-3.10/bin/activate
 }
 
 clcache()
