@@ -3,7 +3,7 @@
 set -e
 #set -x
 
-notmucn new
+notmuch new
 
 #notmuch tag +spam -inbox tag:inbox folder:spam
 notmuch tag +spam -inbox tag:inbox "Haartooi Guy"
