@@ -33,6 +33,7 @@ for src in "${BACKUP_DIRS[@]}"; do
         --exclude-rx='/tmp/$' \
         --exclude-rx='/oldtmp-[-0-9]+/$' \
         --exclude-rx='/.local/share/Steam/$' \
+        --exclude-rx='/.local/share/containers/$' \
         "$src" || true
   fi
 
