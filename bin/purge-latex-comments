@@ -1,0 +1,49 @@
+#! /usr/bin/env python3
+
+import sys
+import re
+
+with open(sys.argv[1], "rt") as infile:
+    tex = infile.read()
+
+tex, _ = re.subn("%.*\n", "", tex)
+tex, _ = re.subn(r"\\begin\{comment\}.*\\end\{comment\}", "", tex, flags=re.DOTALL)
+
+def remove_macro_with_argument(macro, s):
+
+    i = 0
+    while True:
+        start = s.find(macro, i)
+        if start == -1:
+            break
+
+        i = start + len(macro)
+
+        if s[i] == "#":
+            # That's the definition, keep going.
+            continue
+
+        assert s[i] == "{"
+        level = 1
+        i += 1
+
+        while i < len(s):
+            c = s[i]
+            i += 1
+
+            if c == "{":
+                level += 1
+            elif c == "}":
+                level -= 1
+                if level == 0:
+                    break
+
+        s = s[:start] + s[i:]
+        i = start
+
+    return s
+
+tex = remove_macro_with_argument(r"\iftechreport", tex)
+
+print(tex)
+
