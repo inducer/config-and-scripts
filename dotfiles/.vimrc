@@ -191,6 +191,7 @@ set nostartofline
 set confirm
 set mouse=a
 set encoding=utf-8
+set shiftround
 
 set expandtab
 set smarttab
