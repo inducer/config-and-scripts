@@ -1,0 +1,12 @@
+#! /bin/bash
+set -e
+CURTHEME="$(gsettings get org.gnome.desktop.interface gtk-theme)"
+
+CURTHEME=${CURTHEME//\'/}
+
+if [[ $CURTHEME = *-dark ]]; then
+  NEWTHEME="${CURTHEME%%-dark}"
+else
+  NEWTHEME="${CURTHEME}-dark"
+fi
+gsettings set org.gnome.desktop.interface gtk-theme "$NEWTHEME"
