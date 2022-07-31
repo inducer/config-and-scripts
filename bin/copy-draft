@@ -25,7 +25,7 @@ fi
 PDF_NAME_STRIPPED="${PDF_NAME%.pdf}"
 PDF_NAME_STRIPPED="$(basename "$PDF_NAME_STRIPPED")"
 
-DRAFT_FOLDER="$HOME/nc/drafts/$PAPER_NAME"
+DRAFT_FOLDER="$HOME/nc/review/drafts/$PAPER_NAME"
 
 DRAFT_SUFFIX="$(date "+%Y-%m-%d-%H%M")"
 
