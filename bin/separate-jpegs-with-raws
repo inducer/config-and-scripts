@@ -1,0 +1,13 @@
+#! /bin/bash
+
+ACCOMPANIED_JPEG_DIR=jpegs-with-raws
+mkdir -p "$ACCOMPANIED_JPEG_DIR"
+
+for i in *.JPG; do
+    raw=${i%%.JPG}.RW2
+    if test -f "$raw"; then
+        mv "$i" "$ACCOMPANIED_JPEG_DIR/$i"
+    fi
+done
+
+# vim: sw=4
