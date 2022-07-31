@@ -1,0 +1,36 @@
+#! /bin/bash
+
+set -e
+
+echo "notmuch dumped?"
+echo -n "[ENTER]"
+read ENTER
+
+eval `ssh-agent`
+ssh-add ~andreas/.ssh/id_rsa_backup
+
+#DESTDIR="andreas@192.168.77.2:backup/laptop-bup"
+#DESTDIR="/media/andreas/Backup/laptop-bup"
+#DESTDIR="/media/andreas/akstorage/laptop-bup"
+DESTDIR="andreas@rakete:backup/laptop-bup"
+
+function with_echo()
+{
+  echo "$@"
+  "$@"
+}
+
+BACKUP_DIRS=(/home/andreas /etc /media/andreas/lightning-bulk/bulk-andreas/)
+for dn in "${BACKUP_DIRS[@]}"; do
+        bn="$(basename "$dn")"
+        with_echo rdiff-backup -v 5 \
+                --exclude '/home/andreas/no_backup' \
+                --exclude '/home/andreas/.cache' \
+                --exclude '/home/andreas/.cargo' \
+                --exclude '/home/andreas/tmp' \
+                --exclude '/home/andreas/.local/share/Steam' \
+                --exclude '/home/andreas/.local/share/containers' \
+                "$dn" "andreas@rakete::backup/laptop-rdiff/$bn"
+done
+
+echo "COMPLETED"
