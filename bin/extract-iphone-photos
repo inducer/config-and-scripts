@@ -1,0 +1,110 @@
+#! /usr/bin/env python3
+
+import os
+import sys
+import sqlite3
+import argparse
+import shutil
+
+
+def list_albums(args, dbconn):
+    cur = dbconn.cursor()
+    for row in cur.execute("SELECT z_pk, ztitle FROM zgenericalbum "
+            "WHERE ztitle IS NOT NULL"):
+        print(row)
+
+
+def query_assets(args, dbconn):
+    query_parts = ["ztrashedstate = 0"]
+    join = ""
+    if args.filter_favorite:
+        query_parts.append("zfavorite")
+    if args.filter_directory_substr:
+        query_parts.append(f"zdirectory LIKE '%{args.filter_directory_substr}%'")
+    if args.filter_file_substr:
+        query_parts.append(f"zfilename LIKE '%{args.filter_file_substr}%'")
+    if args.filter_album_id:
+        join = "INNER JOIN z_27assets ON z_27assets.z_3assets = zasset.z_pk"
+        query_parts.append(f"z_27assets.z_27albums = {args.filter_album_id}")
+
+    if query_parts:
+        query = " AND ".join(query_parts)
+    else:
+        raise AssertionError()
+
+    cur = dbconn.cursor()
+
+    for row in cur.execute("SELECT zdirectory, zfilename "
+            f"FROM zasset {join} "
+            f"WHERE {query}"):
+        yield row
+
+
+def list_assets(args, dbconn):
+    count = 0
+    for row in query_assets(args, dbconn):
+        print(os.path.join(*row))
+        count += 1
+
+    print(f"{count} photos found", file=sys.stderr)
+
+
+def copy_assets(args, dbconn):
+    if not os.path.isdir(args.phone_directory):
+        raise ValueError(f"input directory '{args.phone_directory}' must exist")
+    if not os.path.isdir(args.output_directory):
+        raise ValueError(f"output directory '{args.output_directory}' must exist")
+
+    for adir, aname in query_assets(args, dbconn):
+        full_src_name = os.path.join(args.phone_directory, adir, aname)
+        print(full_src_name)
+        full_dst_name = os.path.join(args.output_directory, aname)
+
+        if args.skip_if_exists and os.path.exists(full_dst_name):
+            print("EXISTS: SKIPPING")
+            continue
+
+        shutil.copy(full_src_name, args.output_directory)
+
+
+def add_filter_arguments(parser):
+    parser.add_argument("--filter-favorite", action="store_true")
+    parser.add_argument("--filter-album-id", type=int)
+    parser.add_argument("--filter-directory-substr")
+    parser.add_argument("--filter-file-substr")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser.add_argument("--photo-db",
+                        help="the path to 'Photos.sqlite', found in 'PhotoData' "
+                        "under an iphone mounted with 'ifuse'. Probably best to "
+                        "use a copy than to use the live file.")
+
+    subparsers = parser.add_subparsers(help="sub-command help")
+
+    parser_list_albums = subparsers.add_parser("list-albums")
+    parser_list_albums.set_defaults(func=list_albums)
+
+    parser_list_assets = subparsers.add_parser("list-assets")
+    parser_list_assets.set_defaults(func=list_assets)
+    add_filter_arguments(parser_list_assets)
+
+    parser_copy_assets = subparsers.add_parser("copy-assets")
+    parser_copy_assets.set_defaults(func=copy_assets)
+    add_filter_arguments(parser_copy_assets)
+    parser_copy_assets.add_argument("-i", "--phone-directory", required=True)
+    parser_copy_assets.add_argument("-o", "--output-directory", required=True)
+    parser_copy_assets.add_argument("-s", "--skip-if-exists", action="store_true")
+
+    args = parser.parse_args()
+
+    dbconn = sqlite3.connect(f"file:{args.photo_db}?mode=ro", uri=True)
+    try:
+        args.func(args, dbconn)
+    finally:
+        dbconn.close()
+
+
+if __name__ == "__main__":
+    main()
