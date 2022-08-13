@@ -4,7 +4,7 @@ set -e
 
 CAMTMPDIR="$(mktemp -d)"
 find . -iname '*.jpg' -print0 | \
-        parallel -0 --no-notice "mkdir -p $CAMTMPDIR/{//}; jpeg-recompress -q high -m smallfry {} $CAMTMPDIR/{}"
+        parallel -0 --no-notice "mkdir -p $CAMTMPDIR/{//}; jpeg-recompress -q high {} $CAMTMPDIR/{}"
 
 find . -iname '*.mp4' -print0 | \
         parallel -j1 -0 "mkdir -p $CAMTMPDIR/{//}; ffmpeg -i {} -c:v libx264 -preset medium -crf 22 -c:a copy  $CAMTMPDIR/{}"
