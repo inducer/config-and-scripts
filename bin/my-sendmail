@@ -1,4 +1,25 @@
 #!/bin/bash
+
+set -eo pipefail
+
 unset GNOME_KEYRING_CONTROL
 unset GNOME_KEYRING_PID
-exec /usr/sbin/sendmail "$@"
+args=( "$@" )
+
+is_employer=0
+for ip1 in $(seq ${#args}); do
+    i=$((ip1-1))
+    if [[ "${args[i]}" = "-f" ]]; then
+        if [[ "${args[i+1]}" = "andreask@illinois.edu" ]]; then
+            is_employer=1
+        fi
+    fi
+done
+
+if [[ $is_employer = 1 ]]; then
+    exec /usr/bin/msmtp "$@"
+else
+    exec /usr/sbin/sendmail "$@"
+fi
+
+# vim: sw=4
