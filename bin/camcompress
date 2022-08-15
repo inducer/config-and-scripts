@@ -2,13 +2,18 @@
 
 set -e
 
-CAMTMPDIR="$(mktemp -d)"
-find . -iname '*.jpg' -print0 | \
-        parallel -0 --no-notice "mkdir -p $CAMTMPDIR/{//}; jpeg-recompress -q high {} $CAMTMPDIR/{}"
+TGTDIR="comp"
+mkdir -p "$TGTDIR"
+count=1
+for i in *.[jJ][pP][gG] ; do
+    echo "$count: $i"
+    heif-enc "$i" -o "$TGTDIR/${i%%.[jJ][pP][gG]}.heic"
+    count=$((count+1))
+done
 
 find . -iname '*.mp4' -print0 | \
-        parallel -j1 -0 "mkdir -p $CAMTMPDIR/{//}; ffmpeg -i {} -c:v libx264 -preset medium -crf 22 -c:a copy  $CAMTMPDIR/{}"
-
-mv "$CAMTMPDIR" comp
+    parallel -j1 -0 "mkdir -p $CAMTMPDIR/{//}; ffmpeg -i {} -c:v libx264 -preset medium -crf 22 -c:a copy  $TGTDIR/{}"
 
 echo "compressed files are in comp/"
+
+# vim: sw=4
