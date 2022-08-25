@@ -416,6 +416,15 @@ else
   set background=dark
 endif
 
+" {{{ indentline / conceal
+"
+let g:indentLine_char = '┆'
+let g:indentLine_setConceal = 0
+
+au FileType python setl conceallevel=1
+
+" }}}
+
 " }}}
 
 " {{{ keyboard mappings
