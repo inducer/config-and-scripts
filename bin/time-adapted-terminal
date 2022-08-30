@@ -6,7 +6,10 @@ HOUR=$(date +%H)
 
 HOUR=${HOUR#0}
 
-if [[ ($HOUR -ge 6 && $HOUR -lt 18) && ! -e $HOME/.force-dark-terminal ]]; then
+GNOME_COLOR_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme)"
+
+#if [[ ($HOUR -ge 6 && $HOUR -lt 20) && ! -e $HOME/.force-dark-terminal ]]; then
+if [[ "$GNOME_COLOR_SCHEME" == "'default'" && ! -e $HOME/.force-dark-terminal ]]; then
   export TERMINAL_LIGHTNESS="light"
   TERMCOLORS=theme-brewer-light-v2
 else
