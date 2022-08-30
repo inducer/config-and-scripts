@@ -5,4 +5,4 @@ if [[ "$hostname" == "blitz" || "$hostname" == "flash" ]]; then
   crflags="--force-device-scale-factor=2"
 fi
 
-flatpak run com.github.Eloston.UngoogledChromium $crflags --incognito "$@"
+chromium $crflags --incognito "$@"
