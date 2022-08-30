@@ -206,27 +206,27 @@ http://my.cs.illinois.edu/ .
 
 Looking forward to seeing you soon,
 Andreas" nil 4)
-    ("toprivate" "Please use private questions on Piazza for requests of this nature.
-The TAs should be able to help you right away. Thanks for understanding.
+    ("toforum" "Thank you for your question. Unfortunately, neither I nor the TAs are
+able to answer subject matter or policy questions sent privately. This
+is to help us avoid having to answer the same questions many, many
+times over.
 
-Best,
-Andreas" nil 4)
-    ("toforum" "Thank you for your question. Unfortunately, neither I nor the TAs are able to answer subject matter questions sent privately (say via DM or email).
+Please rephrase your question (if necessary) and re-ask it on the public
+forum. By asking there, you stand a much better chance of a quick reply
+since many more people can see your question. In addition, other
+students can see and learn from your concern and the associated
+discussion.
 
-Please rephrase your question (if necessary) and re-ask it on the public forum. By asking there, you stand a much better chance of a quick reply since many more people can see your question. In addition, other students can see and learn from your concern and the associated discussion.
+You can find the course forum at
+https://scicomp-discourse.cs.illinois.edu/c/cs450-f22/11
 
-Note that you are able to change your username via the forum's profile settings if you would like additional privacy.
+Thank you for understanding.
 
-Thanks!
 Andreas" nil 4)
     ("tohelp" "Please send a message to the help desk at
 
-https://discourse.tiker.net/u/andreask/messages/group/cs450-f21-help
+https://scicomp-discourse.cs.illinois.edu/g/cs450-f22-helpdesk
 
-Andreas" nil 4)
-    ("tolist" "Please send requests like this to the appropriate mailing list.
-
-Thanks!
 Andreas" nil 4)
     ("enrollreq" "Hi there,
 
@@ -238,6 +238,15 @@ your request? (Also note that there's a delay in the way my roster updates,
 so if you're actually officially registered, just say that.)
 
 Thanks!
+Andreas" nil 4)
+    ("seminterest" "Hi there,
+
+Thank you for your interest in the scientific computing seminar.
+As you may be aware, it is a requirement of the class to give a
+research-level talk about a topic in scientific computing. Could you
+please respond to this email with a rough title and brief summary of the
+work which you are hoping to present?
+
 Andreas" nil 4)
     ("reimb" "Dana,
 
