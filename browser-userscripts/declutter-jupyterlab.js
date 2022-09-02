@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Declutter Jupyterlab for class demos
 // @namespace   Violentmonkey Scripts
-// @match       http://localhost:8888/doc/tree/*
+// @match       http://localhost:8888/doc/*
 // @grant       none
 // @version     1.0
 // @author      -
