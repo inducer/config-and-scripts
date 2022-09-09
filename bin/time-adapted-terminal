@@ -32,7 +32,7 @@ if test -f "$KITTY_HOST_CONF_FILE"; then
   KITTY_EXTRA_CONF="--config=$KITTY_HOST_CONF_FILE"
 fi
 
-exec python3 -X faulthandler ~/pack/kitty \
+exec ~/pack/kitty/kitty/launcher/kitty \
   --config="$KITTY_CONF_PATH/kitty.conf" \
   --config="$KITTY_CONF_PATH/$TERMCOLORS.conf" \
   $KITTY_EXTRA_CONF
