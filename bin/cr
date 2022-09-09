@@ -1,8 +1,15 @@
 #! /bin/bash
 hostname="$(hostname)"
-crflags=""
+crflags=()
 if [[ "$hostname" == "blitz" ]]; then
-  crflags="--force-device-scale-factor=1"
+        crflags+=("--force-device-scale-factor=1")
 fi
+#crflags+=("--use-gl=egl")
+#crflags+=("--use-gl=desktop")
+crflags+=("--enable-features=VaapiVideoDecoder,VaapiVideoEncoder")
+#crflags+=("--enable-features=")
+# use chrome://gpu to check
 
-chromium $crflags "$@"
+# https://www.linuxuprising.com/2021/01/how-to-enable-hardware-accelerated.html
+
+chromium "${crflags[@]}" "$@"
