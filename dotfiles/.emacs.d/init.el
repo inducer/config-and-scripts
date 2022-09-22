@@ -30,6 +30,7 @@
  '(comint-scroll-show-maximum-output nil)
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
+ '(delete-by-moving-to-trash t)
  '(fci-rule-color "#383838")
  '(global-auto-revert-mode t)
  '(gnus-alias-default-identity "uofi")
