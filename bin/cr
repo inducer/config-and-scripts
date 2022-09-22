@@ -6,7 +6,7 @@ if [[ "$hostname" == "blitz" ]]; then
 fi
 #crflags+=("--use-gl=egl")
 #crflags+=("--use-gl=desktop")
-crflags+=("--enable-features=VaapiVideoDecoder,VaapiVideoEncoder")
+#crflags+=("--enable-features=VaapiVideoDecoder,VaapiVideoEncoder")
 #crflags+=("--enable-features=")
 # use chrome://gpu to check
 
