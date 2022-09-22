@@ -582,6 +582,7 @@ autocmd FileAppendPost      *.xopp  call gzip#write("gzip -S .xopp")
 " :CocInstall coc-json
 " :CocInstall coc-diagnostic
 " :CocInstall coc-eslint
+" :CocInstall coc-rust-analyzer
 
 " Some servers have issues with backup files, see #649.
 " set nobackup
