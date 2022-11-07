@@ -119,6 +119,9 @@ https://andreask.cs.illinois.edu/aboutme
      ("w"
       ("+weeksnoozed" "-inbox")
       "Snooze until Monday")
+     ("R"
+      ("+reclet" "-inbox")
+      "Recommendation letter to-do")
      ("l"
       ("+todolater" "-inbox")
       "Mark as to be done later, tracked via Org")))
