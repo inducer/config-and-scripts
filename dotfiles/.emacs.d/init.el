@@ -74,10 +74,10 @@ https://andreask.cs.illinois.edu/aboutme
  '(notmuch-fcc-dirs "offlineimap-badger/Sent -inbox +sent -unread")
  '(notmuch-saved-searches
    '((:name "Inbox" :query "tag:inbox and not tag:draft and not tag:deleted")
-     (:name "Piazza" :query "tag:inbox and tag:piazza")
      (:name "Waiting" :query "tag:waiting")
      (:name "Flagged" :query "tag:flagged")
-     (:name "Snoozed" :query "tag:snoozed")
+     (:name "Snoozed" :query "tag:snoozed or tag:evesnoozed or tag:weeksnoozed")
+     (:name "Recommendation letters" :query "tag:snoozed")
      (:name "To-Do Later" :query "tag:todolater")))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-indent-messages-width 0)
