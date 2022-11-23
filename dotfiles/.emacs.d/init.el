@@ -197,9 +197,9 @@ SCHEDULED: %t DEADLINE: %t
  '(org-src-preserve-indentation t)
  '(package-archives
    '(("gnu" . "https://elpa.gnu.org/packages/")
+     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
      ("melpa" . "https://melpa.org/packages/")
-     ("melpa-stable" . "https://stable.melpa.org/packages/")
-     ("org" . "https://orgmode.org/elpa/")))
+     ("melpa-stable" . "https://stable.melpa.org/packages/")))
  '(package-enable-at-startup nil)
  '(package-selected-packages
    '(ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme org-plus-contrib olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
