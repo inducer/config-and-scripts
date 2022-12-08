@@ -1,4 +1,4 @@
 #! /bin/bash
 
 
-exec python3 -i -c 'from numpy import *; import numpy.linalg as la; import matplotlib.pyplot as plt; import sympy as sym'
+exec python3 -i -c 'import numpy as np; from numpy import *; import numpy.linalg as la; import matplotlib.pyplot as plt; import sympy as sym'
