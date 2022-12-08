@@ -1,4 +1,15 @@
 #! /bin/bash
 
+TMPNAM="$(mktemp)"
 
-exec python3 -i -c 'import numpy as np; from numpy import *; import numpy.linalg as la; import matplotlib.pyplot as plt; import sympy as sym'
+cat > "$TMPNAM" <<EOF
+import numpy as np
+from numpy import *
+import numpy.linalg as la
+import matplotlib.pyplot as plt
+import sympy as sym
+EOF
+
+unset PYTHONWARNINGS
+
+exec ptpython "--$TERMINAL_LIGHTNESS-bg" -i "$TMPNAM"
