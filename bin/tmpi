@@ -230,7 +230,7 @@ EOF
     export session=${x[2]}
 
     # synchronize/multiplex input to all panes (comment to disable)
-    "$tmux_cmd" set-window-option -t ${window} synchronize-panes on &> /dev/null
+    # "$tmux_cmd" set-window-option -t ${window} synchronize-panes on &> /dev/null
 
     "$tmux_cmd" set-window-option -t ${window} remain-on-exit on &> /dev/null
 
