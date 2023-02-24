@@ -23,7 +23,7 @@ function with_echo()
   "$@"
 }
 
-BACKUP_DIRS=(/home/andreas /etc /media/andreas/lightning-bulk/bulk-andreas/)
+BACKUP_DIRS=(/home/andreas /etc /media/andreas/sd-bulk-tera/bulk-andreas/)
 for src in "${BACKUP_DIRS[@]}"; do
   bn=$(basename "$src")
   if test "$REINDEX" != "n"; then
