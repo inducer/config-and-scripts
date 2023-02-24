@@ -1,0 +1,35 @@
+#! /bin/bash
+
+set -eo pipefail
+
+export RESTIC_REPOSITORY=sftp:backups@sprout.d.tiker.net:/mnt/andreas-backup/home/repos/lightning
+export RESTIC_PASSWORD_FILE=$HOME/.restic-password
+
+# https://stackoverflow.com/a/28776166
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+
+if [[ $sourced = 0 ]]; then
+    echo "dumping notmuch..."
+    notmuch-dump
+    echo "done"
+
+    restic backup --verbose --one-file-system \
+            "$HOME" /media/andreas/sd-bulk-tera/bulk-andreas \
+            --exclude "$HOME/from-bolt" \
+            --exclude "$HOME/mail/.notmuch/xapian" \
+            --exclude "$HOME/.cache" \
+            --exclude "$HOME/.wine" \
+            --exclude "$HOME/Downloads" \
+            --exclude "$HOME/.var/app/*/cache" \
+            --exclude "$HOME/.vim/plugged" \
+            --exclude "$HOME/.cargo" \
+            --exclude "$HOME/.rustup" \
+            --exclude "$HOME/.local/share/Trash" \
+            --exclude "$HOME/.config/*/Cache" \
+            --exclude "$HOME/.config/libvirt" \
+            --exclude "$HOME/tmp" \
+            --exclude "$HOME/.local/share/Steam" \
+            --exclude "$HOME/.local/share/containers"
+fi
+
+# vim: shiftwidth=4
