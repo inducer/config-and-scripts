@@ -202,7 +202,7 @@ SCHEDULED: %t DEADLINE: %t
      ("melpa-stable" . "https://stable.melpa.org/packages/")))
  '(package-enable-at-startup nil)
  '(package-selected-packages
-   '(ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme org-plus-contrib olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
+   '(ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(printer-name "PDF")
  '(ps-paper-type 'letter)
