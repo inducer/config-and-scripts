@@ -2,6 +2,7 @@
 
 
 export RESTIC_REPOSITORY="rest:https://aklightning:$(cat $HOME/.restic-repo-password)@sprout.d.tiker.net:8000/aklightning/lightning"
+# export RESTIC_REPOSITORY="sftp:andreas@tuck:backup/laptop-restic"
 export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 
 # https://stackoverflow.com/a/28776166
