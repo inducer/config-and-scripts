@@ -1,0 +1,69 @@
+#! /bin/bash
+
+set -eo pipefail
+
+function check_snapshots()
+{
+    restic mount ~/mnt &
+    mount_pid="$!"
+
+    trap "kill -INT $mount_pid || true" RETURN
+
+    while ! test -d ~/mnt/snapshots; do
+        sleep 0.1
+    done
+
+    ls --color -lah ~/mnt/snapshots
+    for dir in \
+            ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/gitlab \
+            ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/discourse \
+            ~/mnt/snapshots/latest/mnt/aux/autopostgresqlbackup/daily/relate2 \
+            ; do
+        if test -d "$dir"; then
+            ls --color -lah "$dir"
+            break
+        fi
+    done
+
+    echo "ENTER TO MOVE ON:"
+    read ENTER
+
+    kill -INT "$mount_pid"
+    wait "$mount_pid" || true
+    trap - RETURN
+}
+
+export RESTIC_REPOSITORY="rest:https://aklightning:$(cat $HOME/.restic-repo-password)@sprout.d.tiker.net:8000/aklightning/lightning"
+export RESTIC_PASSWORD_FILE=$HOME/.restic-password
+
+machine=lightning
+echo "------------------------------------------------------"
+echo "$machine"
+echo "------------------------------------------------------"
+check_snapshots
+
+unset RESTIC_PASSWORD_FILE
+
+for machine in marten relate scicomp-discourse; do
+    echo "------------------------------------------------------"
+    echo "$machine"
+    echo "------------------------------------------------------"
+    RESTIC_REPO_ACCESS_PASSWORD=""
+    while test -z "$RESTIC_REPO_ACCESS_PASSWORD" ; do
+        read -p "Repo REST access password: " -r -s RESTIC_REPO_ACCESS_PASSWORD
+        echo
+    done
+    RESTIC_PASSWORD=""
+    while test -z "$RESTIC_PASSWORD" ; do
+        read -p "Repo password: " -r -s RESTIC_PASSWORD
+        echo
+    done
+    export RESTIC_PASSWORD
+
+    export RESTIC_REPOSITORY="rest:https://ak$machine:${RESTIC_REPO_ACCESS_PASSWORD}@sprout.d.tiker.net:8000/ak$machine/$machine"
+
+    check_snapshots
+done
+
+
+# vim: sw=4
