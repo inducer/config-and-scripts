@@ -1,50 +1,37 @@
 #! /bin/bash
 
-set -e
 
-echo "notmuch dumped?"
-echo -n "[ENTER]"
-read ENTER
+export RESTIC_REPOSITORY="rest:https://aklightning:$(cat $HOME/.restic-repo-password)@sprout.d.tiker.net:8000/aklightning/lightning"
+# export RESTIC_REPOSITORY="sftp:andreas@tuck:backup/laptop-restic"
+export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 
-echo -n "reindex ? [y]/n: "
-read REINDEX
+# https://stackoverflow.com/a/28776166
+(return 0 2>/dev/null) && sourced=1 || sourced=0
 
-eval `ssh-agent`
-ssh-add ~andreas/.ssh/id_rsa_backup
+if [[ $sourced = 0 ]]; then
+    set -eo pipefail
 
-#DESTDIR="andreas@192.168.77.2:backup/laptop-bup"
-#DESTDIR="/media/andreas/Backup/laptop-bup"
-DESTDIR="/media/andreas/akstorage/laptop-bup"
-#DESTDIR="andreas@192.168.1.201:backup/laptop-bup"
+    echo "dumping notmuch..."
+    notmuch-dump
+    echo "done"
 
-function with_echo()
-{
-  echo "$@"
-  "$@"
-}
+    restic backup --verbose --one-file-system \
+            "$HOME" /media/andreas/sd-bulk-tera/bulk-andreas \
+            --exclude "$HOME/from-bolt" \
+            --exclude "$HOME/mail/.notmuch/xapian" \
+            --exclude "$HOME/.cache" \
+            --exclude "$HOME/.wine" \
+            --exclude "$HOME/Downloads" \
+            --exclude "$HOME/.var/app/*/cache" \
+            --exclude "$HOME/.vim/plugged" \
+            --exclude "$HOME/.cargo" \
+            --exclude "$HOME/.rustup" \
+            --exclude "$HOME/.local/share/Trash" \
+            --exclude "$HOME/.config/*/Cache" \
+            --exclude "$HOME/.config/libvirt" \
+            --exclude "$HOME/tmp" \
+            --exclude "$HOME/.local/share/Steam" \
+            --exclude "$HOME/.local/share/containers"
+fi
 
-BACKUP_DIRS=(/home/andreas /etc /media/andreas/sd-bulk-tera/bulk-andreas/)
-for src in "${BACKUP_DIRS[@]}"; do
-  bn=$(basename "$src")
-  if test "$REINDEX" != "n"; then
-      with_echo bup index \
-        --exclude-rx='/no_backup/$' \
-        --exclude-rx='/.cache/$' \
-        --exclude-rx='/.cargo/$' \
-        --exclude-rx='/tmp/$' \
-        --exclude-rx='/oldtmp-[-0-9]+/$' \
-        --exclude-rx='/.local/share/Steam/$' \
-        --exclude-rx='/.local/share/containers/$' \
-        "$src" || true
-  fi
-
-  if ! with_echo bup save -r "$DESTDIR" -n "$bn" "$src"; then
-    echo "--------------------------------------------------------------------------"
-    echo "ERRORS OCCURRED DURING SAVE, CHECK AND HIT ENTER"
-    echo "--------------------------------------------------------------------------"
-    echo -n "[ENTER]"
-    read ENTER
-  fi
-done
-
-echo "COMPLETED"
+# vim: shiftwidth=4
