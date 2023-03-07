@@ -11,6 +11,12 @@ export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 if [[ $sourced = 0 ]]; then
     set -eo pipefail
 
+    echo "Enter password to archive /etc:"
+    ETCTAR="/home/andreas/etc-$(date +%Y-%m-%d-%H%M).tar"
+    sudo tar cf "$ETCTAR" /etc
+    sudo chown andreas:andreas "$ETCTAR"
+    trap 'rm "$ETCTAR"' EXIT
+
     echo "dumping notmuch..."
     notmuch-dump
     echo "done"
