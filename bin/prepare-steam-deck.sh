@@ -3,7 +3,8 @@
 steamos-readonly disable
 pacman-key --init
 pacman-key --populate
-pacman -S tmux nodejs openssh
+pacman -Syu tmux nodejs openssh libfido2 yarn \
+        ccid opensc
 systemctl enable sshd
 systemctl start sshd
 
