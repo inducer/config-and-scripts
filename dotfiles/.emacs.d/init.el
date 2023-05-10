@@ -351,6 +351,10 @@ SCHEDULED: %t DEADLINE: %t
 (evil-set-initial-state 'notmuch-tree-mode 'emacs)
 ; (evil-collection-init)
 
+; https://emacs.stackexchange.com/a/9584
+(modify-syntax-entry ?_ "w")
+
+
 ; {{{ org-related
 
 (require 'evil-org)
