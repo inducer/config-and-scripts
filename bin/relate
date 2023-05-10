@@ -1,3 +1,4 @@
 #! /bin/bash
 
+unset PYTHONWARNINGS
 exec ~/work/django/relate/.venv/bin/python -m relate "$@"
