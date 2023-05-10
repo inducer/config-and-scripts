@@ -278,7 +278,6 @@ SCHEDULED: %t DEADLINE: %t
 (require 'gnus-art)
 (require 'gnus-alias)
 (require 'zoom-frm)
-(require 'helm-config)
 
 (autoload 'gnus-alias-determine-identity "gnus-alias" "" t)
 (add-hook 'message-setup-hook 'gnus-alias-determine-identity)
