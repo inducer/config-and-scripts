@@ -49,7 +49,7 @@ reloc()
 }
 re3()
 {
-  source ~/shared/src/env-3.10/bin/activate
+  source ~/shared/src/env-3.11/bin/activate
 }
 
 aconda()
@@ -126,14 +126,9 @@ export LD_LIBRARY_PATH=$HOME/pool/lib:$HOME/pack/barvinok/lib
 export PYTHONWARNINGS=default
 export BROWSER=xdg-open
 #export SSH_ASKPASS=ksshaskpass
-export ETS_TOOLKIT=qt4
 
 # for XDG stuff
 #export KDE_FULL_SESSION=kde
-
-function ocamldebug() {
-  ledit -h ~/.ocamldebug-history -x /usr/bin/ocamldebug -I ~/work/ocaml_lib "$@"
-  }
 
 function mcd()
 {
@@ -144,11 +139,7 @@ if test "$TERM" = "xterm"; then
   export TERM="xterm-256color"
 fi
 
-export OCCA_DIR=$HOME/src/occa
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OCCA_DIR/lib
-
-export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$HOME/shared/pack/gh-cli/bin:$PATH
+export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$HOME/shared/pack/gh-cli/bin:$PATH:$HOME/shared/pack/glab/bin
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$HOME/shared/pool/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/shared/pool/lib
-export PYTHONPATH=$PYTHONPATH:$HOME/shared/src/HPX-Python/source
