@@ -6,9 +6,11 @@ TGTDIR="comp"
 mkdir -p "$TGTDIR"
 count=1
 for i in *.[jJ][pP][gG] ; do
-    echo "$count: $i"
-    heif-enc "$i" -o "$TGTDIR/${i%%.[jJ][pP][gG]}.heic"
-    count=$((count+1))
+    if test -f '$i'; then
+        echo "$count: $i"
+        heif-enc "$i" -o "$TGTDIR/${i%%.[jJ][pP][gG]}.heic"
+        count=$((count+1))
+    fi
 done
 
 find . -iname '*.mp4' -print0 | \
