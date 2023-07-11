@@ -2,7 +2,7 @@
 
 unset PYTHONWARNINGS
 if test -x "$HOME/pack/kitty"; then
-  exec python3 ~/pack/kitty/kitty/launcher/kitty "$@"
+  exec ~/pack/kitty/kitty/launcher/kitty "$@"
 else
   exec /usr/bin/kitty "$@"
 fi
