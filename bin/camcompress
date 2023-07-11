@@ -14,7 +14,7 @@ for i in *.[jJ][pP][gG] ; do
 done
 
 find . -iname '*.mp4' -print0 | \
-    parallel -j1 -0 "mkdir -p $CAMTMPDIR/{//}; ffmpeg -i {} -c:v libx264 -preset medium -crf 25 -b:a 64k $TGTDIR/{}"
+    parallel -j1 -0 "mkdir -p $CAMTMPDIR/{//}; ffmpeg -i {} -c:v libx264 -preset slow -crf 25 -b:a 64k $TGTDIR/{}"
 
 echo "compressed files are in comp/"
 
