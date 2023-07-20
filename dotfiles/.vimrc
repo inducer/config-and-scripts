@@ -43,6 +43,7 @@ Plug 'junegunn/goyo.vim'
 " color schemes
 Plug 'junegunn/seoul256.vim'
 Plug 'inducer/vim-lucius'
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'altercation/vim-colors-solarized'
 
 " Plug 'tpope/vim-speeddating'
@@ -408,7 +409,8 @@ syntax enable
 
 " colorscheme solarized
 " colorscheme seoul256
-colorscheme lucius
+" colorscheme lucius
+colorscheme PaperColor
 
 if $TERMINAL_LIGHTNESS == "light"
   set background=light
