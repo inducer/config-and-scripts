@@ -42,7 +42,7 @@ Plug 'junegunn/goyo.vim'
 
 " color schemes
 Plug 'junegunn/seoul256.vim'
-Plug 'jonathanfilip/vim-lucius'
+Plug 'inducer/vim-lucius'
 Plug 'altercation/vim-colors-solarized'
 
 " Plug 'tpope/vim-speeddating'
