@@ -136,7 +136,7 @@ https://andreask.cs.illinois.edu/aboutme
        (org-agenda-skip-function
         '(org-agenda-skip-entry-if 'deadline))))))
  '(org-agenda-files
-   '("/home/andreas/org/todo.org" "/home/andreas/org/notes.org" "/home/andreas/org/ideas.org"))
+   '("/home/andreas/org/notes.org" "/home/andreas/org/todo.org" "/home/andreas/org/ideas.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-sticky t)
@@ -202,7 +202,7 @@ SCHEDULED: %t DEADLINE: %t
      ("melpa-stable" . "https://stable.melpa.org/packages/")))
  '(package-enable-at-startup nil)
  '(package-selected-packages
-   '(magit-delta ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
+   '(org-contrib magit-delta ace-window evil-collection flycheck-pycheckers markdown-mode flycheck editorconfig magit monokai-theme zenburn-theme nyx-theme dracula-theme nord-theme gruvbox-theme olivetti leuven-theme focus evil-easymotion base16-theme htmlize ox-gfm org helm color-theme-solarized evil evil-org company))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(printer-name "PDF")
  '(ps-paper-type 'letter)
