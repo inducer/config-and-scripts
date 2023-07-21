@@ -479,7 +479,8 @@ SCHEDULED: %t DEADLINE: %t
 (define-key global-map [(control ?')]     'org-cycle-agenda-files)
 (define-key global-map [(control ?.)]     'browse-url)
 
-(define-key notmuch-message-mode-map (kbd "C-c C-i")  'gnus-alias-select-identity)
+(if (boundp 'notmuch-message-mode-map )
+  (define-key notmuch-message-mode-map (kbd "C-c C-i")  'gnus-alias-select-identity))
 
 (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
 (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
