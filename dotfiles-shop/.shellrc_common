@@ -38,6 +38,8 @@ alias eow='~andreas/src/env/bin/eow -k vim -p snarf13 -H 0.0.0.0 --wrap-lines --
 alias em='GPG_AGENT_INFO= emacs -nw -f notmuch'
 alias toplev='python2 ~/shared/pack/pmu-tools/toplev.py'
 alias repo="PYTHONWARNINGS= repo"
+alias mg="emacs -f magit"
+
 
 fb()
 {
