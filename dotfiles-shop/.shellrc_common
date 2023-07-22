@@ -124,7 +124,7 @@ vims()
 
 pycl()
 {
-  PYOPENCL_TEST="port:pthread" python "$@"
+  PYOPENCL_TEST="port:cpu" python "$@"
 }
 
 export MANPATH=~/pool/share/man:$MANPATH
