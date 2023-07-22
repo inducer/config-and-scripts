@@ -45,6 +45,16 @@ fb()
 {
   xdg-open $(pwd)
 }
+
+tl()
+{
+  if test "$1" == "1"; then
+        export TERMINAL_LIGHTNESS=light
+  else
+        export TERMINAL_LIGHTNESS=dark
+  fi
+}
+
 reloc()
 {
   source ~/local-src/env-3.10/bin/activate
