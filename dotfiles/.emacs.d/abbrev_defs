@@ -85,10 +85,6 @@ If you would still like to proceed, please let me know how I would go
 about entering that override.
 
 Andreas" nil 1)
-    ("msgriot" "Could you take a look at my recent message on Riot?
-
-Thanks,
-Andreas" nil 1)
     ("extrawurst" "Thank you for your message. I would very much like to offer what you are
 requesting, but from a standpoint of fairness, I unfortunately
 cannot. The problem is that if I were to offer you extra 'private office
@@ -116,6 +112,15 @@ with a grade of zero.
 
 Hope you get better soon,
 
+Andreas" nil 1)
+    ("todiscuss" "
+Thank you for your message. To ensure that others can benefit from what we
+discuss, could you please repost your question in Github discussions, i.e.
+at
+
+https://github.com/inducer/pycuda/discussions
+
+Thank you!
 Andreas" nil 1)
     ("adm" "
 Thank you for your message! I am almost always looking for promising PhD
