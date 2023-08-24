@@ -3,13 +3,22 @@
 set -eo pipefail
 
 envname="$1"
-if [[ "$envname" = "wip" ]]; then
+if [[ "$envname" = "production" ]]; then
     declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
         [loopy]=kaushikcfd/main
         [meshmode]=majosm/production
         [grudge]=majosm/coupled-volumes
         [pytato]=kaushikcfd/main
         # [mirgecom]=github/main
+    )
+elif [[ "$envname" = "kaushik" ]]; then
+    declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
+        [loopy]=kaushikcfd/main
+        [arraycontext]=github/main
+        [meshmode]=kaushikcfd/main
+        [grudge]=illinois-ceesd/production
+        [pytato]=kaushikcfd/main
+        [mirgecom]=github/production
     )
 elif [[ "$envname" = "main" ]]; then
     declare -A PACKAGE_TO_REMOTE_AND_BRANCH=( \
