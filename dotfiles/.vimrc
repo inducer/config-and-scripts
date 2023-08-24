@@ -586,6 +586,8 @@ function! InstallCocPlugins()
   CocInstall coc-diagnostic
   CocInstall coc-eslint
   CocInstall coc-rust-analyzer
+  CocInstall coc-diagnostic
+  CocInstall coc-snippets
 endfunction
 command InstallCoc call InstallCocPlugins()
 
