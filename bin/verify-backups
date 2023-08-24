@@ -33,7 +33,7 @@ function check_snapshots()
     trap - RETURN
 }
 
-export RESTIC_REPOSITORY="rest:https://aklightning:$(cat $HOME/.restic-repo-password)@sprout.d.tiker.net:8000/aklightning/lightning"
+export RESTIC_REPOSITORY="rest:https://aklightning:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklightning/lightning"
 export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 
 machine=lightning
@@ -60,7 +60,7 @@ for machine in marten relate scicomp-discourse; do
     done
     export RESTIC_PASSWORD
 
-    export RESTIC_REPOSITORY="rest:https://ak$machine:${RESTIC_REPO_ACCESS_PASSWORD}@sprout.d.tiker.net:8000/ak$machine/$machine"
+    export RESTIC_REPOSITORY="rest:https://ak$machine:${RESTIC_REPO_ACCESS_PASSWORD}@piepsel.d.tiker.net:8000/ak$machine/$machine"
 
     check_snapshots
 done
