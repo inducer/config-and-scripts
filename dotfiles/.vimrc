@@ -498,6 +498,8 @@ nnoremap <expr> <CR> empty(&buftype) ? '}' : '<CR>'
 onoremap <expr> <CR> empty(&buftype) ? '}' : '<CR>'
 vnoremap <CR> }
 
+" }}}
+
 " {{{ coc
 
 function! s:check_back_space() abort
@@ -516,8 +518,6 @@ function! s:check_back_space() abort
 nnoremap <silent><nowait> <S-f6>  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent><nowait> <S-f5>  :<C-u>CocPrev<CR>
-
-" }}}
 
 " }}}
 
