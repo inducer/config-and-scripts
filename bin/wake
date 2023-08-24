@@ -12,18 +12,18 @@ do_wake()
 SSH_TGT="$1"
 case "$1" in
   tuck )
-    ssh sprout "./wake tuck"
+    ssh octolith "./wake tuck"
     SSH_TGT=tuck
     ;;
   tuck.d* )
-    ssh sprout.d.tiker.net "./wake tuck"
+    ssh octolith.d.tiker.net "./wake tuck"
     SSH_TGT=tuck.d.tiker.net
     ;;
   rakete )
     do_wake 00:1C:C0:2F:E8:AC
     ;;
   inkling )
-    ssh sprout "./wake inkling"
+    ssh octolith "./wake inkling"
     ;;
   frontend1 )
     do_wake 00:30:05:15:15:68
