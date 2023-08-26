@@ -1,0 +1,217 @@
+#! /usr/bin/env python
+
+import re
+import json
+import argparse
+import datetime
+from requests import Session
+
+
+
+TEMPLATE = """
+date = 2023-08-24
+tags = ["cdl"]
+meal_duration = 15
+
+[[meals]]
+when = 09:10:00
+amount = 1
+what = "formula"
+note = "blarf"
+
+[[naps]]
+start = 09:15:00
+end = 09:35:00
+[[naps]]
+start = 10:55:00
+end = 11:15:00
+
+[[changes]]
+when = 09:05:00
+wet = true
+solid = false
+"""
+
+def print_template(args):
+    print(TEMPLATE)
+
+
+class BabyBuddyAPI:
+    def __init__(self, base_url, key):
+        self.base_url = base_url
+        self.key = key
+        self.session = Session()
+
+    def _request(self, method, endpoint, *, json=None):
+        headers = {"Authorization": f"Token {self.key}"}
+
+        kwargs = {}
+        if json is not None:
+            from json import dumps
+            kwargs["data"] = dumps(json)
+            headers["Content-Type"]  = "application/json"
+
+        r = self.session.request(
+                method=method,
+                url=(self.base_url + "/api" + endpoint),
+                headers=headers,
+                **kwargs,
+                )
+        if r.status_code != 200:
+            print(r.json())
+            r.raise_for_status()
+        return r
+
+    def describe(self, endpoint):
+        return self._request("OPTIONS", endpoint).json()
+
+    def children(self):
+        return self._request("GET", "/children/").json()
+
+    def add_feeding(self, data):
+        return self._request("POST", "/feedings/", json=data)
+
+    def add_sleep(self, data):
+        return self._request("POST", "/sleep/", json=data)
+
+    def add_change(self, data):
+        return self._request("POST", "/changes/", json=data)
+
+
+
+TIME_RE = re.compile("^([0-9]+):([0-9]+)$")
+
+
+def parse_time(date: datetime.date, s) -> datetime.datetime:
+    if isinstance(s, str):
+        match = TIME_RE.match(s)
+        assert match
+
+        return datetime.datetime(
+                        year=date.year,
+                        month=date.month,
+                        day=date.day, 
+                        hour=int(match.group(1)),
+                        minute=int(match.group(2)),
+                        )
+    elif isinstance(s, datetime.time):
+        return datetime.datetime.combine(date, s)
+    
+    else:
+        raise ValueError(f"time not understood: {s}")
+
+
+MEAL_TYPES = [
+        "formula",
+        "solid food",
+        "fortified breast milk",
+        "breast milk",
+        ]
+DEFAULT_METHODS = {
+        "formula": "bottle",
+        "solid food": "parent fed",
+        }
+
+
+def parse_meal_type(s):
+    for mt in MEAL_TYPES:
+        if mt.startswith(s.lower()):
+            return mt
+
+    raise ValueError(f"meal type not understood: {s}")
+
+
+def upload(args):
+    api = BabyBuddyAPI(args.bb_url, args.bb_key)
+
+    child, = api.children()["results"]
+    #print(json.dumps(api.describe("/feedings"), indent=4))
+
+    from tomli import load
+    with open(args.data, "rb") as inf:
+        data = load(inf)
+
+
+    date = data["date"]
+    tags = data["tags"]
+    assert isinstance(date, datetime.date)
+
+    meals = []
+    for meal_in in data["meals"]:
+        meal_type = parse_meal_type(meal_in["what"])
+        method = meal_in.get("method", DEFAULT_METHODS.get(meal_type))
+        start = parse_time(date, meal_in["when"])
+        meal_out = {
+                "child": child["id"],
+                "start": start.isoformat(),
+                "end": (start+datetime.timedelta(minutes=15)).isoformat(),
+                "type": meal_type,
+                "method": method,
+                "amount": None if "amount" not in meal_in else meal_in["amount"]*30,
+                "tags": tags,
+                }
+        if "note" in meal_in:
+            meal_out["notes"] = meal_in["note"]
+        meals.append(meal_out)
+
+    naps = [
+            {
+                "child": child["id"],
+                "start": parse_time(date, nap_in["start"]).isoformat(),
+                "end": parse_time(date, nap_in["end"]).isoformat(),
+                "nap": True,
+                "tags": tags,
+                }
+            for nap_in in data["naps"]
+            ]
+
+    changes = [
+            {
+                "child": child["id"],
+                "time": parse_time(date, change_in["when"]).isoformat(),
+                "wet": change_in.get("wet", False),
+                "solid": change_in.get("solid", False),
+                "tags": tags,
+            }
+            for change_in in data["changes"]
+            ]
+
+    for m in meals:
+        api.add_feeding(m)
+    for n in naps:
+        api.add_sleep(n)
+    for c in changes:
+        api.add_change(c)
+
+    #import json
+    #print(json.dumps(changes, indent=4))
+
+
+def main():
+    parser = argparse.ArgumentParser(
+            description="Upload a TOML file of daycare info to baby buddy")
+    parser.add_argument("--bb-url", metavar="URL")
+    parser.add_argument("--bb-key", metavar="KEY")
+
+    subp = parser.add_subparsers()
+
+    parser_print_template = subp.add_parser("template")
+    parser_print_template.set_defaults(func=print_template)
+
+    parser_upload = subp.add_parser("upload")
+    parser_upload.add_argument("data", metavar="DATA.TOML")
+    parser_upload.set_defaults(func=upload)
+
+    args = parser.parse_args()
+
+    if not hasattr(args, "func"):
+        parser.print_usage()
+        import sys
+        sys.exit(1)
+
+    import sys
+    sys.exit(args.func(args))
+
+
+if __name__ == "__main__":
+    main()

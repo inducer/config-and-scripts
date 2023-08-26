@@ -1,0 +1,3 @@
+#! /bin/bash
+
+upload-cdl-halfsheet --bb-url https://bb.tiker.net --bb-key "$(cat ~/.baby-buddy-api-key)" "$@"
