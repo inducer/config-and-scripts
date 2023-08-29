@@ -352,7 +352,14 @@ SCHEDULED: %t DEADLINE: %t
 ; (evil-collection-init)
 
 ; https://emacs.stackexchange.com/a/9584
-(modify-syntax-entry ?_ "w")
+; This line will cause hangs on emails with many underscores:
+; https://github.com/djcb/mu/issues/1779#issuecomment-731760046
+; (modify-syntax-entry ?_ "w")
+(defadvice evil-inner-word (around underscore-as-word activate)
+  (let ((table (copy-syntax-table (syntax-table))))
+    (modify-syntax-entry ?_ "w" table)
+    (with-syntax-table table
+      ad-do-it)))
 
 
 ; {{{ org-related
