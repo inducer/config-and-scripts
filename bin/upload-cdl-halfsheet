@@ -28,8 +28,9 @@ end = 11:15:00
 
 [[changes]]
 when = 09:05:00
-wet = true
-solid = false
+wet = false
+solid = true
+note = diarrhea
 """
 
 def print_template(args):
@@ -125,7 +126,7 @@ def upload(args):
     api = BabyBuddyAPI(args.bb_url, args.bb_key)
 
     child, = api.children()["results"]
-    #print(json.dumps(api.describe("/feedings"), indent=4))
+    #print(json.dumps(api.describe("/changes"), indent=4))
 
     from tomli import load
     with open(args.data, "rb") as inf:
@@ -165,16 +166,17 @@ def upload(args):
             for nap_in in data["naps"]
             ]
 
-    changes = [
-            {
+    changes = []
+    for change_in in data["changes"]:
+        change_out = {
                 "child": child["id"],
                 "time": parse_time(date, change_in["when"]).isoformat(),
                 "wet": change_in.get("wet", False),
                 "solid": change_in.get("solid", False),
                 "tags": tags,
             }
-            for change_in in data["changes"]
-            ]
+        if "note" in change_in:
+            change_out["notes"] = change_in["note"]
 
     for m in meals:
         api.add_feeding(m)
