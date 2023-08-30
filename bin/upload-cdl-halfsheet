@@ -177,6 +177,7 @@ def upload(args):
             }
         if "note" in change_in:
             change_out["notes"] = change_in["note"]
+        changes.append(change_out)
 
     for m in meals:
         api.add_feeding(m)
