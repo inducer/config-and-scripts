@@ -8,8 +8,8 @@ from requests import Session
 
 
 
-TEMPLATE = """
-date = 2023-08-24
+TEMPLATE = f"""
+date = {datetime.date.today().isoformat()}
 tags = ["cdl"]
 meal_duration = 15
 
