@@ -155,16 +155,18 @@ def upload(args):
             meal_out["notes"] = meal_in["note"]
         meals.append(meal_out)
 
-    naps = [
-            {
+    naps = []
+    for nap_in in data["naps"]:
+        nap_out = {
                 "child": child["id"],
                 "start": parse_time(date, nap_in["start"]).isoformat(),
                 "end": parse_time(date, nap_in["end"]).isoformat(),
                 "nap": True,
                 "tags": tags,
                 }
-            for nap_in in data["naps"]
-            ]
+        if "note" in nap_in:
+            nap_out["notes"] = nap_in["note"]
+        naps.append(nap_out)
 
     changes = []
     for change_in in data["changes"]:
