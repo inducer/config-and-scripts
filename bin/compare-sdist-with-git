@@ -1,8 +1,10 @@
 #! /bin/bash
 
-set -e
+set -eo pipefail
 trap "rm -f .tmp-sdist .tmp-git" EXIT
 
-python3 setup.py sdist | grep "copying" | cut -d' ' -f2 | sort > .tmp-sdist
+python3 -m build -s
+TARBALL="dist/$(ls -Art dist | tail -n 1)"
+tar tvfz "$TARBALL"  | awk '{print $6;}' | cut -d/ -f2- | sort > .tmp-sdist
 git ls-files | sort > .tmp-git
 vimdiff .tmp-sdist .tmp-git
