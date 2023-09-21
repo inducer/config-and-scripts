@@ -9,7 +9,8 @@ if test "$NAME" = ""; then
 fi
 
 PPD=/etc/cups/ppd/ricoh-im-5000.ppd 
-curl -o "$PPD" https://answers.uillinois.edu/images/group356/shared/Ricoh-IM_5000-Postscript-Ricoh.ppd
+wget https://answers.uillinois.edu/images/group356/shared/Ricoh-IM_5000-Postscript-Ricoh.ppd
+mv Ricoh-IM_5000-Postscript-Ricoh.ppd "$PPD"
 /usr/sbin/lpadmin \
         -p "$NAME" -P "$PPD" \
         -o printer-is-shared=false \
