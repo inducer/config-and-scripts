@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import os.path
 import re
 import json
 import argparse
@@ -34,7 +35,11 @@ note = diarrhea
 """
 
 def print_template(args):
-    print(TEMPLATE)
+    fn = f"{datetime.date.today().isoformat()}.toml"
+    if os.path.exists(fn):
+        raise RuntimeError(f"'{fn}' already exists")
+    with open(fn, "w") as outf:
+        outf.write(TEMPLATE)
 
 
 class BabyBuddyAPI:
