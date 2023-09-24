@@ -43,6 +43,8 @@ notmuch tag -inbox +archived -- 'tag:inbox  cnsba e-learning webmaster'
 notmuch tag -inbox +archived -- "mail delivery failed" relate.cs from:mailer-daemon@illinois.edu welcome tag:inbox
 notmuch tag -inbox +archived -- tag:inbox delivery returned '"if this was not you"' relate
 notmuch tag -inbox +cron +ceesd +archived -- tag:inbox cron mtcampbe lassen
+notmuch tag +github +ci -- tag:inbox "from:github.com" "to:ci_activity@noreply.github.com"
+notmuch tag +gitlab +ci -- 'tag:inbox from:gitlab ("pipeline has been fixed" or "failed pipeline") project branch'
 
 ~/bin/unsnooze-mail
 
