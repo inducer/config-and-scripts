@@ -32,7 +32,13 @@ if test -f "$KITTY_HOST_CONF_FILE"; then
   KITTY_EXTRA_CONF="--config=$KITTY_HOST_CONF_FILE"
 fi
 
-exec ~/pack/kitty/kitty/launcher/kitty \
+CUSTOM_KITTY=$HOME/pack/kitty/kitty/launcher/kitty 
+if test -f "$CUSTOM_KITTY"; then
+  KITTY_EXE="$CUSTOM_KITTY"
+else
+  KITTY_EXE=kitty
+fi
+exec $KITTY_EXE \
   --config="$KITTY_CONF_PATH/kitty.conf" \
   --config="$KITTY_CONF_PATH/$TERMCOLORS.conf" \
   $KITTY_EXTRA_CONF
