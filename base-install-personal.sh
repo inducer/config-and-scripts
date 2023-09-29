@@ -7,65 +7,69 @@ function with_echo()
   echo "$@"
   $@
 }
-
-with_echo apt install aptitude \
-  spectre-meltdown-checker smartmontools \
-  netcat-traditional elinks \
-  iucode-tool \
-  rsync cronie \
-  etckeeper logrotate gnupg2 \
-  htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui \
-  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr \
-  zsh \
-  moreutils gawk \
-  tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo \
-  curl \
-  mlocate \
-  libgmp-dev libmpfr-dev \
-  libpq-dev libjemalloc-dev \
-  vim neovim emacs exuberant-ctags micro \
-  python3-psutil python3-yaml python3-websockets \
-  prometheus-node-exporter \
-  net-tools acl \
-  pypy3 pypy3-dev \
-  python3-scipy python3-matplotlib \
-  swig \
-  python3-pyqt5 \
-  flake8 python3-pep8-naming \
-  python3-dbg python3-venv python3-virtualenv python3-pip-whl \
-  python3.11-dbg python3.11-dev python3.11-venv \
-  silversearcher-ag ripgrep fzf fd-find \
-  texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber \
-  texlive-fonts-extra cm-super dvipng latexdiff \
-  pandoc \
-  mc \
-  graphviz \
-  gmsh occt-draw occt-misc libxi-dev rapidjson-dev freecad \
-  libocct-{ocaf,data-exchange,draw,foundation,modeling-algorithms,modeling-data,visualization}-dev \
-  libopenmpi-dev openmpi-common mpich libmpich-dev \
-  systemd-coredump \
-  likwid cpufrequtils linux-perf time numactl libunwind-dev \
-  ffmpeg \
-  ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind \
-  build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui \
-  gcc-multilib \
-  llvm-dev libclang-dev gdb strace ltrace valgrind \
-  libblas-dev liblapack-dev libopenblas-dev \
-  opensc-pkcs11 \
-  libboost-all-dev \
-  kitty imagemagick \
-  maxima \
-  bison flex \
-  npm yarnpkg \
-  octave \
-  qemu qemu-user-static virtualbox-qt \
-  libelf-dev dwarves \
-  dconf-editor \
-  restic \
-  katarakt \
-  geeqie darktable \
-  nebula \
+PACKAGES=(
+  spectre-meltdown-checker smartmontools
+  netcat-traditional elinks
+  iucode-tool
+  rsync cronie
+  etckeeper logrotate gnupg2
+  htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
+  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr
+  zsh
+  moreutils gawk
+  tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo
+  curl
+  mlocate
+  libgmp-dev libmpfr-dev
+  libpq-dev libjemalloc-dev
+  vim neovim emacs exuberant-ctags micro
+  python3-psutil python3-yaml python3-websockets
+  prometheus-node-exporter
+  net-tools acl
+  pypy3 pypy3-dev
+  python3-scipy python3-matplotlib
+  swig
+  python3-pyqt5
+  flake8 python3-pep8-naming
+  python3-dbg python3-venv python3-virtualenv python3-pip-whl
+  python3.11-dbg python3.11-dev python3.11-venv
+  silversearcher-ag ripgrep fzf fd-find
+  texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
+  texlive-fonts-extra cm-super dvipng latexdiff
+  pandoc
+  mc
+  graphviz
+  gmsh occt-draw occt-misc libxi-dev rapidjson-dev freecad
+  libocct-{ocaf,data-exchange,draw,foundation,modeling-algorithms,modeling-data,visualization}-dev
+  libopenmpi-dev openmpi-common mpich libmpich-dev
+  systemd-coredump
+  likwid cpufrequtils linux-perf time numactl libunwind-dev
+  ffmpeg
+  ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind
+  build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui
+  gcc-multilib
+  llvm-dev libclang-dev gdb strace ltrace valgrind
+  libblas-dev liblapack-dev libopenblas-dev
+  opensc-pkcs11
+  libboost-all-dev
+  kitty imagemagick
+  maxima
+  bison flex
+  npm yarnpkg
+  octave
+  qemu qemu-user-static virtualbox-qt
+  libelf-dev dwarves
+  dconf-editor
+  restic
+  katarakt
+  geeqie darktable
+  nebula
   yubikey-manager yubikey-manager-qt
 
+  # xournal++ wants this
+  libcairo-dev
+)
+
+with_echo apt install aptitude "${PACKAGES[@]}"
 
 # vim: foldmethod=marker
