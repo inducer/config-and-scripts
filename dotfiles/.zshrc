@@ -29,8 +29,10 @@ source_if_exists()
 
 if test -d ~/shared/pack/fzf; then
   MY_FZF_PATH=$HOME/shared/pack/fzf
-else
+elif test -d ~/pack/fzf; then
   MY_FZF_PATH=$HOME/pack/fzf
+else
+  echo "fzf is missing: https://github.com/junegunn/fzf.git"
 fi
 
 source_if_exists $MY_FZF_PATH/shell/completion.zsh
