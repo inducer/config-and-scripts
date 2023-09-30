@@ -270,7 +270,7 @@ SCHEDULED: %t DEADLINE: %t
 ; }}}
 
 ; set up various stuff -----------------------------------------------------
-(when (string= system-name "lightning")
+(when (string= system-name "arc")
   (require 'notmuch)
   (require 'org-notmuch)
   )
