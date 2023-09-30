@@ -14,7 +14,7 @@ PACKAGES=(
   rsync cronie
   etckeeper logrotate gnupg2
   htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
-  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr
+  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs
   zsh
   moreutils gawk
   tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo
@@ -66,8 +66,23 @@ PACKAGES=(
   nebula
   yubikey-manager yubikey-manager-qt
 
-  # xournal++ wants this
-  libcairo-dev
+  # xournal++ wants these
+  libcairo-dev libgtk-3-dev libpoppler-glib-dev portaudio19-dev libsndfile-dev \
+  libxml2-dev liblua5.3-dev libzip-dev librsvg2-dev gettext lua-lgi \
+  libgtksourceview-4-dev help2man
+
+  sqlite3 sqlitebrowser
+
+  notmuch notmuch-git libnotmuch-dev
+
+  firefox firefox-l10n-de chromium
+
+  # for pop shell
+  node-typescript
+
+  msmtp offlineimap
+
+  nextcloud-desktop nextcloud-desktop-cmd nextcloud-desktop-l10n
 )
 
 with_echo apt install aptitude "${PACKAGES[@]}"
