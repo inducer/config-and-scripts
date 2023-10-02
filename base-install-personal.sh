@@ -15,6 +15,7 @@ PACKAGES=(
   etckeeper logrotate gnupg2
   htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
   tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs
+  transmission
   zsh
   moreutils gawk
   tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo
@@ -22,7 +23,7 @@ PACKAGES=(
   mlocate
   libgmp-dev libmpfr-dev
   libpq-dev libjemalloc-dev
-  vim neovim emacs exuberant-ctags micro
+  vim-gtk3 neovim emacs exuberant-ctags micro gedit
   python3-psutil python3-yaml python3-websockets
   prometheus-node-exporter
   net-tools acl
@@ -32,10 +33,10 @@ PACKAGES=(
   python3-pyqt5
   flake8 python3-pep8-naming
   python3-dbg python3-venv python3-virtualenv python3-pip-whl
-  python3.11-dbg python3.11-dev python3.11-venv
+  python3.11-dbg python3.11-dev python3.11-venv python3-poetry
   silversearcher-ag ripgrep fzf fd-find
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
-  texlive-fonts-extra cm-super dvipng latexdiff
+  texlive-fonts-extra cm-super dvipng latexdiff psutils
   pandoc
   mc
   graphviz
@@ -52,7 +53,7 @@ PACKAGES=(
   libblas-dev liblapack-dev libopenblas-dev
   opensc-pkcs11
   libboost-all-dev
-  kitty imagemagick
+  kitty
   maxima
   bison flex
   npm yarnpkg
@@ -83,6 +84,11 @@ PACKAGES=(
   msmtp offlineimap
 
   nextcloud-desktop nextcloud-desktop-cmd nextcloud-desktop-l10n
+  nautilus-nextcloud
+
+  imagemagick graphicsmagick  heif-thumbnailer heif-gdk-pixbuf libheif-examples
+
+  flatpak
 )
 
 with_echo apt install aptitude "${PACKAGES[@]}"
