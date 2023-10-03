@@ -36,7 +36,7 @@ PACKAGES=(
   python3.11-dbg python3.11-dev python3.11-venv python3-poetry
   silversearcher-ag ripgrep fzf fd-find
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
-  texlive-fonts-extra cm-super dvipng latexdiff psutils
+  texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk
   pandoc
   mc
   graphviz
