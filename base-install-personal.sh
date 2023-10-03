@@ -37,6 +37,7 @@ PACKAGES=(
   silversearcher-ag ripgrep fzf fd-find
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
   texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk texlive-extra-utils
+  chktex dvidvi fragmaster lacheck latexmk purifyeps texlive-luatex
   pandoc
   mc
   graphviz
