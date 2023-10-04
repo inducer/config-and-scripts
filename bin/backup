@@ -23,7 +23,7 @@ if [[ $sourced = 0 ]]; then
     echo "done"
 
     restic backup --verbose --one-file-system \
-            "$HOME" /media/andreas/sd-bulk-tera/bulk-andreas \
+            "$HOME" \
             --exclude "$HOME/from-bolt" \
             --exclude "$HOME/mail/.notmuch/xapian" \
             --exclude "$HOME/.cache" \
