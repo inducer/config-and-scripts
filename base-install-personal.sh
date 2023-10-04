@@ -20,7 +20,7 @@ PACKAGES=(
   moreutils gawk
   tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo
   curl
-  mlocate
+  mlocate pwgen
   libgmp-dev libmpfr-dev
   libpq-dev libjemalloc-dev
   vim-gtk3 neovim emacs exuberant-ctags micro gedit
