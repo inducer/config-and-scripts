@@ -1,4 +1,4 @@
 #! /bin/bash
 
 set -e
-exec ~/pack/notmuch-addrlookup-c/notmuch-addrlookup "$@"
+exec notmuch address "$@"
