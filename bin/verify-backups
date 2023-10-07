@@ -33,10 +33,10 @@ function check_snapshots()
     trap - RETURN
 }
 
-export RESTIC_REPOSITORY="rest:https://aklightning:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklightning/lightning"
+export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklaptop/laptop"
 export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 
-machine=lightning
+machine=laptop
 echo "------------------------------------------------------"
 echo "$machine"
 echo "------------------------------------------------------"
