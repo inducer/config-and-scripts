@@ -15,7 +15,7 @@ PACKAGES=(
   etckeeper logrotate gnupg2 scdaemon keepassxc
   htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
   tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs
-  transmission
+  transmission xsel
   zsh
   moreutils gawk
   tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo
