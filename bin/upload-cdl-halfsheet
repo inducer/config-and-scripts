@@ -16,9 +16,21 @@ meal_duration = 15
 
 [[meals]]
 when = 09:10:00
-amount = 1
+amount = 4
 what = "formula"
 note = "blarf"
+[[meals]]
+when = 09:10:00
+amount = 4
+what = "formula"
+[[meals]]
+when = 09:30:00
+what = "sol"
+note = "cheerios, banana"
+[[meals]]
+when = 12:00:00
+what = "sol"
+note = "peas, oatmeal"
 
 [[naps]]
 start = 09:15:00
@@ -29,9 +41,18 @@ end = 11:15:00
 
 [[changes]]
 when = 09:05:00
-wet = false
+wet = true
+[[changes]]
+when = 11:00:00
+wet = true
 solid = true
-note = diarrhea
+[[changes]]
+when = 13:00:00
+wet = true
+[[changes]]
+when = 14:00:00
+wet = true
+solid = true
 """
 
 def print_template(args):
