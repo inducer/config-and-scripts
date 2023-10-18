@@ -58,7 +58,7 @@ PACKAGES=(
   maxima
   bison flex
   npm yarnpkg
-  octave
+  octave paraview
   qemu qemu-user-static virtualbox-qt
   libelf-dev dwarves
   dconf-editor
