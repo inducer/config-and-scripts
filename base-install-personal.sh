@@ -46,7 +46,7 @@ PACKAGES=(
   libopenmpi-dev openmpi-common mpich libmpich-dev
   systemd-coredump
   likwid cpufrequtils linux-perf time numactl libunwind-dev
-  ffmpeg
+  ffmpeg ffmpegthumbnailer
   ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind
   build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui
   gcc-multilib
