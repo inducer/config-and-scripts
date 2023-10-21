@@ -25,7 +25,6 @@ PACKAGES=(
   libpq-dev libjemalloc-dev
   vim-gtk3 neovim emacs exuberant-ctags micro gedit
   python3-psutil python3-yaml python3-websockets
-  prometheus-node-exporter
   net-tools acl
   pypy3 pypy3-dev
   python3-scipy python3-matplotlib
