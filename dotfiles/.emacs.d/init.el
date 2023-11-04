@@ -36,10 +36,7 @@
  '(global-auto-revert-mode t)
  '(gnus-alias-default-identity "uofi")
  '(gnus-alias-identity-alist
-   '(("uofi" "" "\"Andreas Kloeckner\" <andreask@illinois.edu>" "University of Illinois" nil "" "Andreas Kloeckner
-Room 4318 (Siebel Center), University of Illinois at Urbana-Champaign
-https://andreask.cs.illinois.edu/aboutme
-+1-217-244-6401")
+   '(("uofi" "" "\"Andreas Kloeckner\" <andreask@illinois.edu>" "University of Illinois" nil "" "Andreas Kloeckner\12Room 4318 (Siebel Center), University of Illinois at Urbana-Champaign\12https://andreask.cs.illinois.edu/aboutme\12+1-217-244-6401")
      ("tician" "" "\"Andreas Kloeckner\" <mathem@tician.de>" "" nil "" "")
      ("de" "" "\"Andreas Kloeckner\" <mathem@tiker.net>" "" nil "" "")
      ("inform" "" "\"Andreas Kloeckner\" <inform@tiker.net>" "" nil "" "")
@@ -149,45 +146,11 @@ https://andreask.cs.illinois.edu/aboutme
       "** %?")
      ("t" "To-do item" entry
       (file "~/org/todo.org")
-      "* TODO %i%?
-SCHEDULED: %t DEADLINE: %t
-%a")))
+      "* TODO %i%?\12SCHEDULED: %t DEADLINE: %t\12%a")))
  '(org-capture-use-agenda-date t)
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-format-latex-header
-   "\\documentclass{article}
-\\usepackage[usenames]{color}
-[PACKAGES]
-[DEFAULT-PACKAGES]
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-3cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-\\usepackage{tikz}
-\\usetikzlibrary{calc}
-\\usetikzlibrary{positioning}
-\\usetikzlibrary{shapes.geometric}
-\\usetikzlibrary{shapes.arrows}
-\\usetikzlibrary{shadows}
-
-\\newcommand{\\abs}[1]{\\left| #1 \\right|}
-\\newcommand{\\norm}[1]{\\left\\| #1 \\right\\|}
-\\newcommand{\\ip}[1]{\\left\\langle #1, \\right\\rangle}
-\\newcommand{\\mathd}{\\mathrm{d}}
-
-\\let\\B=\\mathbf
-\\let\\b=\\mathbf
-\\let\\op=\\operatorname")
+   "\\documentclass{article}\12\\usepackage[usenames]{color}\12[PACKAGES]\12[DEFAULT-PACKAGES]\12\\pagestyle{empty}             % do not remove\12% The settings below are copied from fullpage.sty\12\\setlength{\\textwidth}{\\paperwidth}\12\\addtolength{\\textwidth}{-3cm}\12\\setlength{\\oddsidemargin}{1.5cm}\12\\addtolength{\\oddsidemargin}{-2.54cm}\12\\setlength{\\evensidemargin}{\\oddsidemargin}\12\\setlength{\\textheight}{\\paperheight}\12\\addtolength{\\textheight}{-\\headheight}\12\\addtolength{\\textheight}{-\\headsep}\12\\addtolength{\\textheight}{-\\footskip}\12\\addtolength{\\textheight}{-3cm}\12\\setlength{\\topmargin}{1.5cm}\12\\addtolength{\\topmargin}{-2.54cm}\12\\usepackage{tikz}\12\\usetikzlibrary{calc}\12\\usetikzlibrary{positioning}\12\\usetikzlibrary{shapes.geometric}\12\\usetikzlibrary{shapes.arrows}\12\\usetikzlibrary{shadows}\12\12\\newcommand{\\abs}[1]{\\left| #1 \\right|}\12\\newcommand{\\norm}[1]{\\left\\| #1 \\right\\|}\12\\newcommand{\\ip}[1]{\\left\\langle #1, \\right\\rangle}\12\\newcommand{\\mathd}{\\mathrm{d}}\12\12\\let\\B=\\mathbf\12\\let\\b=\\mathbf\12\\let\\op=\\operatorname")
  '(org-format-latex-options
    '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\[")))
