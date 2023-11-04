@@ -31,6 +31,7 @@
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(delete-by-moving-to-trash t)
+ '(evil-undo-system 'undo-redo)
  '(fci-rule-color "#383838")
  '(global-auto-revert-mode t)
  '(gnus-alias-default-identity "uofi")
