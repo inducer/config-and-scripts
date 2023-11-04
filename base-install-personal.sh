@@ -19,6 +19,7 @@ PACKAGES=(
   zsh
   moreutils gawk
   tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo meld
+  qgit
   curl
   mlocate pwgen
   libgmp-dev libmpfr-dev
