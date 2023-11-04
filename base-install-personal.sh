@@ -14,7 +14,7 @@ PACKAGES=(
   rsync cronie
   etckeeper logrotate gnupg2 scdaemon keepassxc
   htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
-  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs
+  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs sshuttle
   transmission xsel
   zsh
   moreutils gawk
