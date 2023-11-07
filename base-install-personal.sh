@@ -55,7 +55,7 @@ PACKAGES=(
   opensc-pkcs11
   libboost-all-dev
   kitty
-  maxima
+  maxima wxmaxima
   bison flex
   npm yarnpkg
   octave paraview
