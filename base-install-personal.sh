@@ -56,6 +56,7 @@ PACKAGES=(
   libboost-all-dev
   kitty
   maxima wxmaxima
+  shellcheck
   bison flex
   npm yarnpkg
   golang
