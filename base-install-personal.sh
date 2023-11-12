@@ -58,6 +58,7 @@ PACKAGES=(
   maxima wxmaxima
   bison flex
   npm yarnpkg
+  golang
   octave paraview
   qemu qemu-user-static virtualbox-qt
   libelf-dev dwarves
