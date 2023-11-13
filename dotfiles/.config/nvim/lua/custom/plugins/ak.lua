@@ -19,7 +19,7 @@ vim.cmd([[
         set background=light
       endif
     endfunction
-    command Tb call ToggleBackground()
+    command! Tb call ToggleBackground()
 
     autocmd BufReadPre,FileReadPre    *.xoj setlocal bin
     autocmd BufReadPost,FileReadPost  *.xoj  call gzip#read("gzip -S .xoj -dn")
