@@ -33,21 +33,21 @@ vim.cmd([[
     autocmd FileAppendPre         *.xopp  call gzip#appre("gzip -S .xopp -dn")
     autocmd FileAppendPost      *.xopp  call gzip#write("gzip -S .xopp")
 
-    function FixWhitespace()
+    function! FixWhitespace()
         %s/\s\+$//eg
         set expandtab
         %retab
     endfunction
-    command Fws call FixWhitespace()
+    command! Fws call FixWhitespace()
 
-    function WebEdit()
+    function! WebEdit()
         set nolist
         set wrap
         set linebreak
         map j gj
         map k gk
     endfunction
-    command We call WebEdit()
+    command! We call WebEdit()
 ]])
 
 return {
