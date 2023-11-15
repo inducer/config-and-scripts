@@ -108,6 +108,24 @@ return {
             vim.keymap.set('n', '<leader>t', "<cmd>:Neotree<CR>",
                 { desc = "Show file [t]ree" })
         end,
+    },
+    {
+        'smoka7/hop.nvim',
+        version = "v2.*",
+        opts = {},
+        config = function()
+            local hop = require('hop')
+
+            hop.setup { keys = 'etovxqpdygfblzhckisuran' }
+
+            local directions = require('hop.hint').HintDirection
+            vim.keymap.set('n', '<leader>j', function()
+                hop.hint_words({ direction = directions.AFTER_CURSOR })
+            end, {remap=true, desc = "Hinted hop down"})
+            vim.keymap.set('n', '<leader>k', function()
+                hop.hint_words({ direction = directions.BEFORE_CURSOR })
+            end, {remap=true, desc = "Hinted hop up"})
+        end
     }
 }
 
