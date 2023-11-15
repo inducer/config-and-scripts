@@ -58,6 +58,15 @@ vim.cmd([[
     command! We call WebEdit()
 ]])
 
+-- Restore cursor position
+-- https://stackoverflow.com/a/72939989
+vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+    pattern = { "*" },
+    callback = function()
+        vim.cmd('silent! normal! g`"zv', false)
+    end,
+})
+
 return {
     {
         'nvim-orgmode/orgmode',
