@@ -11,6 +11,14 @@ vim.keymap.set('n', '<leader>sF',
     end,
     { desc = '[S]earch [F]iles in src' })
 
+-- Requires commenting out corresponding entry in init
+-- https://github.com/nvim-telescope/telescope.nvim/issues/1173
+vim.keymap.set('n', '<leader>sf',
+    function()
+        require('telescope.builtin').find_files({hidden=true})
+    end,
+    { desc = '[S]earch [F]iles' })
+
 vim.cmd([[
     function! ToggleBackground()
       if &background == "light"
