@@ -127,6 +127,10 @@ return {
                 hop.hint_words({ direction = directions.BEFORE_CURSOR })
             end, {remap=true, desc = "Hinted hop up"})
         end
+    },
+    {
+        "lervag/vimtex",
+        version = "*",
     }
 }
 
