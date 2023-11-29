@@ -70,6 +70,9 @@ PACKAGES=(
   nebula
   yubikey-manager yubikey-manager-qt
 
+  # zotero needs this
+  libbus-glib-1-2
+
   # xournal++ wants these
   libcairo-dev libgtk-3-dev libpoppler-glib-dev portaudio19-dev libsndfile-dev \
   libxml2-dev liblua5.3-dev libzip-dev librsvg2-dev gettext lua-lgi \
