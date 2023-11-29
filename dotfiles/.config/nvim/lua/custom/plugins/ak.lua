@@ -1,5 +1,6 @@
 -- needs commenting out default in init.lua
 vim.o.hlsearch = true
+vim.o.expandtab = true
 
 vim.o.colorcolumn = "85"
 
