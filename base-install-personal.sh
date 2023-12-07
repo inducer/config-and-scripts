@@ -11,7 +11,7 @@ PACKAGES=(
   spectre-meltdown-checker smartmontools
   netcat-traditional elinks
   iucode-tool
-  rsync cronie
+  rsync cronie wireguard
   etckeeper logrotate gnupg2 scdaemon keepassxc
   htop iotop iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
   tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs sshuttle
