@@ -46,6 +46,7 @@ notmuch tag -inbox +cron +ceesd +archived -- tag:inbox cron mtcampbe lassen
 notmuch tag +github +ci -- tag:inbox "from:github.com" "to:ci_activity@noreply.github.com"
 notmuch tag +gitlab +ci -- 'tag:inbox from:gitlab ("pipeline has been fixed" or "failed pipeline") project branch'
 notmuch tag +element --  'tag:inbox and from:"friendly element home server" and from:inform@tiker.net and subject:"you have"'
+notmuch tag +fair -inbox -- tag:inbox from:fair@engr.illinois.edu "department notice"      
 
 ~/bin/unsnooze-mail
 
