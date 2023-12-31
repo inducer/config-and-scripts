@@ -40,7 +40,7 @@ PACKAGES=(
   chktex dvidvi fragmaster lacheck latexmk purifyeps texlive-luatex
   pandoc
   mc
-  graphviz inkscape gnucash audacity
+  graphviz inkscape gnucash audacity gimp krita
   gmsh occt-draw occt-misc libxi-dev rapidjson-dev freecad
   libocct-{ocaf,data-exchange,draw,foundation,modeling-algorithms,modeling-data,visualization}-dev
   libopenmpi-dev openmpi-common mpich libmpich-dev
