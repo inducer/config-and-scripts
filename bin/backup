@@ -1,9 +1,10 @@
 #! /bin/bash
 
 
-export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklaptop/laptop"
-#export RESTIC_REPOSITORY="sftp:andreas@tuck:backup/laptop-restic"
+#export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklaptop/laptop"
+export RESTIC_REPOSITORY="sftp:andreas@tuck:backup/laptop-restic"
 #export RESTIC_REPOSITORY="/media/andreas/Backup/restic-laptop"
+#export RESTIC_REPOSITORY="sftp:andreas@rakete:backup/laptop-restic"
 export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 
 # https://stackoverflow.com/a/28776166
