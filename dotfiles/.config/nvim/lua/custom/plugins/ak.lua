@@ -131,6 +131,10 @@ return {
     {
         "lervag/vimtex",
         version = "*",
+    },
+    {
+        "folke/zen-mode.nvim",
+        version = "*",
     }
 }
 
