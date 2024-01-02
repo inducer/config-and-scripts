@@ -1,8 +1,12 @@
 #! /bin/bash
 set -eo pipefail
 
-source ~/myenv/bin/activate
-FN="$(date +%Y-%m-%d.toml)"
+source ~/myvenv/bin/activate
+if test "$1" = ""; then
+        FN="$(date +%Y-%m-%d.toml)"
+else
+        FN="$1"
+fi
 if test -f "$FN"; then
         echo "$FN already exists, not overwriting"
 else
