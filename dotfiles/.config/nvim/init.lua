@@ -94,6 +94,11 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
+  {
+    'creativenull/efmls-configs-nvim',
+    version = 'v1.*',
+    dependencies = { 'neovim/nvim-lspconfig' },
+  },
 
   {
     -- Autocompletion
@@ -514,6 +519,7 @@ local servers = {
   clangd = {},
   -- gopls = {},
   pyright = {},
+  efm = {},
   rust_analyzer = {},
   tsserver = {},
   bashls = {},
@@ -545,12 +551,31 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
   function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
+    if server_name == 'efm' then
+      local flake8 = require('efmls-configs.linters.flake8')
+      local languages = {
+        python = { flake8 },
+      }
+      require('lspconfig').efm.setup({
+        capabilities = capabilities,
+        filetypes = vim.tbl_keys(languages),
+        settings = {
+          rootMarkers = { '.git/' },
+          languages = languages,
+        },
+        init_options = {
+          documentFormatting = true,
+          documentRangeFormatting = true,
+        },
+      })
+    else
+      require('lspconfig')[server_name].setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = servers[server_name],
+        filetypes = (servers[server_name] or {}).filetypes,
+      }
+    end
   end,
 }
 
