@@ -1,0 +1,13 @@
+# theme = "onelight"
+# theme = "onedark"
+
+[editor]
+text-width = 85
+
+[editor.whitespace.render]
+space = "all"
+nbsp = "all"
+tab = "all"
+
+[editor.indent-guides]
+render = true
