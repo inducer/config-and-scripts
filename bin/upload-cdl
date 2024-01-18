@@ -1,7 +1,10 @@
 #! /bin/bash
 set -eo pipefail
 
-source ~/myvenv/bin/activate
+VENV_ACT="$HOME/myvenv/bin/activate"
+if test -x $VENV_ACT; then
+        source "$VENV_ACT"
+fi
 if test "$1" = ""; then
         FN="$(date +%Y-%m-%d.toml)"
 else
@@ -12,7 +15,7 @@ if test -f "$FN"; then
 else
         upload-cdl-halfsheet template > "$FN"
 fi
-vim "$FN"
+"$EDITOR" "$FN"
 echo "Hit Enter if ready to upload, otherwise ^C."
 read UPLOAD
 upload-cdl-halfsheet --bb-url https://bb.tiker.net --bb-key "$(cat ~/.baby-buddy-api-key)" upload "$FN"
