@@ -24,7 +24,9 @@ PACKAGES=(
   mlocate pwgen
   libgmp-dev libmpfr-dev
   libpq-dev libjemalloc-dev
-  vim-gtk3 neovim emacs exuberant-ctags micro gedit aspell-de aspell-en
+  vim-gtk3 neovim emacs exuberant-ctags micro gedit
+  efm-langserver
+  aspell-de aspell-en
   python3-psutil python3-yaml python3-websockets
   net-tools acl
   pypy3 pypy3-dev
