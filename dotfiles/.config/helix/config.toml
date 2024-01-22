@@ -11,3 +11,6 @@ tab = "all"
 
 [editor.indent-guides]
 render = true
+
+[keys.insert]
+"C-[" = "normal_mode"
