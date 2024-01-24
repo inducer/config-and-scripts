@@ -46,7 +46,66 @@
 (define-abbrev-table 'fundamental-mode-abbrev-table '())
 
 (define-abbrev-table 'global-abbrev-table
-  '(
+  '( 
+("fintake" "Thanks for your message.
+
+I have entered your email below into FAIR and noted that you have
+requested an appeal; there is no need to email everybody on this email
+chain in the future.
+
+I infer from your email that you would like to appeal both the finding
+and the sanction.
+
+Let me start by saying that you of course have every right to appeal the
+instructor's decision. However I will note that I do not think
+your chances successfully appealing this case are particularly
+high. What has been imposed on you is the standard sanction for academic
+integrity infractions in CS, see for example [1]. The student code
+contains no wording to suggest that facilitation is to be viewed as a
+lesser infraction.  The student code *does* provide that 'Careless
+conduct that results in an infraction should be sanctioned less severely
+than intentional conduct.' If I understand correctly, your argument for
+a reduced sanction would rest on your emailing your solutions being
+viewed as 'careless'. It may be helpful for you to understand that
+typical behavior that appeals committees have agreed are careless are
+things like failing to lock one's screen when visiting the bathroom or
+inadvertently leaving a Github repository set to 'public'. By
+comparison, your emailing of solutions means you directly facilitated
+the infraction. If any of this changes your view of your requested
+appeal, please do let me know.
+
+If you decide to proceed, please do upload any evidence you have to
+the FAIR system ahead of the hearing, so that the committee members
+have time to consider it.
+
+A note on my role here: I am telling you these things to help prepare
+for your hearing and better understand the process. I have no power to
+adjudicate your case, this is the job of the hearing committee. My role
+is to serve as a point of contact as well as assemble committees and
+schedule hearings. As such, you should not feel like you need to respond
+to any concerns I raise above; instead, you should think about how to
+address them if/when they come up in your hearing. If you have questions
+about the student code, the process, or any of the points I raise, I
+would of course be more than happy to answer.
+
+The appeal process takes place via FAIR. It will involve a set of
+faculty and a student peer to create a committee to hear your case. Note
+we are following the process defined in the Student Code
+
+https://studentcode.illinois.edu/article1/part4/1-405/
+
+You will hear from me via email shortly to arrange an appeal
+hearing. You will have at least 1 week notice (5 business days).
+The hearing will take place at least 2 weeks from today.
+
+Expect the hearing to take place via Zoom. While the open portion of
+many appeals hearings concludes in about 30 minutes, make sure to
+allow at least 60 minutes in case things run long.
+
+Andreas
+Chair, CS Academic Appeals
+
+[1] https://cs.illinois.edu/academics/honor-code" nil 0)
     ("ugrad" "Thanks for your interest! Could you send a CV? What is your preparation
 in terms of math, and in terms of programming? Are you more interested
 in high performance, or in numerics? Do you have any code on Github that
