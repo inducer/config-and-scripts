@@ -1,13 +1,25 @@
-# theme = "onelight"
-# theme = "onedark"
+theme = "catppuccin_frappe"
 
 [editor]
 text-width = 85
+rulers = [85]
+cursorline = true
+cursorcolumn = true
+bufferline = "multiple"
+color-modes = true
 
 [editor.whitespace.render]
 space = "all"
 nbsp = "all"
 tab = "all"
+
+[editor.statusline]
+center = ["version-control"]
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
 
 [editor.indent-guides]
 render = true
@@ -16,4 +28,4 @@ render = true
 "C-[" = "normal_mode"
 
 [keys.select]
-"C-[" = "normal_mode"     
+"C-[" = "normal_mode"
