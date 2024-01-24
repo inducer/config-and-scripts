@@ -84,7 +84,7 @@ PACKAGES=(
 
   notmuch notmuch-git libnotmuch-dev
 
-  firefox firefox-l10n-de chromium
+  firefox firefox-l10n-de chromium epiphany-browser
 
   # for pop shell
   node-typescript
