@@ -48,7 +48,7 @@ notmuch tag +gitlab +ci -- 'tag:inbox from:gitlab ("pipeline has been fixed" or 
 notmuch tag +element --  'tag:inbox and from:"friendly element home server" and from:inform@tiker.net and subject:"you have"'
 notmuch tag +fair -inbox -- tag:inbox from:fair@engr.illinois.edu "department notice"      
 notmuch tag -inbox -- tag:inbox django invalid external http_host 
-notmuch tag -inbox +spam -- tag:inbox mathem apotheke tfrei rezep
+notmuch tag -inbox +spam -- tag:inbox mathem apotheke "(mann or manneskraft)"
 
 ~/bin/unsnooze-mail
 
