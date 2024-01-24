@@ -18,7 +18,7 @@ PACKAGES=(
   transmission xsel
   zsh
   moreutils gawk
-  tig subversion mercurial git-lfs gh git-absorb git-autofixup git-delta repo meld
+  tig subversion mercurial git-lfs gh glab git-absorb git-autofixup git-delta repo meld
   qgit
   curl
   mlocate pwgen
