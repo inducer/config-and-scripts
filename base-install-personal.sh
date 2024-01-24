@@ -52,7 +52,7 @@ PACKAGES=(
   ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind
   build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui
   gcc-multilib
-  llvm-dev libclang-dev gdb strace ltrace valgrind
+  llvm-dev libclang-dev ispc gdb strace ltrace valgrind
   libblas-dev liblapack-dev libopenblas-dev
   opensc-pkcs11
   libboost-all-dev
