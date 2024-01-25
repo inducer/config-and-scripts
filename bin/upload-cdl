@@ -2,7 +2,7 @@
 set -eo pipefail
 
 VENV_ACT="$HOME/myvenv/bin/activate"
-if test -x $VENV_ACT; then
+if test -f $VENV_ACT; then
         source "$VENV_ACT"
 fi
 if test "$1" = ""; then
