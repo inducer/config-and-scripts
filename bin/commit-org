@@ -8,7 +8,7 @@ function debuglog()
 }
 
 MARKERDIR="$HOME/.cache"
-mkdir -p $MARKERDIR
+mkdir -p "$MARKERDIR"
 
 TODAY="$(date +%Y-%m-%d)"
 YESTERDAY="$(date +%Y-%m-%d --date=yesterday)"
@@ -39,7 +39,7 @@ else
 
   eval "$(ssh-agent)"
   trap "kill $SSH_AGENT_PID" EXIT
-  ssh-add $HOME/.ssh/id_org-autopush
+  ssh-add "$HOME/.ssh/id_org-autopush"
   git push
   touch "$TODAY_PUSHEDFILE"
 fi
