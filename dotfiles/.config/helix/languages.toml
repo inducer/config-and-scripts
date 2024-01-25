@@ -1,3 +1,10 @@
+[language-server.efm]
+command = "efm-langserver"
+# config.documentFormatting = true
+
 [[language]]
 name = "python"
-language-servers = ["pyright"]
+language-servers = [
+  "efm",
+  "pyright"
+]
