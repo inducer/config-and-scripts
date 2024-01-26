@@ -23,9 +23,10 @@ if test -f "$TODAY_COMMITTEDFILE"; then
   debuglog "$TODAY_COMMITTEDFILE exists, not committing"
 else
   debuglog "$TODAY_COMMITTEDFILE does not exist, committing"
-  rm -f "$YESTERDAY_COMMITTEDFILE"
 
-  debuglog "deleting $YESTERDAY_COMMITTEDFILE"
+  rm -f "$YESTERDAY_COMMITTEDFILE"
+  debuglog "deleted $YESTERDAY_COMMITTEDFILE"
+
   git add -A
   git commit -m "Automatic commit: $(date)"
   touch "$TODAY_COMMITTEDFILE"
