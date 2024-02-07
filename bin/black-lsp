@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+TOOLPATH="$HOME/pack/vscode-black-formatter/bundled/tool"
+export PYTHONPATH="$TOOLPATH:$PYTHONPATH"
+
+source ~/src/env-3.12/bin/activate
+exec python $TOOLPATH/lsp_server.py "$@"

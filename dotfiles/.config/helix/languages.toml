@@ -2,9 +2,19 @@
 command = "efm-langserver"
 # config.documentFormatting = true
 
+[language-server.ruff]
+command = "ruff-lsp"
+
+[language-server.black-lsp]
+command = "black-lsp"
+args = ["--stdio"]
+config = {}
+
 [[language]]
 name = "python"
 language-servers = [
-  "efm",
-  "pyright"
+  # "efm",
+  "ruff",
+  "pyright",
+  "black-lsp"
 ]
