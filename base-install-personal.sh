@@ -25,7 +25,7 @@ PACKAGES=(
   libgmp-dev libmpfr-dev
   libpq-dev libjemalloc-dev
   vim-gtk3 neovim emacs exuberant-ctags micro gedit
-  efm-langserver
+  efm-langserver clangd
   aspell-de aspell-en
   python3-psutil python3-yaml python3-websockets
   net-tools acl
