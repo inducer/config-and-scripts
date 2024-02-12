@@ -25,6 +25,9 @@ select = "underline"
 [editor.indent-guides]
 render = true
 
+[editor.lsp]
+display-messages = true
+
 [keys.insert]
 "C-[" = "normal_mode"
 
