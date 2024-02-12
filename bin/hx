@@ -1,0 +1,15 @@
+#! /bin/bash
+
+set -eo pipefail
+
+mkdir -p "$HOME/.config/helix/themes"
+
+if [[ $TERMINAL_LIGHTNESS = light ]]; then
+  THEME=catppuccin_latte
+else
+  THEME=catppuccin_frappe
+fi
+
+ln -sf "$HOME/pack/helix/runtime/themes/$THEME.toml" "$HOME/.config/helix/themes/mytheme.toml"
+
+exec "$HOME/.cargo/bin/hx" "$@"
