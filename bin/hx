@@ -10,7 +10,7 @@ else
   THEME=catppuccin_frappe
 fi
 
-if ! [[ -d "$HOME/.config/helix/runtime ]]; then
+if ! [[ -d "$HOME/.config/helix/runtime" ]]; then
   echo "*** helix runtime path not set. Run the following in the helix source tree:"
   echo "ln -Ts $PWD/runtime ~/.config/helix/runtime"
   exit 1
