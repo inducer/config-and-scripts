@@ -18,4 +18,4 @@ fi
 
 ln -sf "$HOME/.config/helix/runtime/themes/$THEME.toml" "$HOME/.config/helix/themes/mytheme.toml"
 
-pkill hx -USR1
+pkill -H hx -USR1
