@@ -1,0 +1,21 @@
+#! /bin/bash
+
+set -eo pipefail
+
+mkdir -p "$HOME/.config/helix/themes"
+
+if [[ $TERMINAL_LIGHTNESS = light ]]; then
+  THEME=catppuccin_latte
+else
+  THEME=catppuccin_frappe
+fi
+
+if ! [[ -d "$HOME/.config/helix/runtime" ]]; then
+  echo "*** helix runtime path not set. Run the following in the helix source tree:"
+  echo "ln -Ts $PWD/runtime ~/.config/helix/runtime"
+  exit 1
+fi
+
+ln -sf "$HOME/.config/helix/runtime/themes/$THEME.toml" "$HOME/.config/helix/themes/mytheme.toml"
+
+pkill hx -USR1
