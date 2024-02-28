@@ -96,8 +96,8 @@ PACKAGES=(
 
   imagemagick graphicsmagick  heif-thumbnailer heif-gdk-pixbuf libheif-examples
 
-  flatpak
-)
+  flatpak adb fastboot
+  )
 
 with_echo apt install aptitude "${PACKAGES[@]}"
 
