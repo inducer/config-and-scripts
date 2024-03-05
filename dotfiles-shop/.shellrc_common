@@ -30,7 +30,6 @@ alias pt='python `which py.test`'
 #alias open="kioclient exec"
 alias open="xdg-open"
 alias lab="ipython --pylab"
-alias bat='watch -n 1 laptop-stats'
 alias ipy3='BROWSER="chromium" python3 $(which jupyter) notebook'
 alias mv='mv -i'
 alias cp='cp -i'
@@ -69,7 +68,7 @@ aconda()
   local shell_type="$(ps o command= $$)"
   shell_type="${shell_type##-}"
   shell_type="$(basename "$shell_type")"
-  eval "$(PYTHONWARNINGS= $HOME/shared/pack/miniforge3/bin/conda shell.${shell_type} hook)"
+  eval "$(PYTHONWARNINGS= $HOME/shared/pack/mambaforge/bin/conda shell.${shell_type} hook)"
 }
 ce3()
 {
@@ -155,3 +154,9 @@ export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$HOM
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$HOME/shared/pool/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/shared/pool/lib
+
+export RUSTUP_HOME=$HOME/shared/.rustup
+export CARGO_HOME=$HOME/shared/.cargo
+
+
+source "$CARGO_HOME/env"
