@@ -12,6 +12,10 @@
 (add-to-list 'load-path (concat dotfiles-dir "my-packages"))
 
 ; {{{ customize stuff
+
+; org-fold-core-style = overlays avoids a bug where subtrees fail to open.
+; https://github.com/bastibe/org-journal/issues/392#issuecomment-1198274605
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -150,6 +154,7 @@
       "* TODO %i%?\12SCHEDULED: %t DEADLINE: %t\12%a")))
  '(org-capture-use-agenda-date t)
  '(org-enforce-todo-checkbox-dependencies t)
+ '(org-fold-core-style 'overlays)
  '(org-format-latex-header
    "\\documentclass{article}\12\\usepackage[usenames]{color}\12[PACKAGES]\12[DEFAULT-PACKAGES]\12\\pagestyle{empty}             % do not remove\12% The settings below are copied from fullpage.sty\12\\setlength{\\textwidth}{\\paperwidth}\12\\addtolength{\\textwidth}{-3cm}\12\\setlength{\\oddsidemargin}{1.5cm}\12\\addtolength{\\oddsidemargin}{-2.54cm}\12\\setlength{\\evensidemargin}{\\oddsidemargin}\12\\setlength{\\textheight}{\\paperheight}\12\\addtolength{\\textheight}{-\\headheight}\12\\addtolength{\\textheight}{-\\headsep}\12\\addtolength{\\textheight}{-\\footskip}\12\\addtolength{\\textheight}{-3cm}\12\\setlength{\\topmargin}{1.5cm}\12\\addtolength{\\topmargin}{-2.54cm}\12\\usepackage{tikz}\12\\usetikzlibrary{calc}\12\\usetikzlibrary{positioning}\12\\usetikzlibrary{shapes.geometric}\12\\usetikzlibrary{shapes.arrows}\12\\usetikzlibrary{shadows}\12\12\\newcommand{\\abs}[1]{\\left| #1 \\right|}\12\\newcommand{\\norm}[1]{\\left\\| #1 \\right\\|}\12\\newcommand{\\ip}[1]{\\left\\langle #1, \\right\\rangle}\12\\newcommand{\\mathd}{\\mathrm{d}}\12\12\\let\\B=\\mathbf\12\\let\\b=\\mathbf\12\\let\\op=\\operatorname")
  '(org-format-latex-options
