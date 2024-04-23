@@ -50,6 +50,7 @@ PACKAGES=(
   likwid cpufrequtils linux-perf time numactl libunwind-dev
   ffmpeg ffmpegthumbnailer vlc
   ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind
+  libtbb-dev
   build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui
   gcc-multilib
   llvm-dev libclang-dev ispc gdb strace ltrace valgrind
