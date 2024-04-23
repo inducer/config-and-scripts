@@ -4,7 +4,7 @@ set -eo pipefail
 
 function check_snapshots()
 {
-    restic mount ~/mnt &
+    restic mount ~/mnt -H "$1" &
     mount_pid="$!"
 
     trap 'kill -INT $mount_pid || true' RETURN
@@ -18,6 +18,7 @@ function check_snapshots()
             ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/gitlab \
             ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/discourse \
             ~/mnt/snapshots/latest/mnt/aux/autopostgresqlbackup/daily/relate2 \
+            ~/mnt/snapshots/latest/storage/autopostgresqlbackup/daily/gitlab \
             ; do
         if test -d "$dir"; then
             ls --color -lah "$dir"
@@ -40,14 +41,22 @@ machine=laptop
 echo "------------------------------------------------------"
 echo "$machine"
 echo "------------------------------------------------------"
-check_snapshots
+check_snapshots "$(hostname)"
 
 unset RESTIC_PASSWORD_FILE
 
-for machine in marten relate scicomp-discourse; do
+for backupname in server/marten server/ermine grison relate scicomp-discourse; do
     echo "------------------------------------------------------"
-    echo "$machine"
+    echo "$backupname"
     echo "------------------------------------------------------"
+    if [[ $backupname == */* ]]; then
+        reponame="$(dirname "$backupname")"
+        machinename="$(basename "$backupname")"
+    else
+        reponame="$backupname"
+        machinename="$backupname"
+    fi
+
     RESTIC_REPO_ACCESS_PASSWORD=""
     while test -z "$RESTIC_REPO_ACCESS_PASSWORD" ; do
         read -p "Repo REST access password: " -r -s RESTIC_REPO_ACCESS_PASSWORD
@@ -60,9 +69,9 @@ for machine in marten relate scicomp-discourse; do
     done
     export RESTIC_PASSWORD
 
-    export RESTIC_REPOSITORY="rest:https://ak$machine:${RESTIC_REPO_ACCESS_PASSWORD}@piepsel.d.tiker.net:8000/ak$machine/$machine"
+    export RESTIC_REPOSITORY="rest:https://ak$reponame:${RESTIC_REPO_ACCESS_PASSWORD}@piepsel.d.tiker.net:8000/ak$reponame/$reponame"
 
-    check_snapshots
+    check_snapshots "$machinename"
 done
 
 
