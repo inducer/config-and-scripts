@@ -43,7 +43,7 @@ PACKAGES=(
   pandoc
   mc
   graphviz inkscape gnucash audacity gimp krita
-  gmsh occt-draw occt-misc libxi-dev rapidjson-dev freecad
+  gmsh occt-draw occt-misc libxi-dev rapidjson-dev
   libocct-{ocaf,data-exchange,draw,foundation,modeling-algorithms,modeling-data,visualization}-dev
   libopenmpi-dev openmpi-common mpich libmpich-dev
   systemd-coredump
