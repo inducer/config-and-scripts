@@ -17,7 +17,7 @@ PACKAGES=(
   tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs sshuttle
   transmission xsel
   zsh
-  moreutils gawk bat
+  moreutils gawk bat mutt
   tig subversion mercurial git-lfs gh glab git-absorb git-autofixup git-delta repo meld
   qgit
   curl
