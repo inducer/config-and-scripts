@@ -34,8 +34,9 @@ function check_snapshots()
     trap - RETURN
 }
 
-export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklaptop/laptop"
+export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
 export RESTIC_PASSWORD_FILE=$HOME/.restic-password
+export RESTIC_CACERT=$HOME/.restic-public-key.pem
 
 machine=laptop
 echo "------------------------------------------------------"
@@ -69,7 +70,7 @@ for backupname in server/marten server/ermine grison relate scicomp-discourse; d
     done
     export RESTIC_PASSWORD
 
-    export RESTIC_REPOSITORY="rest:https://ak$reponame:${RESTIC_REPO_ACCESS_PASSWORD}@piepsel.d.tiker.net:8000/ak$reponame/$reponame"
+    export RESTIC_REPOSITORY="rest:https://ak$reponame:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$reponame/$reponame"
 
     check_snapshots "$machinename"
 done
