@@ -122,7 +122,7 @@ def upload(args):
                 feedings.append({
                         "child": bb_kid_id,
                         "start": atime.isoformat(),
-                        "end": (atime+datetime.timedelta(minutes=10)).isoformat(),
+                        "end": (atime+datetime.timedelta(minutes=1)).isoformat(),
                         "type": "solid food",
                         "method": "parent fed",
                         "notes": (
