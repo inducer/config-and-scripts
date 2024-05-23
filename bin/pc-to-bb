@@ -1,0 +1,13 @@
+#! /bin/bash
+
+if test "$1" = ""; then
+	DATE="$(date "+%Y-%m-%d")"
+else
+	DATE="$1"
+fi
+
+exec ./upload-procare-to-bb \
+	--bb-url=https://bb.tiker.net \
+	--bb-key="$(cat ~/.baby-buddy-api-key )" \
+	--procare-key="$(cat ~/.procare-api-key )" \
+	upload "$DATE "--tag cdl

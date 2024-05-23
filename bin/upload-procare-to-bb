@@ -1,0 +1,208 @@
+#! /usr/bin/env python3
+
+import argparse
+import datetime
+from typing import Any, List
+from warnings import warn
+
+from babybuddy import JsonAPI, BabyBuddyAPI
+
+
+class ProcareAPI(JsonAPI):
+    auth_type = "Bearer"
+
+    def __init__(self, key: str,
+                 base_url: str = "https://api-school.procareconnect.com/api/web"
+             ) -> None:
+        super().__init__(base_url, key)
+
+    def kids(self):
+        return self._request("GET", "/parent/kids/").json()
+
+    def daily_activities(self,
+                         kid_id: str,
+                         date: datetime.date,
+                         ) -> List[Any]:
+        params = {"kid_id": kid_id}
+        if date is not None:
+            params["filters[daily_activity][date_to]"] = date.isoformat()
+        page = 1
+        result = []
+
+        while True:
+            params["page"] = str(page)
+            response = self._request(
+                 "GET", "/parent/daily_activities/",
+                 params=params).json()
+            resp_activities = response["daily_activities"]
+            resp_activities_date = [
+                act
+                for act in resp_activities
+                if act["activity_date"] == date.isoformat()
+            ]
+            result.extend(resp_activities_date)
+
+            if len(resp_activities_date) < len(resp_activities):
+                # We've exhausted the activities for the day, return.
+                return result
+
+            page += 1
+
+
+def upload(args):
+    bb_client = BabyBuddyAPI(args.bb_url, args.bb_key)
+    pc_client = ProcareAPI(args.procare_key)
+
+    date = datetime.date.fromisoformat(args.date)
+
+    bb_kids = bb_client.children()["results"]
+
+    from pprint import pprint
+
+    feedings = []
+    sleeps = []
+    changes = []
+    notes = []
+
+    default_tags = [] if not args.tag else list(args.tag)
+
+    for pc_kid in pc_client.kids()["kids"]:
+        pc_kid_id = pc_kid["id"]
+
+        bb_kid_id, = [
+            bb_kid["id"]
+            for bb_kid in bb_kids
+            if bb_kid["first_name"] == pc_kid["first_name"]
+            and bb_kid["last_name"] == pc_kid["last_name"]
+            ]
+
+        activities = pc_client.daily_activities(pc_kid_id, date=date)
+
+        activities = sorted(
+            activities,
+            key=lambda act: datetime.datetime.fromisoformat(act["activity_time"]))
+
+        last_nap_start = None
+        for act in activities:
+            atype = act["activity_type"]
+            atime = datetime.datetime.fromisoformat(act["activity_time"])
+            data = act["data"]
+
+            pc_id = f"\n(ProCare event ID: {act['id']})"
+            if atype == "sign_in_activity":
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": f"Signed in.{pc_id}",
+                                 "time": atime.isoformat(),
+                                 "tags": ["signin"] + default_tags,
+                             })
+            elif atype == "sign_out_activity":
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": f"Signed out.{pc_id}",
+                                 "time": atime.isoformat(),
+                                 "tags": ["signin"] + default_tags,
+                             })
+            elif atype == "bathroom_activity":
+                changes.append({
+                        "child": bb_kid_id,
+                        "time": atime.isoformat(),
+                        "wet": "Wet" in data["sub_type"],
+                        "solid": "BM" in data["sub_type"],
+                        "tags": (
+                            default_tags
+                            + ["diapercream"] if data['diaper_cream'] else []),
+                        "notes": (
+                            f"{act['comment']}"
+                            f"{' (diaper cream)' if data['diaper_cream'] else ''}"
+                            f"{pc_id}".strip()
+                        )
+                    })
+            elif atype == "meal_activity":
+                feedings.append({
+                        "child": bb_kid_id,
+                        "start": atime.isoformat(),
+                        "end": (atime+datetime.timedelta(minutes=10)).isoformat(),
+                        "type": "solid food",
+                        "method": "parent fed",
+                        "notes": (
+                            f"{data['type']}. {data['desc']} {act['comment']}"
+                            f"(Quantity: {data['quantity']}){pc_id}"),
+                        "tags": default_tags,
+                        })
+            elif atype == "nap_activity":
+                if data["start_time"]:
+                    assert not data["end_time"]
+                    if last_nap_start is not None:
+                        raise ValueError("two nap starts back-to-back")
+                    else:
+                        last_nap_start = (
+                            datetime.datetime.fromisoformat(data["start_time"]))
+                elif data["end_time"]:
+                    assert not data["start_time"]
+
+                    if last_nap_start is None:
+                        warn("nap ended without starting")
+                    else:
+                        sleeps.append({
+                                        "child": bb_kid_id,
+                                        "start": last_nap_start.isoformat(),
+                                        "end":  datetime.datetime.fromisoformat(
+                                                data["end_time"]).isoformat(),
+                                        "nap": True,
+                                        "tags": default_tags,
+                                        "notes": (
+                                            f"{data['desc']} {act['comment']}"
+                                            f"{pc_id}").strip()
+                                        })
+                        last_nap_start = None
+                else:
+                    raise ValueError("nap without start or end")
+            else:
+                raise ValueError(f"activity type not understood: {atype}")
+
+        if last_nap_start is not None:
+            raise ValueError("unended nap")
+
+        print(
+              f"{len(feedings)} feedings, {len(sleeps)} sleeps, "
+              f"{len(changes)} changes, {len(notes)} notes.")
+        if not args.dry_run:
+            for f in feedings:
+                bb_client.add_feeding(f)
+            for s in sleeps:
+                bb_client.add_sleep(s)
+            for c in changes:
+                bb_client.add_change(c)
+            for n in notes:
+                bb_client.add_note(n)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+            description="Transfer daycare information from ProCare(tm) to BabyBuddy")
+    parser.add_argument("--bb-url", metavar="URL", required=True)
+    parser.add_argument("--bb-key", metavar="KEY", required=True)
+    parser.add_argument("--procare-key", metavar="KEY", required=True)
+
+    subp = parser.add_subparsers()
+
+    parser_upload = subp.add_parser("upload")
+    parser_upload.add_argument("--tag", metavar="TAG", nargs="*")
+    parser_upload.add_argument("-n", "--dry-run", action="store_true")
+    parser_upload.add_argument("date", metavar="YYYY-MM-DD")
+    parser_upload.set_defaults(func=upload)
+
+    args = parser.parse_args()
+
+    if not hasattr(args, "func"):
+        parser.print_usage()
+        import sys
+        sys.exit(1)
+
+    import sys
+    sys.exit(args.func(args))
+
+
+if __name__ == "__main__":
+    main()
