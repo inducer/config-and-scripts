@@ -110,7 +110,7 @@ def upload(args):
                         "solid": "BM" in data["sub_type"],
                         "tags": (
                             default_tags
-                            + ["diapercream"] if data['diaper_cream'] else []),
+                            + (["diapercream"] if data['diaper_cream'] else [])),
                         "notes": (
                             f"{act['comment']}"
                             f"{' (diaper cream)' if data['diaper_cream'] else ''}"
