@@ -133,10 +133,11 @@ def upload(args):
                 if data["start_time"]:
                     assert not data["end_time"]
                     if last_nap_start is not None:
-                        raise ValueError("two nap starts back-to-back")
-                    else:
-                        last_nap_start = (
-                            datetime.datetime.fromisoformat(data["start_time"]))
+                        warn("two nap starts back-to-back, ignoring earlier: "
+                             f"{last_nap_start}")
+                    last_nap_start = (
+                        datetime.datetime.fromisoformat(data["start_time"]))
+
                 elif data["end_time"]:
                     assert not data["start_time"]
 
