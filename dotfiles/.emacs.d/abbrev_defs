@@ -53,26 +53,25 @@ I have entered your email below into FAIR and noted that you have
 requested an appeal; there is no need to email everybody on this email
 chain in the future.
 
-I infer from your email that you would like to appeal both the finding
-and the sanction.
+I infer from your email that you would like to appeal the sanction (but
+not the finding) in your academic integrity case. Please let me know if
+this is incorrect.
+
+Next up, you must choose one of the grounds provided for by Section
+1-405c of the student code [1]. I infer from your message that you would
+like to use ground (3): 'Any sanctions imposed were not appropriate for
+the violation(s).' Again please let me know if this is not correct.
 
 Let me start by saying that you of course have every right to appeal the
 instructor's decision. However I will note that I do not think
 your chances successfully appealing this case are particularly
 high. What has been imposed on you is the standard sanction for academic
-integrity infractions in CS, see for example [1]. The student code
-contains no wording to suggest that facilitation is to be viewed as a
-lesser infraction.  The student code *does* provide that 'Careless
-conduct that results in an infraction should be sanctioned less severely
-than intentional conduct.' If I understand correctly, your argument for
-a reduced sanction would rest on your emailing your solutions being
-viewed as 'careless'. It may be helpful for you to understand that
-typical behavior that appeals committees have agreed are careless are
-things like failing to lock one's screen when visiting the bathroom or
-inadvertently leaving a Github repository set to 'public'. By
-comparison, your emailing of solutions means you directly facilitated
-the infraction. If any of this changes your view of your requested
-appeal, please do let me know.
+integrity infractions in CS, see for example [2]. And in your appeal
+request, you seem to readily admit to behavior that qualifies as a
+violation of academic integrity. As such, I am not optimistic that you
+will find a hearing committee that is sympathetic to your cause. If any
+of this changes your view of your requested appeal, please do let me
+know.
 
 If you decide to proceed, please do upload any evidence you have to
 the FAIR system ahead of the hearing, so that the committee members
@@ -105,7 +104,8 @@ allow at least 60 minutes in case things run long.
 Andreas
 Chair, CS Academic Appeals
 
-[1] https://cs.illinois.edu/academics/honor-code" nil 0)
+[1] https://studentcode.illinois.edu/article1/part4/1-405/
+[2] https://cs.illinois.edu/academics/honor-code" nil 0)
     ("ugrad" "Thanks for your interest! Could you send a CV? What is your preparation
 in terms of math, and in terms of programming? Are you more interested
 in high performance, or in numerics? Do you have any code on Github that
