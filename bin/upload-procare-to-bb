@@ -50,6 +50,21 @@ class ProcareAPI(JsonAPI):
             page += 1
 
 
+def grab_photo(date: datetime.date, photo_url: str) -> None:
+    import requests
+    response = requests.get(photo_url)
+    response.raise_for_status()
+
+    from urllib.parse import urlparse
+    bn = os.path.basename(urlparse(photo_url).path)
+    fn = os.path.expanduser("~/nc/instant-upload/"
+                       f"{date.year}/{date.month:02d}/{bn}")
+
+    with open(fn, 'wb') as f:
+        f.write(response.content)
+    print(f"NEW PHOTO DOWNLOADED: {fn}")
+
+
 def upload(args):
     bb_client = BabyBuddyAPI(args.bb_url, args.bb_key)
     pc_client = ProcareAPI(args.procare_key)
@@ -158,20 +173,9 @@ def upload(args):
                         last_nap_start = None
                 else:
                     raise ValueError("nap without start or end")
+
             elif atype == "photo_activity":
-                import requests
-                photo_url = act["photo_url"]
-                response = requests.get(photo_url)
-                response.raise_for_status()
-
-                from urllib.parse import urlparse
-                bn = os.path.basename(urlparse(photo_url).path)
-                fn = os.path.expanduser("~/nc/instant-upload/"
-                                   f"{date.year}/{date.month:02d}/{bn}")
-
-                with open(fn, 'wb') as f:
-                    f.write(response.content)
-                print(f"NEW PHOTO DOWNLOADED: {fn}")
+                grab_photo(date, act["photo_url"])
 
             else:
                 raise ValueError(f"activity type not understood: {atype}")
