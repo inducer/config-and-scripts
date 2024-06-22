@@ -60,6 +60,10 @@ def grab_photo(date: datetime.date, photo_url: str) -> None:
     fn = os.path.expanduser("~/nc/instant-upload/"
                        f"{date.year}/{date.month:02d}/{bn}")
 
+    if os.path.exists(fn):
+        print(f"ALREADY EXISTS? refusing to overwrite {fn}")
+        return
+    
     with open(fn, 'wb') as f:
         f.write(response.content)
     print(f"NEW PHOTO DOWNLOADED: {fn}")
