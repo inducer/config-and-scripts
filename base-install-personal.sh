@@ -65,7 +65,7 @@ PACKAGES=(
   npm yarnpkg
   golang
   octave paraview
-  qemu qemu-user-static virtualbox-qt
+  qemu-system qemu-user-static virtualbox-qt
   libelf-dev dwarves
   dconf-editor
   restic
