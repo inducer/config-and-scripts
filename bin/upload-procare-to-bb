@@ -177,6 +177,24 @@ def upload(args):
             elif atype == "photo_activity":
                 grab_photo(date, act["photo_url"])
 
+            elif atype == "incident_activity":
+                subact = act["activiable"]
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": (
+                                     "INCIDENT REPORTED\n"
+                                     f"NATURE OF INJURY: {subact['injury_nature']}\n"
+                                     f"PARENT NOTIFIED: {subact['notify_parent']}\n"
+                                     f"FIRST AID: {subact['first_aid']}\n"
+                                     f"COMMENT: {subact['other_comments']}"
+                                     f"{pc_id}"),
+                                 "time": atime.isoformat(),
+                                 "tags": ["incident"] + default_tags,
+                             })
+
+                if subact["photo_url"]:
+                    grab_photo(date, subact["photo_url"])
+
             else:
                 raise ValueError(f"activity type not understood: {atype}")
 
