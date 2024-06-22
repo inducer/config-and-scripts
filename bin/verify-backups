@@ -19,6 +19,7 @@ function check_snapshots()
             ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/discourse \
             ~/mnt/snapshots/latest/mnt/aux/autopostgresqlbackup/daily/relate2 \
             ~/mnt/snapshots/latest/storage/autopostgresqlbackup/daily/gitlab \
+            ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/hedgedoc \
             ; do
         if test -d "$dir"; then
             ls --color -lah "$dir"
