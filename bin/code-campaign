@@ -38,11 +38,10 @@ for prj in \
         logpyle \
         mirgecom \
         ; do
+    REPO_SITE="https://github.com"
     if test "$prj" = "mirgecom" || test "$prj" = "logpyle"; then
-        REPO_SITE="https://github.com"
         PRJ_PATH="illinois-ceesd/$prj"
     else
-        REPO_SITE="https://gitlab.tiker.net"
         PRJ_PATH="inducer/$prj"
     fi
 
@@ -68,7 +67,7 @@ for prj in \
     echo "$prj: $CHECKOUT_PATH"
     #FILENAME="doc/conf.py"
     #MYURL="$(eval echo "${EDIT_URL}")"
-    #gio open "$MYURL"
+    gio open "$REPO_SITE/$PRJ_PATH/settings/access"
 done
 
 # vim: sw=4
