@@ -99,6 +99,9 @@ PACKAGES=(
   imagemagick graphicsmagick  heif-thumbnailer heif-gdk-pixbuf libheif-examples
 
   flatpak adb fastboot
+
+  # for appimages
+  libfuse2
   )
 
 with_echo apt install aptitude "${PACKAGES[@]}"
