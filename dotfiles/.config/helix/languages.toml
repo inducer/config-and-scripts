@@ -12,5 +12,4 @@ language-servers = [
   # "efm",
   "ruff",
   "pyright",
-  "black-lsp"
 ]
