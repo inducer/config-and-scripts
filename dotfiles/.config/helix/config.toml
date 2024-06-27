@@ -1,8 +1,8 @@
 theme = "mytheme"
 
 [editor]
-text-width = 85
-rulers = [85]
+text-width = 88
+rulers = [88]
 cursorline = true
 cursorcolumn = true
 bufferline = "multiple"
