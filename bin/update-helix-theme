@@ -16,6 +16,12 @@ if ! [[ -d "$HOME/.config/helix/runtime" ]]; then
   exit 1
 fi
 
-ln -sf "$HOME/.config/helix/runtime/themes/$THEME.toml" "$HOME/.config/helix/themes/mytheme.toml"
+MYTHEME="$HOME/.config/helix/themes/mytheme.toml"
+rm -f "$MYTHEME"
+
+cat <<EOF > "$MYTHEME"
+inherits = "$THEME"
+"ui.virtual.trailing_whitespace" = { fg = "base", bg = "red" }
+EOF
 
 pkill -H hx -USR1
