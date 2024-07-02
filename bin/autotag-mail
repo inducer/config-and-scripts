@@ -49,6 +49,7 @@ notmuch tag +element --  'tag:inbox and from:"friendly element home server" and 
 notmuch tag +fair -inbox -- tag:inbox from:fair@engr.illinois.edu "department notice"
 notmuch tag -inbox -- tag:inbox django invalid external http_host
 notmuch tag -inbox +spam -- tag:inbox mathem apotheke "(mann or manneskraft)"
+notmuch tag -inbox +dmarc -- tag:inbox to:inform+dmarc@tiker.net
 
 ~/bin/unsnooze-mail
 
