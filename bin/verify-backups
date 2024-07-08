@@ -47,7 +47,7 @@ check_snapshots "$(hostname)"
 
 unset RESTIC_PASSWORD_FILE
 
-for backupname in server/marten server/ermine grison relate scicomp-discourse; do
+for backupname in server/ermine grison relate scicomp-discourse; do
     echo "------------------------------------------------------"
     echo "$backupname"
     echo "------------------------------------------------------"
