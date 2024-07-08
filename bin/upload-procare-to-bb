@@ -63,7 +63,7 @@ def grab_photo(date: datetime.date, photo_url: str) -> None:
     if os.path.exists(fn):
         print(f"ALREADY EXISTS? refusing to overwrite {fn}")
         return
-    
+
     with open(fn, 'wb') as f:
         f.write(response.content)
     print(f"NEW PHOTO DOWNLOADED: {fn}")
@@ -180,6 +180,16 @@ def upload(args):
 
             elif atype == "photo_activity":
                 grab_photo(date, act["photo_url"])
+
+            elif atype == "note_activity":
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": (
+                                     f"{act['data']['desc']}"
+                                     f"{pc_id}"),
+                                 "time": atime.isoformat(),
+                                 "tags": ["note"] + default_tags,
+                             })
 
             elif atype == "incident_activity":
                 subact = act["activiable"]
