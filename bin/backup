@@ -41,7 +41,8 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/tmp" \
             --exclude "$HOME/.steam" \
             --exclude "$HOME/.local/share/Steam" \
-            --exclude "$HOME/.local/share/containers"
+            --exclude "$HOME/.local/share/containers" \
+            --exclude "$HOME/bulk/camprocess"
 fi
 
 # vim: shiftwidth=4
