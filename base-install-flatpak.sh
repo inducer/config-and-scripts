@@ -5,3 +5,4 @@ flatpak install com.github.flxzt.rnote
 flatpak install com.spotify.Client
 flatpak install com.github.tchx84.Flatseal
 flatpak install org.freecadweb.FreeCAD
+flatpak install no.mifi.losslesscut
