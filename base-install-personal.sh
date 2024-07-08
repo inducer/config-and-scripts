@@ -102,6 +102,15 @@ PACKAGES=(
 
   # for appimages
   libfuse2
+
+  # to build pygobject
+  libgirepository-1.0-dev
+
+  # to build the chat book
+  fonts-junicode
+
+  # e.g. so that Python builds have sqlite3 out of the box
+  libsqlite3-dev
   )
 
 with_echo apt install aptitude "${PACKAGES[@]}"
