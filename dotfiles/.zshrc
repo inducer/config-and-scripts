@@ -167,13 +167,22 @@ if [ $commands[gh] ]; then
   compdef _gh gh
 fi
 
-if test -d $HOME/pack/zsh-syntax-highlighting; then
-  . $HOME/pack/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif test -d $HOME/shared/pack/zsh-syntax-highlighting; then
-  . $HOME/shared/pack/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else
-  echo "zsh syntax highlighting is missing: https://github.com/zsh-users/zsh-syntax-highlighting.git"
-fi
+loadpkg()
+{
+  local pkgname="$1"
+  local pkgurl="$2"
+  if test -d "$HOME/pack/$pkgname"; then
+    . "$HOME/pack/$pkgname/$pkgname.zsh"
+  elif test -d "$HOME/shared/pack/$pkgname"; then
+    . "$HOME/shared/pack/$pkgname/$pkgname.zsh"
+  else
+    echo "$pkgname is missing: $pkgurl"
+  fi
+}
+
+loadpkg zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions.git"
+loadpkg zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+
 
 if test -d $HOME/pack/zsh-completions; then
   fpath=($HOME/pack/zsh-completions $fpath)
