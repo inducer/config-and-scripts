@@ -213,7 +213,16 @@ def upload(args):
                 raise ValueError(f"activity type not understood: {atype}")
 
         if last_nap_start is not None:
-            raise ValueError("unended nap")
+            sleeps.append({
+                            "child": bb_kid_id,
+                            "start": last_nap_start.isoformat(),
+                            "end":  (
+                                last_nap_start
+                                + datetime.timedelta(hours=1)).isoformat(),
+                            "nap": True,
+                            "tags": default_tags,
+                            "notes": "Nap not ended in ProCare. Assuming 1 hour."
+                            })
 
         print(
               f"{len(feedings)} feedings, {len(sleeps)} sleeps, "
