@@ -180,8 +180,9 @@ loadpkg()
   fi
 }
 
-loadpkg zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions.git"
-bindkey '^ ' autosuggest-accept
+# loadpkg zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions.git"
+# bindkey '^ ' autosuggest-accept
+# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#e0e0e0,bg=cyan,bold,underline"
 
 loadpkg zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 
