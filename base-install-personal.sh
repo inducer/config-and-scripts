@@ -37,7 +37,7 @@ PACKAGES=(
   flake8 python3-pep8-naming
   python3-dbg python3-venv python3-virtualenv python3-pip-whl
   python3.11-dbg python3.11-dev python3.11-venv python3-poetry
-  silversearcher-ag ripgrep fzf fd-find fdupes
+  silversearcher-ag ripgrep fzf fd-find
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
   texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk texlive-extra-utils
   chktex dvidvi fragmaster lacheck latexmk purifyeps texlive-luatex
