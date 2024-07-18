@@ -42,6 +42,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/.steam" \
             --exclude "$HOME/.local/share/Steam" \
             --exclude "$HOME/.local/share/containers" \
+            --exclude "$HOME/.local/share/gnome-boxes" \
             --exclude "$HOME/VirtualBox VMs" \
             --exclude "$HOME/bulk/camprocess"
 fi
