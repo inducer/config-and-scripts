@@ -30,6 +30,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/.local/share/notmuch/" \
             --exclude "$HOME/.cache" \
             --exclude "$HOME/.wine" \
+            --exclude "$HOME/.PlayOnLinux" \
             --exclude "$HOME/Downloads" \
             --exclude "$HOME/.var/app/*/cache" \
             --exclude "$HOME/.vim/plugged" \
