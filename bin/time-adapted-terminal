@@ -11,34 +11,48 @@ GNOME_COLOR_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme)"
 #if [[ ($HOUR -ge 6 && $HOUR -lt 20) && ! -e $HOME/.force-dark-terminal ]]; then
 if [[ "$GNOME_COLOR_SCHEME" == "'default'" && ! -e $HOME/.force-dark-terminal ]]; then
   export TERMINAL_LIGHTNESS="light"
-  TERMCOLORS=theme-brewer-light-v2
+  # TERMCOLORS=theme-brewer-light-v2
+  TERMCOLORS=catppuccin_latte
 else
   export TERMINAL_LIGHTNESS="dark"
-  TERMCOLORS=theme-solarized-dark
+  # TERMCOLORS=theme-solarized-dark
+  TERMCOLORS=catppuccin_frappe
+fi
+
+if ! test -d ~/.config/alacritty/themes; then
+  mkdir -p ~/.config/alacritty/themes
+  git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
 fi
 
 # (~/.config/alacritty/gen.sh)
 
 #exec konsole -p colors=$prof
 #exec gnome-terminal --profile="$prof" "$@"
-#alacritty "$@"
 
-KITTY_CONF_PATH=$HOME/.config/kitty
+cat > ~/.config/alacritty/alacritty.toml <<EOF
+import = [
+  "~/.config/alacritty/themes/themes/$TERMCOLORS.toml",
+  "~/.config/alacritty/base.toml",
+]
+EOF
+alacritty "$@"
 
-KITTY_HOST_CONF_FILE="$KITTY_CONF_PATH/kitty-$(hostname).conf"
-KITTY_EXTRA_CONF=""
+# KITTY_CONF_PATH=$HOME/.config/kitty
 
-if test -f "$KITTY_HOST_CONF_FILE"; then
-  KITTY_EXTRA_CONF="--config=$KITTY_HOST_CONF_FILE"
-fi
+# KITTY_HOST_CONF_FILE="$KITTY_CONF_PATH/kitty-$(hostname).conf"
+# KITTY_EXTRA_CONF=""
 
-CUSTOM_KITTY=$HOME/pack/kitty/kitty/launcher/kitty 
-if test -f "$CUSTOM_KITTY"; then
-  KITTY_EXE="$CUSTOM_KITTY"
-else
-  KITTY_EXE=kitty
-fi
-exec $KITTY_EXE \
-  --config="$KITTY_CONF_PATH/kitty.conf" \
-  --config="$KITTY_CONF_PATH/$TERMCOLORS.conf" \
-  $KITTY_EXTRA_CONF
+# if test -f "$KITTY_HOST_CONF_FILE"; then
+#   KITTY_EXTRA_CONF="--config=$KITTY_HOST_CONF_FILE"
+# fi
+
+# CUSTOM_KITTY=$HOME/pack/kitty/kitty/launcher/kitty
+# if test -f "$CUSTOM_KITTY"; then
+#   KITTY_EXE="$CUSTOM_KITTY"
+# else
+#   KITTY_EXE=kitty
+# fi
+# exec $KITTY_EXE \
+#   --config="$KITTY_CONF_PATH/kitty.conf" \
+#   --config="$KITTY_CONF_PATH/$TERMCOLORS.conf" \
+#   $KITTY_EXTRA_CONF
