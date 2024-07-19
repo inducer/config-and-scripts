@@ -58,7 +58,7 @@ PACKAGES=(
   libblas-dev liblapack-dev libopenblas-dev
   opensc-pkcs11
   libboost-all-dev
-  kitty
+  kitty alacritty
   maxima wxmaxima
   shellcheck
   bison flex
