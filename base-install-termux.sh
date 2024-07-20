@@ -13,3 +13,4 @@ PACKAGES=(
   okc-agents
   nodejs yarn
 )
+pkg install "${PACKAGES[@]}"
