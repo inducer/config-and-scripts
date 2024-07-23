@@ -101,6 +101,7 @@ def upload(args):
             key=lambda act: datetime.datetime.fromisoformat(act["activity_time"]))
 
         last_nap_start = None
+        last_feed_end = None
         for act in activities:
             atype = act["activity_type"]
             atime = datetime.datetime.fromisoformat(act["activity_time"])
@@ -137,14 +138,25 @@ def upload(args):
                         )
                     })
             elif atype == "meal_activity":
+                feed_start = atime
+                if last_feed_end is not None and feed_start < last_feed_end:
+                    feed_start = last_feed_end
+                    additional_comment = (" (bumped back to avoid overlap, "
+                        f"originally {atime.isoformat()})")
+                else:
+                    additional_comment = ""
+
+                feed_end = atime+datetime.timedelta(minutes=1)
+                last_feed_end = feed_end
                 feedings.append({
                         "child": bb_kid_id,
-                        "start": atime.isoformat(),
-                        "end": (atime+datetime.timedelta(minutes=1)).isoformat(),
+                        "start": feed_start.isoformat(),
+                        "end": feed_end.isoformat(),
                         "type": "solid food",
                         "method": "parent fed",
                         "notes": (
                             f"{data['type']}. {data['desc']} {act['comment']}"
+                            f"{additional_comment}"
                             f"(Quantity: {data['quantity']}){pc_id}"),
                         "tags": default_tags,
                         })
