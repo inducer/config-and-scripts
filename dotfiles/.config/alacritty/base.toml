@@ -20,3 +20,7 @@ regex = "[-./:_a-zA-Z.0-9]+"
 action = "Copy"
 binding =  { key = "l", mods = "Control|Shift" }
 regex = "^.*$"
+
+[env]
+# This makes 256-color support in tmux work
+TERM = "xterm-256color"
