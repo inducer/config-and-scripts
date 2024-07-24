@@ -22,8 +22,14 @@ environment = {"RUST_LOG" = "error"}
 [[language]]
 name = "python"
 language-servers = [
-  # "efm",
   "ruff",
   "pyright",
   "typos"
+]
+
+[[language]]
+name = "javascript"
+language-servers = [
+  { name = "efm", only-features = [ "diagnostics", "format" ] },
+  { name = "typescript-language-server", except-features = [ "format" ] },
 ]
