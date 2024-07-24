@@ -14,7 +14,7 @@ regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|go‐ pher://|https://|http://|n
 [[hints.enabled]]
 action = "Copy"
 binding =  { key = "w", mods = "Control|Shift" }
-regex = "[-./:_a-zA-Z.0-9]+"
+regex = "[-./:_a-zA-Z.0-9?=+]+"
 
 [[hints.enabled]]
 action = "Copy"
