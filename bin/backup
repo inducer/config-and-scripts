@@ -27,7 +27,7 @@ if [[ $sourced = 0 ]]; then
     restic backup --verbose --one-file-system \
             "$HOME" \
             --exclude "$HOME/from-bolt" \
-            --exclude "$HOME/.local/share/notmuch/" \
+            --exclude "$HOME/.local/" \
             --exclude "$HOME/.cache" \
             --exclude "$HOME/.wine" \
             --exclude "$HOME/.PlayOnLinux" \
@@ -41,9 +41,6 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/.config/libvirt" \
             --exclude "$HOME/tmp" \
             --exclude "$HOME/.steam" \
-            --exclude "$HOME/.local/share/Steam" \
-            --exclude "$HOME/.local/share/containers" \
-            --exclude "$HOME/.local/share/gnome-boxes" \
             --exclude "$HOME/VirtualBox VMs" \
             --exclude "$HOME/bulk/camprocess"
 fi
