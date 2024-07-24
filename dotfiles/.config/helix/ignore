@@ -2,3 +2,4 @@
 !.ci/
 !.*.yml
 !.gitmodules
+!.eslintrc.js
