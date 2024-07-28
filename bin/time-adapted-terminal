@@ -12,11 +12,11 @@ GNOME_COLOR_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme)"
 if [[ "$GNOME_COLOR_SCHEME" == "'default'" && ! -e $HOME/.force-dark-terminal ]]; then
   export TERMINAL_LIGHTNESS="light"
   # TERMCOLORS=theme-brewer-light-v2
-  TERMCOLORS=catppuccin_latte
+  TERMCOLORS=alabaster
 else
   export TERMINAL_LIGHTNESS="dark"
   # TERMCOLORS=theme-solarized-dark
-  TERMCOLORS=catppuccin_frappe
+  TERMCOLORS=google
 fi
 
 if ! test -d ~/.config/alacritty/themes; then
