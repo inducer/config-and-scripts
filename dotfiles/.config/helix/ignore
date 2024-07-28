@@ -3,3 +3,4 @@
 !.*.yml
 !.gitmodules
 !.eslintrc.js
+!*.py
