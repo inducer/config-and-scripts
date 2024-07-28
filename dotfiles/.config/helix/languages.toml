@@ -30,6 +30,13 @@ language-servers = [
 [[language]]
 name = "javascript"
 language-servers = [
-  { name = "efm", only-features = [ "diagnostics", "format" ] },
+  { name = "efm", only-features = [ "diagnostics" ] },
   { name = "typescript-language-server", except-features = [ "format" ] },
 ]
+[[language]]
+name = "html"
+auto-format = false
+
+[[language]]
+name = "css"
+auto-format = false
