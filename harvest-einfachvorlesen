@@ -1,0 +1,77 @@
+#! /usr/bin/env python3
+
+import tempfile
+import os
+import argparse
+import tomllib
+from subprocess import run
+from urllib.parse import urlparse
+from pathlib import Path
+from bs4 import BeautifulSoup
+
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("control_file", metavar="CONTROL.TOML")
+    parser.add_argument(
+                 "-o", "--output-dir",
+                 default=os.path.expanduser("~/nc/shared/cbal/kiddo/vorlesen/"))
+
+    args = parser.parse_args()
+
+    with open(args.control_file, "rb") as cf:
+        control = tomllib.load(cf)
+
+    outpath = Path(args.output_dir)
+
+    for folder, urls in control.items():
+        for url in urls:
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                tmppath = Path(tmpdirname)
+
+                purl = urlparse(url)
+                assert purl.path[0] == "/"
+                htmlpath = tmppath / purl.netloc / purl.path[1:]
+
+                run([
+                    "wget", "-p", "-k",
+                    "--exclude-directories=/themes",
+                    url],
+                    cwd=tmpdirname, check=True)
+
+                with open(htmlpath) as inf:
+                    html = inf.read()
+                soup = BeautifulSoup(html, "html.parser")
+
+                for div in soup.find_all("div", {"class": "story_pdf"}):
+                    div.decompose()
+
+                geschichte_div = None
+
+                for div in soup.find_all("div"):
+                    if "geschichte" in div.get("class", []):
+                        geschichte_div = div
+                        break
+
+                if geschichte_div is None:
+                    raise ValueError("story div not found")
+
+                for p in geschichte_div.find_all("p"):
+                    if "headline" in p.get("class", []):
+                        p.name = "h3"
+
+                clean_htmlpath = htmlpath.with_suffix(".readable.html")
+                with open(clean_htmlpath, "w") as outf:
+                    outf.write(str(geschichte_div))
+
+                outpath_story = outpath / folder
+                outpath_story.mkdir(parents=True, exist_ok=True)
+                run(["pandoc", clean_htmlpath,
+                    "-o", str(outpath_story / (htmlpath.stem + ".epub"))],
+                    cwd=clean_htmlpath.parent, check=True)
+
+
+if __name__ == "__main__":
+    main()
+
