@@ -21,7 +21,7 @@ PACKAGES=(
   moreutils gawk bat mutt
   tig subversion mercurial git-lfs gh glab git-absorb git-autofixup git-delta repo meld
   qgit
-  curl
+  curl yt-dlp
   mlocate pwgen
   libgmp-dev libmpfr-dev
   libpq-dev libjemalloc-dev
