@@ -129,15 +129,20 @@ Andreas
 
 #+LATEX: \\end{hidden}
 " nil 0)
-    ("tconflict" "I am in principle happy to allow you to do what you suggest.  Lecture
+    ("tconflict" "
+Please describe how you will manage the time conflict, which resources
+you intend to use, and what your weekly schedule for the two classes
+might look like.
+
+I am in principle happy to allow you to do what you suggest.  Lecture
 recordings will be available. That said, I cannot promise you that you
-can be successful in 450 while missing parts of the lecture--the class
+can be successful in CS450 while missing parts of the lecture--the class
 is not designed that way. Please state in your reply that you are
 assuming all risk for poor outcomes that may be the result of this.  You
 will be held to the same standard as anyone else in the class, with no
 expectation of lenience with grading or assignments or anything else.
 
-In addition, 450 will offer frequent ungraded in-class activities which
+In addition, CS450 will offer frequent ungraded in-class activities which
 I highly recommend you work through as you watch the lecture recordings.
 
 If you would still like to proceed, please let me know how I would go
@@ -272,26 +277,20 @@ http://my.cs.illinois.edu/ .
 
 Looking forward to seeing you soon,
 Andreas" nil 4)
-    ("toforum" "Thank you for your question. Unfortunately, neither I nor the TAs are
-able to answer subject matter or policy questions sent privately. This
-is to help us avoid having to answer the same questions many, many
-times over.
-
-Please rephrase your question (if necessary) and re-ask it on the public
-forum. By asking there, you stand a much better chance of a quick reply
-since many more people can see your question. In addition, other
-students can see and learn from your concern and the associated
-discussion.
+    ("toforum" "Thank you for your question! You might not be the only one
+who would like to know. To help the TAs and me field these questions
+efficiently, please rephrase your question (if necessary) and re-ask it on the public
+forum.
 
 You can find the course forum at
-https://scicomp-discourse.cs.illinois.edu/c/cs450-f22/11
+https://scicomp-discourse.cs.illinois.edu/c/cs450-f24/21
 
 Thank you for understanding.
 
 Andreas" nil 4)
     ("tohelp" "Please send a message to the help desk at
 
-https://scicomp-discourse.cs.illinois.edu/g/cs450-f23-helpdesk
+https://scicomp-discourse.cs.illinois.edu/g/cs450-f24-helpdesk
 
 Andreas" nil 4)
     ("enrollreq" "Hi there,
