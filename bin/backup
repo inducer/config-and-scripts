@@ -42,7 +42,9 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/tmp" \
             --exclude "$HOME/.steam" \
             --exclude "$HOME/VirtualBox VMs" \
-            --exclude "$HOME/bulk/camprocess"
+            --exclude "$HOME/bulk/camprocess" \
+            --exclude "$HOME/work/django/relate/contrib/jupyterlite" \
+            --exclude "$HOME/work/django/relate/bulk-storage"
 fi
 
 # vim: shiftwidth=4
