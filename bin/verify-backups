@@ -4,22 +4,23 @@ set -eo pipefail
 
 function check_snapshots()
 {
-    restic mount ~/mnt -H "$1" &
+    mount-backup $backupname &
     mount_pid="$!"
 
     trap 'kill -INT $mount_pid || true' RETURN
 
-    while ! test -d ~/mnt/snapshots; do
+    MOUNTPOINT="$HOME/mnt/backup"
+    while ! test -d "$MOUNTPOINT/snapshots"; do
         sleep 0.1
     done
 
-    ls --color -lah ~/mnt/snapshots
+    ls --color -lah $MOUNTPOINT/snapshots
     for dir in \
-            ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/gitlab \
-            ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/discourse \
-            ~/mnt/snapshots/latest/mnt/aux/autopostgresqlbackup/daily/relate2 \
-            ~/mnt/snapshots/latest/storage/autopostgresqlbackup/daily/gitlab \
-            ~/mnt/snapshots/latest/var/lib/autopostgresqlbackup/daily/hedgedoc \
+            $MOUNTPOINT/snapshots/latest/var/lib/autopostgresqlbackup/daily/gitlab \
+            $MOUNTPOINT/snapshots/latest/var/lib/autopostgresqlbackup/daily/discourse \
+            $MOUNTPOINT/snapshots/latest/mnt/aux/autopostgresqlbackup/daily/relate2 \
+            $MOUNTPOINT/snapshots/latest/storage/autopostgresqlbackup/daily/gitlab \
+            $MOUNTPOINT/snapshots/latest/var/lib/autopostgresqlbackup/daily/hedgedoc \
             ; do
         if test -d "$dir"; then
             ls --color -lah "$dir"
@@ -35,44 +36,10 @@ function check_snapshots()
     trap - RETURN
 }
 
-export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
-export RESTIC_PASSWORD_FILE=$HOME/.restic-password
-export RESTIC_CACERT=$HOME/.restic-public-key.pem
-
-machine=laptop
-echo "------------------------------------------------------"
-echo "$machine"
-echo "------------------------------------------------------"
-check_snapshots "$(hostname)"
-
-unset RESTIC_PASSWORD_FILE
-
-for backupname in server/ermine grison relate scicomp-discourse; do
+for backupname in laptop server/ermine grison relate scicomp-discourse; do
     echo "------------------------------------------------------"
     echo "$backupname"
     echo "------------------------------------------------------"
-    if [[ $backupname == */* ]]; then
-        reponame="$(dirname "$backupname")"
-        machinename="$(basename "$backupname")"
-    else
-        reponame="$backupname"
-        machinename="$backupname"
-    fi
-
-    RESTIC_REPO_ACCESS_PASSWORD=""
-    while test -z "$RESTIC_REPO_ACCESS_PASSWORD" ; do
-        read -p "Repo REST access password: " -r -s RESTIC_REPO_ACCESS_PASSWORD
-        echo
-    done
-    RESTIC_PASSWORD=""
-    while test -z "$RESTIC_PASSWORD" ; do
-        read -p "Repo password: " -r -s RESTIC_PASSWORD
-        echo
-    done
-    export RESTIC_PASSWORD
-
-    export RESTIC_REPOSITORY="rest:https://ak$reponame:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$reponame/$reponame"
-
     check_snapshots "$machinename"
 done
 

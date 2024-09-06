@@ -1,7 +1,43 @@
 #! /bin/bash
 
-export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@piepsel.d.tiker.net:8000/aklaptop/laptop"
-export RESTIC_PASSWORD_FILE=$HOME/.restic-password
+if test "$1" = ""; then
+  echo "usage: $0 backupname"
+  exit 1
+fi
 
-restic mount ~/mnt/backup
+backupname="$1"
 
+if test "$backupname" = "laptop"; then
+  reponame=laptop
+  machinename="$(hostname)"
+elif [[ $backupname == */* ]]; then
+    reponame="$(dirname "$backupname")"
+    machinename="$(basename "$backupname")"
+else
+    reponame="$backupname"
+    machinename="$backupname"
+fi
+
+unset RESTIC_PASSWORD_FILE
+export RESTIC_CACERT=$HOME/.restic-public-key.pem
+
+if test "$machinename" = "laptop"; then
+  export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
+  export RESTIC_PASSWORD_FILE=$HOME/.restic-password
+else
+  RESTIC_REPO_ACCESS_PASSWORD=""
+  while test -z "$RESTIC_REPO_ACCESS_PASSWORD" ; do
+      read -p "Repo REST access password: " -r -s RESTIC_REPO_ACCESS_PASSWORD
+      echo
+  done
+  RESTIC_PASSWORD=""
+  while test -z "$RESTIC_PASSWORD" ; do
+      read -p "Repo password: " -r -s RESTIC_PASSWORD
+      echo
+  done
+
+  export RESTIC_REPOSITORY="rest:https://ak$reponame:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$reponame/$reponame"
+  export RESTIC_PASSWORD
+fi
+
+restic mount -H "$machinename" ~/mnt/backup
