@@ -47,7 +47,7 @@ notmuch tag +github +ci -- tag:inbox "from:github.com" "to:ci_activity@noreply.g
 notmuch tag +gitlab +ci -- 'tag:inbox from:gitlab ("pipeline has been fixed" or "failed pipeline") project branch'
 notmuch tag +element --  'tag:inbox and from:"friendly element home server" and from:inform@tiker.net and subject:"you have"'
 notmuch tag +fair -inbox -- tag:inbox from:fair@engr.illinois.edu "department notice"
-notmuch tag -inbox -- tag:inbox django invalid external http_host
+notmuch tag -inbox +django -- tag:inbox django '"invalid http_host header"' external
 notmuch tag -inbox +spam -- tag:inbox mathem apotheke "(mann or manneskraft)"
 notmuch tag -inbox +dmarc -- tag:inbox to:inform+dmarc@tiker.net
 
