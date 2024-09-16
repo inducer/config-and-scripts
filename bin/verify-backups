@@ -4,15 +4,11 @@ set -eo pipefail
 
 function check_snapshots()
 {
-    mount-backup $backupname &
-    mount_pid="$!"
-
-    trap 'kill -INT $mount_pid || true' RETURN
+    mount-backup $backupname
 
     MOUNTPOINT="$HOME/mnt/backup"
-    while ! test -d "$MOUNTPOINT/snapshots"; do
-        sleep 0.1
-    done
+
+    trap "fusermount -u $MOUNTPOINT || true" RETURN
 
     ls --color -lah $MOUNTPOINT/snapshots
     for dir in \
@@ -31,8 +27,8 @@ function check_snapshots()
     echo "ENTER TO MOVE ON:"
     read ENTER
 
-    kill -INT "$mount_pid"
-    wait "$mount_pid" || true
+    fusermount -u "$MOUNTPOINT"
+    sleep 1
     trap - RETURN
 }
 

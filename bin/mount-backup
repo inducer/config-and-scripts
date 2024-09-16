@@ -1,27 +1,37 @@
 #! /bin/bash
 
+MOUNTPOINT="$HOME/mnt/backup"
+
 if test "$1" = ""; then
-  echo "usage: $0 backupname"
-  exit 1
+  if test "$RESTIC_MACHINENAME" = ""; then
+    echo "usage: $0 backupname"
+    exit 1
+  else
+    exec restic mount -H "$RESTIC_MACHINENAME" "$MOUNTPOINT"
+  fi
 fi
 
 backupname="$1"
 
 if test "$backupname" = "laptop"; then
-  reponame=laptop
-  machinename="$(hostname)"
+  RESTIC_REPONAME=laptop
+  RESTIC_MACHINENAME="$(hostname)"
 elif [[ $backupname == */* ]]; then
-    reponame="$(dirname "$backupname")"
-    machinename="$(basename "$backupname")"
+    RESTIC_REPONAME="$(dirname "$backupname")"
+    RESTIC_MACHINENAME="$(basename "$backupname")"
 else
-    reponame="$backupname"
-    machinename="$backupname"
+    RESTIC_REPONAME="$backupname"
+    RESTIC_MACHINENAME="$backupname"
 fi
+
+unset backupname
 
 unset RESTIC_PASSWORD_FILE
 export RESTIC_CACERT=$HOME/.restic-public-key.pem
+export RESTIC_REPONAME
+export RESTIC_MACHINENAME
 
-if test "$machinename" = "laptop"; then
+if test "$RESTIC_REPONAME" = "laptop"; then
   export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
   export RESTIC_PASSWORD_FILE=$HOME/.restic-password
 else
@@ -36,8 +46,11 @@ else
       echo
   done
 
-  export RESTIC_REPOSITORY="rest:https://ak$reponame:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$reponame/$reponame"
+  export RESTIC_REPOSITORY="rest:https://ak$RESTIC_REPONAME:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$RESTIC_REPONAME/$RESTIC_REPONAME"
   export RESTIC_PASSWORD
 fi
 
-restic mount -H "$machinename" ~/mnt/backup
+exec "$0" &
+while ! test -d "$MOUNTPOINT/snapshots"; do
+    sleep 0.1
+done
