@@ -161,13 +161,17 @@ def upload(args):
                         "tags": default_tags,
                         })
             elif atype == "nap_activity":
+                valid_sleep = False
                 if data["start_time"]:
-                    assert not data["end_time"]
-                    if last_nap_start is not None:
+                    if data["end_time"]:
+                        valid_sleep = True
+                        nap_start = datetime.datetime.fromisoformat(data["start_time"])
+                        nap_end = datetime.datetime.fromisoformat(data["end_time"])
+                    elif last_nap_start is not None:
                         warn("two nap starts back-to-back, ignoring earlier: "
                              f"{last_nap_start}")
-                    last_nap_start = (
-                        datetime.datetime.fromisoformat(data["start_time"]))
+                        last_nap_start = (
+                            datetime.datetime.fromisoformat(data["start_time"]))
 
                 elif data["end_time"]:
                     assert not data["start_time"]
@@ -175,20 +179,25 @@ def upload(args):
                     if last_nap_start is None:
                         warn("nap ended without starting")
                     else:
-                        sleeps.append({
-                                        "child": bb_kid_id,
-                                        "start": last_nap_start.isoformat(),
-                                        "end":  datetime.datetime.fromisoformat(
-                                                data["end_time"]).isoformat(),
-                                        "nap": True,
-                                        "tags": default_tags,
-                                        "notes": (
-                                            f"{data['desc']} {act['comment']}"
-                                            f"{pc_id}").strip()
-                                        })
+                        valid_sleep = True
+                        nap_start = last_nap_start
+                        nap_end = datetime.datetime.fromisoformat(data["end_time"])
                         last_nap_start = None
                 else:
                     raise ValueError("nap without start or end")
+
+                if valid_sleep:
+                    valid_sleep = False
+                    sleeps.append({
+                                    "child": bb_kid_id,
+                                    "start": nap_start.isoformat(),
+                                    "end":  nap_end.isoformat(),
+                                    "nap": True,
+                                    "tags": default_tags,
+                                    "notes": (
+                                        f"{data['desc']} {act['comment']}"
+                                        f"{pc_id}").strip()
+                                    })
 
             elif atype == "photo_activity":
                 grab_photo(date, act["photo_url"])
