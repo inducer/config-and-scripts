@@ -53,7 +53,7 @@ PACKAGES=(
   build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui
   gcc-multilib
   llvm-dev libclang-dev ispc gdb strace ltrace valgrind
-  libblas-dev liblapack-dev libopenblas-dev
+  libblas-dev liblapack-dev libopenblas-dev liblapack-doc
   opensc-pkcs11
   libboost-all-dev
   kitty alacritty
