@@ -170,8 +170,9 @@ def upload(args):
                     elif last_nap_start is not None:
                         warn("two nap starts back-to-back, ignoring earlier: "
                              f"{last_nap_start}")
-                        last_nap_start = (
-                            datetime.datetime.fromisoformat(data["start_time"]))
+
+                    last_nap_start = (
+                        datetime.datetime.fromisoformat(data["start_time"]))
 
                 elif data["end_time"]:
                     assert not data["start_time"]
