@@ -13,3 +13,4 @@
 npm install -g typescript-language-server
 npm install -g 'eslint@<9' eslint-config-airbnb-base eslint-plugin-import
 npm install -g vscode-langservers-extracted
+npm install -g speedscope
