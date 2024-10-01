@@ -5,9 +5,10 @@ if test "$1" = ""; then
 else
 	DATE="$1"
 fi
+shift
 
 exec upload-procare-to-bb \
 	--bb-url=https://bb.tiker.net \
 	--bb-key="$(cat ~/.baby-buddy-api-key )" \
 	--procare-key="$(cat ~/.procare-api-key )" \
-	upload "$DATE" --tag cdl
+	upload "$DATE" --tag cdl "$@"
