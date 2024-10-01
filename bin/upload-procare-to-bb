@@ -161,18 +161,20 @@ def upload(args):
                         "tags": default_tags,
                         })
             elif atype == "nap_activity":
+                print(data)
                 valid_sleep = False
                 if data["start_time"]:
                     if data["end_time"]:
                         valid_sleep = True
                         nap_start = datetime.datetime.fromisoformat(data["start_time"])
                         nap_end = datetime.datetime.fromisoformat(data["end_time"])
-                    elif last_nap_start is not None:
-                        warn("two nap starts back-to-back, ignoring earlier: "
-                             f"{last_nap_start}")
+                    else:
+                        if last_nap_start is not None:
+                            warn("two nap starts back-to-back, ignoring earlier: "
+                                 f"{last_nap_start}")
 
-                    last_nap_start = (
-                        datetime.datetime.fromisoformat(data["start_time"]))
+                        last_nap_start = (
+                            datetime.datetime.fromisoformat(data["start_time"]))
 
                 elif data["end_time"]:
                     assert not data["start_time"]
