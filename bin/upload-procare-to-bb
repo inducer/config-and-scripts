@@ -232,6 +232,17 @@ def upload(args):
                 if subact["photo_url"]:
                     grab_photo(date, subact["photo_url"])
 
+            elif atype == "medication_activity":
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": (
+                                     "Medication administered:\n"
+                                     f"{act['data']['desc']}\n"
+                                     f"Staff present: {act['staff_present_name']}"
+                                     f"{pc_id}"),
+                                 "time": atime.isoformat(),
+                                 "tags": ["meds"] + default_tags,
+                             })
             else:
                 raise ValueError(f"activity type not understood: {atype}")
 
