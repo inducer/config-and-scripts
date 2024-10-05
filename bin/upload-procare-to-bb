@@ -161,7 +161,6 @@ def upload(args):
                         "tags": default_tags,
                         })
             elif atype == "nap_activity":
-                print(data)
                 valid_sleep = False
                 if data["start_time"]:
                     if data["end_time"]:
