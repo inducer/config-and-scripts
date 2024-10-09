@@ -195,4 +195,7 @@ else
   echo "zsh completions is missing: https://github.com/zsh-users/zsh-completions.git"
 fi
 
+source <(zoxide init zsh)
+source <(command fx --init)
+
 # vim: sw=2
