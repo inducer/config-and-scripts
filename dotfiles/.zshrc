@@ -198,4 +198,16 @@ fi
 source <(zoxide init zsh)
 source <(command fx --init)
 
+lg()
+{
+    export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
+
+    ~/pack/lazygit/lazygit "$@"
+
+    if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
+            cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
+            rm -f $LAZYGIT_NEW_DIR_FILE > /dev/null
+    fi
+}
+
 # vim: sw=2

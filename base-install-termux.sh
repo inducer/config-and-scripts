@@ -12,5 +12,6 @@ PACKAGES=(
   openssh
   okc-agents
   nodejs yarn
+  lazygit
 )
 pkg install "${PACKAGES[@]}"
