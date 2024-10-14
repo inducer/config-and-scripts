@@ -68,7 +68,7 @@ PACKAGES=(
   dconf-editor
   restic
   katarakt
-  geeqie darktable gajim
+  geeqie darktable gajim chafa
   nebula
   yubikey-manager yubikey-manager-qt
 
