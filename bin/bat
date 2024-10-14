@@ -1,0 +1,4 @@
+#! /bin/bash
+
+# Oh Debian...
+exec batcat "$@"
