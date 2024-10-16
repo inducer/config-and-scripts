@@ -2,6 +2,9 @@
 
 git:
   autoFetch: false
+  paging:
+    colorArg: always
+    pager: delta-wrapper --paging=never
 
 # https://github.com/jesseduffield/lazygit/wiki/Custom-Commands-Compendium#list-and-select-github-pr-for-checkout
 customCommands:
