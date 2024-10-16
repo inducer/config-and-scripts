@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -eo pipefail
+
 MOUNTPOINT="$HOME/mnt/backup"
 
 if test "$1" = ""; then
@@ -11,44 +13,8 @@ if test "$1" = ""; then
   fi
 fi
 
-backupname="$1"
 
-if test "$backupname" = "laptop"; then
-  RESTIC_REPONAME=laptop
-  RESTIC_MACHINENAME="$(hostname)"
-elif [[ $backupname == */* ]]; then
-    RESTIC_REPONAME="$(dirname "$backupname")"
-    RESTIC_MACHINENAME="$(basename "$backupname")"
-else
-    RESTIC_REPONAME="$backupname"
-    RESTIC_MACHINENAME="$backupname"
-fi
-
-unset backupname
-
-unset RESTIC_PASSWORD_FILE
-export RESTIC_CACERT=$HOME/.restic-public-key.pem
-export RESTIC_REPONAME
-export RESTIC_MACHINENAME
-
-if test "$RESTIC_REPONAME" = "laptop"; then
-  export RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
-  export RESTIC_PASSWORD_FILE=$HOME/.restic-password
-else
-  RESTIC_REPO_ACCESS_PASSWORD=""
-  while test -z "$RESTIC_REPO_ACCESS_PASSWORD" ; do
-      read -p "Repo REST access password: " -r -s RESTIC_REPO_ACCESS_PASSWORD
-      echo
-  done
-  RESTIC_PASSWORD=""
-  while test -z "$RESTIC_PASSWORD" ; do
-      read -p "Repo password: " -r -s RESTIC_PASSWORD
-      echo
-  done
-
-  export RESTIC_REPOSITORY="rest:https://ak$RESTIC_REPONAME:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$RESTIC_REPONAME/$RESTIC_REPONAME"
-  export RESTIC_PASSWORD
-fi
+eval "$(restic-setup-auth "$1")"
 
 exec "$0" &
 while ! test -d "$MOUNTPOINT/snapshots"; do
