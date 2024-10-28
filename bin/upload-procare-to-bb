@@ -213,7 +213,19 @@ def upload(args):
                                  "time": atime.isoformat(),
                                  "tags": ["note"] + default_tags,
                              })
-
+            elif atype == "observation_activity":
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": (
+                                     "Observation:\n"
+                                     f"{act['data']['desc']}\n"
+                                     f"Staff present: {act['staff_present_name']}"
+                                     f"{pc_id}"),
+                                 "time": atime.isoformat(),
+                                 "tags": ["observation"] + default_tags,
+                             })
+                if act["photo_url"]:
+                    grab_photo(date, act["photo_url"])
             elif atype == "incident_activity":
                 subact = act["activiable"]
                 notes.append({
