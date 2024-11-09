@@ -60,6 +60,8 @@ def grab_photo(date: datetime.date, photo_url: str) -> None:
     fn = os.path.expanduser("~/nc/instant-upload/"
                        f"{date.year}/{date.month:02d}/{bn}")
 
+    os.makedirs(os.path.dirname(fn), exist_ok=True)
+
     if os.path.exists(fn):
         print(f"ALREADY EXISTS? refusing to overwrite {fn}")
         return
