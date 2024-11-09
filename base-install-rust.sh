@@ -7,4 +7,6 @@ cargo install --git https://github.com/tekumara/typos-lsp.git
 cargo install fclones
 cargo install tealdeer
 cargo install zoxide
-cargo install felix
+cargo install broot
+cargo install --locked difftastic
+cargo install --git https://codeberg.org/mergiraf/mergiraf.git

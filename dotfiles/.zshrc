@@ -196,7 +196,8 @@ else
 fi
 
 source <(zoxide init zsh)
-source <(command fx --init)
+# source <(command fx --init)
+source <(broot --print-shell-function zsh)
 
 lg()
 {

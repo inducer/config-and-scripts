@@ -12,9 +12,18 @@
 [alias]
         lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
         g = grep --break --heading --line-number
-	l = log --stat
+		l = log --stat
         diffwords = -c core.pager=less diff --color-words
         diffsimple = -c core.pager=less diff
+		ddiff = -c diff.external=difft diff
+
+	    dl = -c diff.external=difft log -p --ext-diff
+
+	    # Show the most recent commit with difftastic.
+	    ds = -c diff.external=difft show --ext-diff
+
+	    # `git diff` with difftastic.
+	    dft = -c diff.external=difft diff
 [grep]
         extendRegexp = true
         lineNumber = true
