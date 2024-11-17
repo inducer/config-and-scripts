@@ -32,7 +32,10 @@ def main():
 
                 purl = urlparse(url)
                 assert purl.path[0] == "/"
-                htmlpath = tmppath / purl.netloc / purl.path[1:]
+                fn = purl.path[1:]
+                if purl.query:
+                    fn = f"{fn}?{purl.query}"
+                htmlpath = tmppath / purl.netloc / fn
 
                 run([
                     "wget", "-p", "-k",
@@ -61,14 +64,17 @@ def main():
                     if "headline" in p.get("class", []):
                         p.name = "h3"
 
-                clean_htmlpath = htmlpath.with_suffix(".readable.html")
+                clean_htmlpath = (
+                    tmppath / purl.netloc / purl.path[1:]).with_suffix(".readable.html")
                 with open(clean_htmlpath, "w") as outf:
                     outf.write(str(geschichte_div))
+
+                htmlpath_noquery =  tmppath / purl.netloc / purl.path[1:]
 
                 outpath_story = outpath / folder
                 outpath_story.mkdir(parents=True, exist_ok=True)
                 run(["pandoc", clean_htmlpath,
-                    "-o", str(outpath_story / (htmlpath.stem + ".epub"))],
+                    "-o", str(outpath_story / (htmlpath_noquery.stem + ".epub"))],
                     cwd=clean_htmlpath.parent, check=True)
 
 
