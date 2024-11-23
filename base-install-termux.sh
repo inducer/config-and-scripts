@@ -18,5 +18,8 @@ PACKAGES=(
   nodejs yarn
   lazygit
   git-delta
+  fzf
+  fd
+  ripgrep
 )
 pkg install "${PACKAGES[@]}"
