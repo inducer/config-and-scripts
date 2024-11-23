@@ -203,7 +203,12 @@ lg()
 {
     export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
 
-    ~/pack/lazygit/lazygit "$@"
+    local manual_loc=$HOME/pack/lazygit/lazygit
+    if test -x $manual_loc; then
+      ~/pack/lazygit/lazygit "$@"
+    else
+      lazygit "$@"
+    fi
 
     if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
             cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
