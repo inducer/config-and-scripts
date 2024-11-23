@@ -4,7 +4,11 @@ PACKAGES=(
   helix helix-grammars
   vim
   git
-  python python-venv
+  broot
+  zoxide
+  lazygit
+  ncdu
+  python
   ndk-sysroot
   make clang
   zsh
@@ -13,5 +17,6 @@ PACKAGES=(
   okc-agents
   nodejs yarn
   lazygit
+  git-delta
 )
 pkg install "${PACKAGES[@]}"
