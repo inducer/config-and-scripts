@@ -233,7 +233,7 @@
  '(italic ((t (:foreground "gray" :slant italic))))
  '(message-cited-text-1 ((t (:foreground "#888"))))
  '(notmuch-message-summary-face ((t (:background "#303030" :foreground "gray"))))
- '(notmuch-search-flagged-face ((t (:foreground "yellow"))))
+ '(notmuch-search-flagged-face ((t (:background "yellow"))))
  '(notmuch-tag-flagged ((t (:foreground "yellow"))))
  '(org-todo ((t (:background "#dc322f" :foreground "#fff" :weight bold)))))
 
