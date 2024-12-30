@@ -36,6 +36,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/.vim/plugged" \
             --exclude "$HOME/.cargo" \
             --exclude "$HOME/.rustup" \
+            --exclude "$HOME/gPodder" \
             --exclude "$HOME/.local/share/Trash" \
             --exclude "$HOME/.config/*/Cache" \
             --exclude "$HOME/.config/libvirt" \
