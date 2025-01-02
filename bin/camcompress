@@ -1,12 +1,12 @@
 #! /bin/bash
 
-set -e
+set -eo pipefail
 
 TGTDIR="comp"
 mkdir -p "$TGTDIR"
 count=1
 for i in *.[jJ][pP][gG] ; do
-    if test -f '$i'; then
+    if test -f "$i"; then
         echo "$count: $i"
         heif-enc "$i" -o "$TGTDIR/${i%%.[jJ][pP][gG]}.heic"
         count=$((count+1))
