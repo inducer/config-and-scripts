@@ -14,7 +14,7 @@ true-color = true
 # space = "all"
 nbsp = "all"
 tab = "all"
-space = "trailing"
+# space = "trailing"
 
 [editor.statusline]
 center = ["version-control"]
