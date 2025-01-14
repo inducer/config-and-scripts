@@ -216,4 +216,6 @@ lg()
     fi
 }
 
+compdef _tmuxinator tmuxinator
+
 # vim: sw=2

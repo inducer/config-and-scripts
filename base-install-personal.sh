@@ -15,7 +15,7 @@ PACKAGES=(
   etckeeper logrotate gnupg2 scdaemon keepassxc-full
   htop iotop-c iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
   ioping fio nvme-cli parallel
-  tmux screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs sshuttle
+  tmux tmuxinator screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs sshuttle
   transmission xsel
   zsh
   moreutils gawk bat mutt
