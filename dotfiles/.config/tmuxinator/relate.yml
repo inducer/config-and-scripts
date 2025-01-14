@@ -1,5 +1,7 @@
-name: hack
-root: ~/src/<%= @args[0] %>
+# /home/andreas/.config/tmuxinator/relate.yml
+
+name: relate
+root: ~/work/django/relate
 
 # Optional tmux socket
 # socket_name: foo
@@ -25,7 +27,7 @@ root: ~/src/<%= @args[0] %>
 # on_project_stop: command
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-pre_window: re3
+# pre_window: rbenv shell 2.0.0-p247
 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf
@@ -43,7 +45,8 @@ pre_window: re3
 # attach: false
 
 windows:
-  - editor: hx
-  - mgmt:
-  - test: "if test -d test; then cd test; fi"
+  - editor: poetry run hx
+  - mgmt: poetry shell
   - git: ~/pack/lazygit/lazygit
+  - server: poetry run python manage.py runserver
+  - npm: npm run dev
