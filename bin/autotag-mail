@@ -51,6 +51,7 @@ notmuch tag -inbox +django -- tag:inbox django '"invalid http_host header"' exte
 notmuch tag -inbox +spam -- tag:inbox mathem apotheke "(mann or manneskraft)"
 notmuch tag -inbox +dmarc -- tag:inbox to:inform+dmarc@tiker.net
 notmuch tag -inbox +mirgecom -- tag:inbox and mtcampbe@lassen708
+notmuch tag -inbox +mirgecom -- tag:inbox and mtcampbe@lassen709
 notmuch tag -inbox +cron +backup -- tag:inbox cron from:andreask@illinois.edu
 
 ~/bin/unsnooze-mail
