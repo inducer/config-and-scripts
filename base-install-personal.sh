@@ -72,6 +72,7 @@ PACKAGES=(
   geeqie darktable gajim chafa
   nebula
   yubikey-manager yubikey-manager-qt
+  galternatives
 
   # zotero needs this
   libdbus-glib-1-2
