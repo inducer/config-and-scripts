@@ -1,7 +1,7 @@
 # /home/andreas/.config/tmuxinator/relate.yml
 
-name: relate
-root: ~/work/django/relate
+name: expensely
+root: ~/work/django/expensely
 
 # Optional tmux socket
 # socket_name: foo
@@ -49,4 +49,3 @@ windows:
   - mgmt:
   - git: ~/pack/lazygit/lazygit
   - server: python manage.py runserver
-  - npm: npm run dev

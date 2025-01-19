@@ -1,7 +1,7 @@
-# /home/andreas/.config/tmuxinator/relate.yml
+# /home/andreas/.config/tmuxinator/grist-av.yml
 
-name: relate
-root: ~/work/django/relate
+name: grist-av
+root: ~/own/dev/web/grist-availability
 
 # Optional tmux socket
 # socket_name: foo
@@ -48,5 +48,4 @@ windows:
   - editor: hx
   - mgmt:
   - git: ~/pack/lazygit/lazygit
-  - server: python manage.py runserver
-  - npm: npm run dev
+  - server: ./dev.sh
