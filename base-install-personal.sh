@@ -14,6 +14,7 @@ PACKAGES=(
   rsync cronie wireguard
   etckeeper logrotate gnupg2 scdaemon keepassxc-full
   htop iotop-c iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
+  alsa-ucm-conf
   ioping fio nvme-cli parallel
   tmux tmuxinator screen tmate sudo apt-listbugs apt-listchanges reptyr sshfs sshuttle
   transmission xsel
