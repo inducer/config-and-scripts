@@ -83,6 +83,9 @@ PACKAGES=(
   libxml2-dev liblua5.3-dev libzip-dev librsvg2-dev gettext lua-lgi \
   libgtksourceview-4-dev help2man
 
+  # interacticrop needs this (via poppler-python)
+  libpoppler-cpp-dev
+
   sqlite3 sqlitebrowser
 
   notmuch notmuch-git libnotmuch-dev
