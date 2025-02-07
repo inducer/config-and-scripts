@@ -204,8 +204,11 @@ lg()
     export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
 
     local manual_loc=$HOME/pack/lazygit/lazygit
-    if test -x $manual_loc; then
-      ~/pack/lazygit/lazygit "$@"
+    local manual_shared_loc=$HOME/shared/pack/lazygit/lazygit
+    if test -x "$manual_loc"; then
+      "$manual_loc" "$@"
+    elif test -x "$manual_shared_loc"; then
+      "$manual_shared_loc" "$@"
     else
       lazygit "$@"
     fi
