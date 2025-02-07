@@ -45,7 +45,8 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/VirtualBox VMs" \
             --exclude "$HOME/bulk/camprocess" \
             --exclude "$HOME/work/django/relate/contrib/jupyterlite" \
-            --exclude "$HOME/work/django/relate/bulk-storage"
+            --exclude "$HOME/work/django/relate/bulk-storage" \
+            --exclude "$HOME/pack/miniforge3"
 fi
 
 # vim: shiftwidth=4
