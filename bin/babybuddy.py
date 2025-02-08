@@ -26,7 +26,7 @@ class JsonAPI:
                 **kwargs,
                 )
         if r.status_code != 200:
-            print(r.json())
+            print(r.content)
             r.raise_for_status()
         return r
 
