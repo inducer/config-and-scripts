@@ -1,0 +1,4 @@
+#! /bin/bash
+
+# https://gitlab.com/Oschowa/gnome-randr/
+exec $HOME/pack/gnome-randr/gnome-randr.py "$@"
