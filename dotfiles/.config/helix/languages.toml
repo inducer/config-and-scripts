@@ -40,3 +40,9 @@ auto-format = false
 [[language]]
 name = "css"
 auto-format = false
+
+# Add ispc
+# See https://github.com/helix-editor/helix/pull/8678 for proper support
+[[language]]
+name = "cpp"
+file-types = ["cc", "hh", "c++", "cpp", "hpp", "h", "ipp", "tpp", "cxx", "hxx", "ixx", "txx", "ino", "C", "H", "cu", "cuh", "cppm", "h++", "ii", "inl", "ispc"]
