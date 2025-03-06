@@ -30,6 +30,7 @@ fi
 #exec gnome-terminal --profile="$prof" "$@"
 
 cat > ~/.config/alacritty/alacritty.toml <<EOF
+[general]
 import = [
   "~/.config/alacritty/themes/themes/$TERMCOLORS.toml",
   "~/.config/alacritty/base.toml",
