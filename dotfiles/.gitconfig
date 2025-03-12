@@ -47,5 +47,5 @@
 [init]
 	defaultBranch = main
 [diff]
-        colorMoved = dimmed-zebra
-        colorMovedWS = allow-indentation-change
+        # colorMoved = dimmed-zebra
+        # colorMovedWS = allow-indentation-change
