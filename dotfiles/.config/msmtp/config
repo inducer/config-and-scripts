@@ -6,4 +6,4 @@ tls     on
 tls_starttls on
 from    andreask@illinois.edu
 user    andreask@illinois.edu
-passwordeval "unset PYTHONWARNINGS; cd /home/andreas/pack/M365-IMAP; /home/andreas/src/env-3.12/bin/python3 refresh_token.py"
+passwordeval "unset PYTHONWARNINGS; cd /home/andreas/pack/M365-IMAP; /home/andreas/src/env-3.13/bin/python3 refresh_token.py"
