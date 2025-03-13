@@ -50,15 +50,22 @@ class ProcareAPI(JsonAPI):
             page += 1
 
 
-def grab_photo(date: datetime.date, photo_url: str) -> None:
+def grab_media(date: datetime.date, media_url: str) -> None:
     import requests
-    response = requests.get(photo_url)
+    response = requests.get(media_url)
     response.raise_for_status()
+    mimetype = response.headers["content-type"]
+
+
 
     from urllib.parse import urlparse
-    bn = os.path.basename(urlparse(photo_url).path)
+    bn = os.path.basename(urlparse(media_url).path)
     fn = os.path.expanduser("~/nc/instant-upload/"
                        f"{date.year}/{date.month:02d}/{bn}")
+
+    if mimetype == "video/mp4":
+        if not fn.endswith(".mp4"):
+            fn += ".mp4"
 
     os.makedirs(os.path.dirname(fn), exist_ok=True)
 
@@ -68,7 +75,7 @@ def grab_photo(date: datetime.date, photo_url: str) -> None:
 
     with open(fn, 'wb') as f:
         f.write(response.content)
-    print(f"NEW PHOTO DOWNLOADED: {fn}")
+    print(f"NEW MEDIA DOWNLOADED: {fn}")
 
 
 def upload(args):
@@ -204,7 +211,11 @@ def upload(args):
                                     })
 
             elif atype == "photo_activity":
-                grab_photo(date, act["photo_url"])
+                grab_media(date, act["photo_url"])
+
+            elif atype == "video_activity":
+                from pprint import pprint
+                grab_media(date, act["activiable"]["video_file_url"])
 
             elif atype == "note_activity":
                 notes.append({
@@ -227,7 +238,7 @@ def upload(args):
                                  "tags": ["observation"] + default_tags,
                              })
                 if act["photo_url"]:
-                    grab_photo(date, act["photo_url"])
+                    grab_media(date, act["photo_url"])
             elif atype == "incident_activity":
                 subact = act["activiable"]
                 notes.append({
@@ -244,7 +255,7 @@ def upload(args):
                              })
 
                 if subact["photo_url"]:
-                    grab_photo(date, subact["photo_url"])
+                    grab_media(date, subact["photo_url"])
 
             elif atype == "medication_activity":
                 notes.append({
