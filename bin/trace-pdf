@@ -1,0 +1,19 @@
+#! /bin/bash
+
+set -eo pipefail
+
+MYTMP=$(mktemp -d)
+PDF="$1"
+
+with_echo()
+{
+  echo "$@"
+  "$@"
+}
+
+with_echo convert -density 150 "$PDF" "$MYTMP/pg%03d.pbm"
+for i in "$MYTMP"/*.pbm; do
+  with_echo potrace -b pdf -o "${i%.pbm}.pdf" "$i"
+done
+( cd "$MYTMP"; pdftk ./*.pdf cat output out.pdf)
+mv "$MYTMP/out.pdf" "${PDF%.pdf}-traced.pdf"
