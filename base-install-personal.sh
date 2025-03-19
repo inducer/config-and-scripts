@@ -101,6 +101,7 @@ PACKAGES=(
   nautilus-nextcloud
 
   imagemagick graphicsmagick  heif-thumbnailer heif-gdk-pixbuf libheif-examples
+  potrace
 
   flatpak adb fastboot
 
