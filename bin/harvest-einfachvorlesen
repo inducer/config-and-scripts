@@ -16,7 +16,7 @@ def main():
     parser.add_argument("control_file", metavar="CONTROL.TOML")
     parser.add_argument(
                  "-o", "--output-dir",
-                 default=os.path.expanduser("~/nc/ereader/vorlesen/"))
+                 default=os.path.expanduser("~/nc/ereader/to/vorlesen/"))
 
     args = parser.parse_args()
 
