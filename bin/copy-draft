@@ -6,6 +6,12 @@ else
   PAPER_NAME=$(basename $(pwd))
 fi
 
+EREADER=0
+if test "$1" = "-e" ; then
+  EREADER=1
+  shift
+fi
+
 if test "$1" = "--name" || test "$1" = "-n"; then
   PAPER_NAME="$2"
   shift
@@ -14,7 +20,7 @@ fi
 
 PDF_NAME="$1"
 if test "$PDF_NAME" = ""; then
-  echo "usage: $0 [--name NAME] paper.pdf"
+  echo "usage: $0 [-e] [--name NAME] paper.pdf"
   exit 1
 fi
 if ! test -f "$PDF_NAME"; then
@@ -25,7 +31,11 @@ fi
 PDF_NAME_STRIPPED="${PDF_NAME%.pdf}"
 PDF_NAME_STRIPPED="$(basename "$PDF_NAME_STRIPPED")"
 
-DRAFT_FOLDER="$HOME/nc/review/drafts/$PAPER_NAME"
+if test "$EREADER" = 1; then
+  DRAFT_FOLDER="$HOME/nc/ereader/review/drafts/$PAPER_NAME"
+else
+  DRAFT_FOLDER="$HOME/nc/review/drafts/$PAPER_NAME"
+fi
 
 DRAFT_SUFFIX="$(date "+%Y-%m-%d-%H%M")"
 
@@ -37,6 +47,10 @@ fi
 DRAFT_NAME="$DRAFT_FOLDER/$PDF_NAME_STRIPPED-$DRAFT_SUFFIX.pdf"
 
 mkdir -p "$DRAFT_FOLDER"
-echo "$DRAFT_NAME"
+echo "DRAFT: $DRAFT_NAME"
 pdfunite "$PDF_NAME" "$DRAFT_NAME"
-xournalpp "$DRAFT_NAME"
+
+if test "$EREADER" = 0; then
+  xournalpp "$DRAFT_NAME"
+fi
+
