@@ -2,43 +2,6 @@
 bindkey -v
 #bindkey -M viins "^R" history-incremental-search-backward
 
-# fzf -------------------------------------------------------------------------
-if test -x /usr/bin/fdfind; then
-
-  # Setting fd as the default source for fzf
-  export FZF_DEFAULT_COMMAND='fdfind --type f -H'
-
-  _fzf_compgen_path() {
-    fdfind --hidden --follow --exclude ".git" . "$1"
-  }
-
-  # Use fd to generate the list for directory completion
-  _fzf_compgen_dir() {
-    fdfind --type d --hidden --follow --exclude ".git" . "$1"
-  }
-
-  export FZF_ALT_C_COMMAND="fdfind --follow -t d . $HOME"
-fi
-
-source_if_exists()
-{
-  if test -f "$1"; then
-    source "$1"
-  fi
-}
-
-if test -d ~/shared/pack/fzf; then
-  MY_FZF_PATH=$HOME/shared/pack/fzf
-elif test -d ~/pack/fzf; then
-  MY_FZF_PATH=$HOME/pack/fzf
-else
-  echo "fzf is missing: https://github.com/junegunn/fzf.git"
-fi
-
-source_if_exists $MY_FZF_PATH/shell/completion.zsh
-source_if_exists $MY_FZF_PATH/shell/key-bindings.zsh
-
-
 # shell options ---------------------------------------------------------------
 setopt auto_cd
 setopt no_menu_complete
@@ -185,6 +148,71 @@ loadpkg()
 # ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#e0e0e0,bg=cyan,bold,underline"
 
 loadpkg zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+
+# {{{ skim
+
+if test -x /usr/bin/fdfind; then
+
+  _fzf_compgen_path() {
+    fdfind --hidden --follow --exclude ".git" . "$1"
+  }
+
+  # Use fd to generate the list for directory completion
+  _fzf_compgen_dir() {
+    fdfind --type d --hidden --follow --exclude ".git" . "$1"
+  }
+
+  export SKIM_ALT_C_COMMAND="fdfind --follow -t d . $HOME"
+fi
+
+source_if_exists()
+{
+  if test -f "$1"; then
+    source "$1"
+  fi
+}
+
+if test -d ~/shared/pack/skim; then
+  MY_SKIM_PATH=$HOME/shared/pack/skim
+elif test -d ~/pack/skim; then
+  MY_SKIM_PATH=$HOME/pack/skim
+else
+  echo "fzf is missing: https://github.com/skim-rs/skim"
+fi
+
+source_if_exists $MY_SKIM_PATH/shell/completion.zsh
+source_if_exists $MY_SKIM_PATH/shell/key-bindings.zsh
+
+# from
+# https://github.com/casonadams/skim.zsh/blob/994a8bbc82c1c12fbb20ba0964dbd7a0cacc3b1e/skim.plugin.zsh
+
+# Bat theme
+if [[ -z "$BAT_THEME" ]]; then
+  export BAT_THEME="ansi"
+fi
+
+if [[ -z "$FZF_PREVIEW_COMMAND" ]]; then
+  export FZF_PREVIEW_COMMAND='([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) \
+    || ([[ -d {} ]] && (tree -L 2 -a -C {} | less || echo {} 2> /dev/null | head -200))'
+fi
+
+if [[ -z "$SKIM_DEFAULT_COMMAND" ]]; then
+  export SKIM_DEFAULT_COMMAND="fd --type f || rg --files || find ."
+fi
+
+if [[ -z "$SKIM_DEFAULT_OPTIONS" ]]; then
+  export SKIM_DEFAULT_OPTIONS="\
+  --inline-info \
+  --no-multi \
+  --cycle \
+  --height=${SKIM_TMUX_HEIGHT:-40%} \
+  --tiebreak=index \
+  --bind '?:toggle-preview' \
+  --preview '([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (tree -L 2 -a -C {} | less || echo {} 2> /dev/null | head -200))' \
+  "
+fi
+
+# }}}
 
 
 if test -d $HOME/pack/zsh-completions; then
