@@ -25,6 +25,7 @@ PACKAGES=(
   curl yt-dlp
   mlocate pwgen
   libgmp-dev libmpfr-dev
+  libhwy-dev
   libpq-dev libjemalloc-dev
   vim-gtk3 neovim emacs exuberant-ctags micro gedit
   efm-langserver clangd
