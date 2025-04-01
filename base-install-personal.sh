@@ -93,9 +93,6 @@ PACKAGES=(
 
   firefox firefox-l10n-de chromium epiphany-browser
 
-  # for pop shell
-  node-typescript
-
   msmtp offlineimap
 
   nextcloud-desktop nextcloud-desktop-cmd nextcloud-desktop-l10n
