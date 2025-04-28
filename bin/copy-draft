@@ -1,9 +1,17 @@
 #! /bin/bash
 
+set -eo pipefail
+
 if test -f .draft-id; then
   PAPER_NAME=$(cat .draft-id)
 else
-  PAPER_NAME=$(basename $(pwd))
+  GIT_ROOT=$(git rev-parse --show-toplevel || true)
+  if ! test "$GIT_ROOT" = "" ; then
+    NAMEDIR="$GIT_ROOT"
+  else
+    NAMEDIR="$(pwd)"
+  fi
+  PAPER_NAME="$(basename "$NAMEDIR")"
 fi
 
 EREADER=0
