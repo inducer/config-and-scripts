@@ -38,6 +38,8 @@ render = true
 
 [editor.lsp]
 display-messages = true
+display-inlay-hints = true
+display-progress-messages = true
 
 [keys.insert]
 "C-[" = "normal_mode"
