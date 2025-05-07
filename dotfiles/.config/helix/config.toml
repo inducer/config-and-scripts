@@ -25,6 +25,9 @@ tab = "all"
 [editor.statusline]
 center = ["version-control"]
 
+[editor.file-picker]
+hidden = false
+
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
