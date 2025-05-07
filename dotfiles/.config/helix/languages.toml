@@ -23,7 +23,7 @@ environment = {"RUST_LOG" = "error"}
 name = "python"
 language-servers = [
   "ruff",
-  "pyright",
+  "basedpyright",
   "typos"
 ]
 
