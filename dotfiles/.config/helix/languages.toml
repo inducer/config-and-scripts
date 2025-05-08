@@ -19,6 +19,9 @@ environment = {"RUST_LOG" = "error"}
 # Defaults to Warning.
 # config.diagnosticSeverity = "Warning"
 
+[language-server.basedpyright.config.analysis]
+useTypingExtensions = true
+
 [[language]]
 name = "python"
 language-servers = [
