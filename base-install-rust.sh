@@ -2,10 +2,15 @@
 
 # add rustup?
 
-cargo install typos-cli
-cargo install --git https://github.com/tekumara/typos-lsp.git
-cargo install fclones
-cargo install tealdeer
-cargo install skim
-cargo install --locked difftastic
-cargo install --git https://codeberg.org/mergiraf/mergiraf.git
+function ci() {
+  cargo install --locked "$@"
+  
+}
+
+ci typos-cli
+ci --git https://github.com/tekumara/typos-lsp.git
+ci fclones
+ci tealdeer
+ci skim
+ci difftastic
+ci --git https://codeberg.org/mergiraf/mergiraf.git
