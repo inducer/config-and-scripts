@@ -46,3 +46,6 @@ display-progress-messages = true
 
 [keys.select]
 "C-[" = "normal_mode"
+
+[keys.normal.space]
+i = ":toggle lsp.display-inlay-hints"
