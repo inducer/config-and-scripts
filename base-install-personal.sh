@@ -36,7 +36,7 @@ PACKAGES=(
   python3-scipy python3-matplotlib
   swig
   python3-pyqt5
-  python3-dbg python3-venv python3-virtualenv python3-pip-whl python3-poetry
+  python3-dbg python3-venv python3-virtualenv python3-pip-whl python3-poetry pipx
   silversearcher-ag ripgrep fzf fd-find
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
   texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk texlive-extra-utils
