@@ -5,6 +5,7 @@
         name = Andreas Kloeckner
         email = inform@tiker.net
         signingkey = CA171145
+	    attributesfile = ~/.gitattributes
 [color]
         ui = auto
 [push]
@@ -27,10 +28,17 @@
 [grep]
         extendRegexp = true
         lineNumber = true
+
 [merge]
         # https://github.blog/2022-01-24-highlights-from-git-2-35/
         #conflictstyle = zdiff3
-	conflictstyle = diff3
+		conflictstyle = diff3
+
+	    name = mergiraf
+	    driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
+
+[core]
+
 [gpg]
 	program = gpg2
 [filter "lfs"]
