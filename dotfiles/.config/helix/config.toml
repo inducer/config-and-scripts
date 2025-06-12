@@ -7,7 +7,6 @@ cursorline = true
 cursorcolumn = true
 bufferline = "multiple"
 color-modes = true
-idle-timeout = 0
 true-color = true
 end-of-line-diagnostics = "hint"
 
