@@ -24,7 +24,7 @@ regex = "^.*$"
 [[hints.enabled]]
 action = "Copy"
 binding =  { key = "t", mods = "Control|Shift" }
-regex = " -> [a-zA-Z,|\\[\\] ]+"
+regex = " -> [_0-9a-zA-Z,|\\[\\] ]+"
 
 [env]
 # This makes 256-color support in tmux work
