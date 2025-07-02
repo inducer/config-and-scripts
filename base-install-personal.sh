@@ -76,6 +76,8 @@ PACKAGES=(
   yubikey-manager yubikey-manager-qt
   galternatives
 
+  intel-lpmd
+
   # zotero needs this
   libdbus-glib-1-2
 
