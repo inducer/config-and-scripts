@@ -42,6 +42,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/.config/libvirt" \
             --exclude "$HOME/tmp" \
             --exclude "$HOME/.steam" \
+            --exclude "$HOME/.elan" \
             --exclude "$HOME/VirtualBox VMs" \
             --exclude "$HOME/bulk/camprocess" \
             --exclude "$HOME/work/django/relate/contrib/jupyterlite" \
