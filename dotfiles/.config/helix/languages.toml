@@ -6,6 +6,50 @@ command = "efm-langserver"
 command = "ruff"
 args = ["server", "--preview"]
 
+[language-server.texlab]
+command = "texlab"
+args = ["run"]
+
+[language-server.ltex-ls-plus]
+command = "ltex-ls-plus"
+
+[language-server.ltex-ls-plus.config.ltex]
+additionalRules.enablePickyRules = true
+
+[language-server.ltex-ls-plus.config.ltex.dictionary]
+en-US = [
+  # not supported:
+  # https://github.com/ltex-plus/ltex-ls-plus/issues/56
+  # ":~/config-and-scripts/languagetool-dict-en.txt",
+
+  "Yukawa",
+  "QBMAX",
+  "Klöckner",
+  "Xiaoyu",
+  "Chaoqi",
+  "Hankel",
+  "GMRES",
+  "SymPy",
+  "Pytential",
+  "Ockendon",
+  "Fredholm",
+  "thermoacoustic",
+  "Nyström",
+  "cruller",
+  "Cruller",
+  "equispaced",
+  "Siebel",
+  "Urbana-Champaign",
+  "subexpression",
+  "wavenumber",
+  "Mascheroni",
+]
+de-DE = [
+  # not supported:
+  # https://github.com/ltex-plus/ltex-ls-plus/issues/56
+  # ":~/config-and-scripts/languagetool-dict-de.txt",
+]
+
 [language-server.typos]
 # typos-lsp must be on your PATH, or otherwise change this to an absolute path to typos-lsp
 command = "typos-lsp"
@@ -49,3 +93,7 @@ auto-format = false
 [[language]]
 name = "cpp"
 file-types = ["cc", "hh", "c++", "cpp", "hpp", "h", "ipp", "tpp", "cxx", "hxx", "ixx", "txx", "ino", "C", "H", "cu", "cuh", "cppm", "h++", "ii", "inl", "ispc"]
+
+[[language]]
+name = "latex"
+language-servers = ["texlab", "ltex-ls-plus"]

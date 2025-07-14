@@ -1,0 +1,4 @@
+#! /bin/bash
+
+bn="$(basename "$0")"
+exec "$HOME/pack/ltex-ls-plus-18.5.1/bin/$bn" "$@"

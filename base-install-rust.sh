@@ -14,3 +14,6 @@ ci tealdeer
 ci skim
 ci difftastic
 ci --git https://codeberg.org/mergiraf/mergiraf.git
+
+ci --git https://github.com/latex-lsp/texlab
+# --tag <insert version here>
