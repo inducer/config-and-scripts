@@ -3,10 +3,10 @@
 import argparse
 import datetime
 import os
-from typing import Any, List
+from typing import Any
 from warnings import warn
 
-from babybuddy import JsonAPI, BabyBuddyAPI
+from babybuddy import BabyBuddyAPI, JsonAPI
 
 
 class ProcareAPI(JsonAPI):
@@ -23,7 +23,7 @@ class ProcareAPI(JsonAPI):
     def daily_activities(self,
                          kid_id: str,
                          date: datetime.date,
-                         ) -> List[Any]:
+                         ) -> list[Any]:
         params = {"kid_id": kid_id}
         if date is not None:
             params["filters[daily_activity][date_to]"] = date.isoformat()
@@ -122,14 +122,14 @@ def upload(args):
                                  "child": bb_kid_id,
                                  "note": f"Signed in.{pc_id}",
                                  "time": atime.isoformat(),
-                                 "tags": ["signin"] + default_tags,
+                                 "tags": ["signin", *default_tags],
                              })
             elif atype == "sign_out_activity":
                 notes.append({
                                  "child": bb_kid_id,
                                  "note": f"Signed out.{pc_id}",
                                  "time": atime.isoformat(),
-                                 "tags": ["signin"] + default_tags,
+                                 "tags": ["signin", *default_tags],
                              })
             elif atype == "bathroom_activity":
                 changes.append({
@@ -139,7 +139,7 @@ def upload(args):
                         "solid": "BM" in data["sub_type"],
                         "tags": (
                             default_tags
-                            + (["diapercream"] if data['diaper_cream'] else [])),
+                            + (["diapercream"] if data["diaper_cream"] else [])),
                         "notes": (
                             f"{act['comment']}"
                             f"{' (diaper cream)' if data['diaper_cream'] else ''}"
@@ -214,7 +214,6 @@ def upload(args):
                 grab_media(date, act["photo_url"])
 
             elif atype == "video_activity":
-                from pprint import pprint
                 grab_media(date, act["activiable"]["video_file_url"])
 
             elif atype == "note_activity":
@@ -224,7 +223,7 @@ def upload(args):
                                      f"{act['data']['desc']}"
                                      f"{pc_id}"),
                                  "time": atime.isoformat(),
-                                 "tags": ["note"] + default_tags,
+                                 "tags": ["note", *default_tags],
                              })
             elif atype == "observation_activity":
                 notes.append({
@@ -235,7 +234,7 @@ def upload(args):
                                      f"Staff present: {act['staff_present_name']}"
                                      f"{pc_id}"),
                                  "time": atime.isoformat(),
-                                 "tags": ["observation"] + default_tags,
+                                 "tags": ["observation", *default_tags],
                              })
                 if act["photo_url"]:
                     grab_media(date, act["photo_url"])
@@ -251,7 +250,7 @@ def upload(args):
                                      f"COMMENT: {subact['other_comments']}"
                                      f"{pc_id}"),
                                  "time": atime.isoformat(),
-                                 "tags": ["incident"] + default_tags,
+                                 "tags": ["incident", *default_tags],
                              })
 
                 if subact["photo_url"]:
@@ -266,7 +265,7 @@ def upload(args):
                                      f"Staff present: {act['staff_present_name']}"
                                      f"{pc_id}"),
                                  "time": atime.isoformat(),
-                                 "tags": ["meds"] + default_tags,
+                                 "tags": ["meds", *default_tags],
                              })
             else:
                 raise ValueError(f"activity type not understood: {atype}")
