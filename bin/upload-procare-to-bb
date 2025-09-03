@@ -50,18 +50,17 @@ class ProcareAPI(JsonAPI):
             page += 1
 
 
-def grab_media(date: datetime.date, media_url: str) -> None:
+def grab_media(date: datetime.date, media_url: str) -> str:
     import requests
     response = requests.get(media_url)
     response.raise_for_status()
     mimetype = response.headers["content-type"]
 
-
-
     from urllib.parse import urlparse
     bn = os.path.basename(urlparse(media_url).path)
-    fn = os.path.expanduser("~/nc/instant-upload/"
+    unexpanded_fn = ("~/nc/instant-upload/"
                        f"{date.year}/{date.month:02d}/{bn}")
+    fn = os.path.expanduser(unexpanded_fn)
 
     if mimetype == "video/mp4":
         if not fn.endswith(".mp4"):
@@ -71,11 +70,13 @@ def grab_media(date: datetime.date, media_url: str) -> None:
 
     if os.path.exists(fn):
         print(f"ALREADY EXISTS? refusing to overwrite {fn}")
-        return
+        return unexpanded_fn
 
-    with open(fn, 'wb') as f:
+    with open(fn, "wb") as f:
         f.write(response.content)
-    print(f"NEW MEDIA DOWNLOADED: {fn}")
+    print(f"NEW MEDIA DOWNLOADED: {unexpanded_fn}")
+
+    return unexpanded_fn
 
 
 def upload(args):
@@ -211,7 +212,17 @@ def upload(args):
                                     })
 
             elif atype == "photo_activity":
-                grab_media(date, act["photo_url"])
+                fn = grab_media(date, act["photo_url"])
+                notes.append({
+                                 "child": bb_kid_id,
+                                 "note": (
+                                     f"Photo, saved as {fn}:\n"
+                                     f"{act['comment']}\n"
+                                     f"Staff present: {act['staff_present_name']}"
+                                     f"{pc_id}"),
+                                 "time": atime.isoformat(),
+                                 "tags": ["photo", *default_tags],
+                             })
 
             elif atype == "video_activity":
                 grab_media(date, act["activiable"]["video_file_url"])
