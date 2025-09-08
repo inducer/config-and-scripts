@@ -38,6 +38,7 @@ alias em='GPG_AGENT_INFO= emacs -nw -f notmuch'
 alias toplev='python2 ~/shared/pack/pmu-tools/toplev.py'
 alias repo="PYTHONWARNINGS= repo"
 alias mg="emacs -f magit"
+alias pip="uv pip"
 
 
 fb()
@@ -60,7 +61,7 @@ reloc()
 }
 re3()
 {
-  source ~/shared/src/env-3.11/bin/activate
+  source ~/shared/src/env-3.13/bin/activate
 }
 
 aconda()
@@ -150,13 +151,10 @@ if test "$TERM" = "xterm"; then
   export TERM="xterm-256color"
 fi
 
-export PATH=$HOME/shared/pack/ispc-v1.9.0-linux:$HOME/bin:$HOME/.poetry/bin:$HOME/shared/pack/gh-cli/bin:$PATH:$HOME/shared/pack/glab/bin
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$HOME/shared/pool/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/shared/pool/lib
 
 export RUSTUP_HOME=$HOME/shared/.rustup
 export CARGO_HOME=$HOME/shared/.cargo
-
-
-source "$CARGO_HOME/env"
+export PATH=$HOME/bin:$HOME/.local/bin:$CARGO_HOME/bin:$PATH
