@@ -1,0 +1,4 @@
+#! /bin/bash
+
+unset PYTHONWARNINGS
+exec ~/work/django/relate/.venv/bin/python -m pudb -m relate "$@"
