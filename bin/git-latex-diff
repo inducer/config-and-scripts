@@ -1,0 +1,24 @@
+#! /bin/bash
+
+set -eo pipefail
+set -x
+
+if test "$2" = ""; then
+  echo "usage: $0 REVISION MAINFILE"
+  exit 1
+fi
+
+REV="$1"
+MAIN_FILE="$2"
+
+OLD_FILE="${MAIN_FILE%.tex}-old-$REV.tex"
+DIFF_FILE="${MAIN_FILE%.tex}-diff-$REV.tex"
+
+if test -f "$OLD_FILE"; then
+  echo "$OLD_FILE already exists, quitting"
+  exit 1
+fi
+
+git show "$REV:$MAIN_FILE" > "$OLD_FILE"
+latexdiff "$OLD_FILE" "$MAIN_FILE" > "$DIFF_FILE"
+rm "$OLD_FILE"
