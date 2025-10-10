@@ -1,7 +1,6 @@
 #! /bin/bash
 
 set -eo pipefail
-set -x
 
 if test "$2" = ""; then
   echo "usage: $0 REVISION MAINFILE"
@@ -11,8 +10,9 @@ fi
 REV="$1"
 MAIN_FILE="$2"
 
+PARSED_REV="$( git rev-parse --short "$REV")"
 OLD_FILE="${MAIN_FILE%.tex}-old-$REV.tex"
-DIFF_FILE="${MAIN_FILE%.tex}-diff-$REV.tex"
+DIFF_FILE="${MAIN_FILE%.tex}-diff-$PARSED_REV..$(git rev-parse --short HEAD).tex"
 
 if test -f "$OLD_FILE"; then
   echo "$OLD_FILE already exists, quitting"
@@ -22,3 +22,4 @@ fi
 git show "$REV:$MAIN_FILE" > "$OLD_FILE"
 latexdiff "$OLD_FILE" "$MAIN_FILE" > "$DIFF_FILE"
 rm "$OLD_FILE"
+echo "Created: $DIFF_FILE"
