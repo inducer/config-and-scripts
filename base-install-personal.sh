@@ -43,7 +43,7 @@ PACKAGES=(
   texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk texlive-extra-utils
   chktex dvidvi fragmaster lacheck latexmk purifyeps texlive-luatex
   pandoc
-  mc zoxide broot
+  mc zoxide # broot
   graphviz inkscape gnucash audacity gimp krita
   gmsh occt-draw occt-misc libxi-dev rapidjson-dev
   libocct-{ocaf,data-exchange,draw,foundation,modeling-algorithms,modeling-data,visualization}-dev
