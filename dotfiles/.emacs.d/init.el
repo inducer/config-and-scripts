@@ -229,7 +229,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight light :height 120 :width normal :foundry "CYEL" :family "Iosevka Term"))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight light :height 120 :width normal :foundry "CYEL" :family "IosevkaTermSlab Nerd Font"))))
  '(italic ((t (:foreground "gray" :slant italic))))
  '(message-cited-text-1 ((t (:foreground "#888"))))
  '(notmuch-message-summary-face ((t (:background "#303030" :foreground "gray"))))
