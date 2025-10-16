@@ -1,0 +1,78 @@
+{
+  zzz
+  Memcheck:Addr4
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Addr4
+  obj:*python*
+}
+{
+  Pyfree_rd8
+  Memcheck:Addr8
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Cond
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Value8
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Value4
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Cond
+  fun:memchr
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Cond
+  fun:strlen
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Cond
+  fun:bcmp
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Cond
+  fun:bcmp
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Param
+  mkdir(pathname)
+  fun:mkdir
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Param
+  stat(file_name)
+  fun:_xstat
+  obj:*python*
+}
+{
+  zzz
+  Memcheck:Param
+  open(filename)
+  fun:*
+  fun:*
+  fun:*
+  fun:__fopen_internal
+  obj:*python*
+}
