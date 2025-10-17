@@ -14,7 +14,7 @@
         lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
         g = grep --break --heading --line-number
 		l = log --stat
-        diffw = -c core.pager=less diff --color-words
+        diffw = -c core.pager=less -c color.diff.old='black red strike' -c color.diff.new='black green italic' diff --color-words
         diffsimple = -c core.pager=less diff
 		ddiff = -c diff.external=difft diff
 
