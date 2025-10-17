@@ -1,0 +1,5 @@
+#! /bin/bash
+
+set -eo pipefail
+
+exec ~/pack/diff-so-fancy/diff-so-fancy "$@"
