@@ -2,6 +2,12 @@
 
 set -eo pipefail
 
+echo "------------------------------------------------"
+echo "zpool status on piepsel (hit yubikey)"
+echo "------------------------------------------------"
+ssh piepsel zpool status
+read ENTER
+
 function check_snapshots()
 {
     mount-backup $backupname
