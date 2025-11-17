@@ -10,19 +10,19 @@ fi
 backupname="$1"
 
 if test "$backupname" = "laptop"; then
-  RESTIC_REPONAME=laptop
+  RESTIC_REPONAME=aklaptop/laptop
   RESTIC_MACHINENAME="$(hostname)"
-elif [[ $backupname == */* ]]; then
+elif [[ $backupname == */*/* ]]; then
     RESTIC_REPONAME="$(dirname "$backupname")"
     RESTIC_MACHINENAME="$(basename "$backupname")"
 else
-    RESTIC_REPONAME="$backupname"
-    RESTIC_MACHINENAME="$backupname"
+    >&2 echo "triple-slash backup name is now required"
+    exit 1
 fi
 
 unset backupname
 
-if test "$RESTIC_REPONAME" = "laptop"; then
+if test "$RESTIC_REPONAME" = "aklaptop/laptop"; then
   RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
   RESTIC_PASSWORD_FILE=$HOME/.restic-password
 else
@@ -37,7 +37,8 @@ else
       >&2 echo
   done
 
-  RESTIC_REPOSITORY="rest:https://ak$RESTIC_REPONAME:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/ak$RESTIC_REPONAME/$RESTIC_REPONAME"
+  USERNAME="$(dirname $RESTIC_REPONAME)"
+  RESTIC_REPOSITORY="rest:https://$USERNAME:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/$RESTIC_REPONAME"
 fi
 
 cat <<EOF

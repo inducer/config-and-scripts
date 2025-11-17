@@ -6,6 +6,7 @@ echo "------------------------------------------------"
 echo "zpool status on piepsel (hit yubikey)"
 echo "------------------------------------------------"
 ssh piepsel zpool status
+echo "ENTER TO MOVE ON:"
 read ENTER
 
 function check_snapshots()
@@ -37,8 +38,15 @@ function check_snapshots()
     sleep 1
     trap - RETURN
 }
+BACKUPS=(
+    laptop
+    akserver/server/ermine
+    akgrison/grison/grison
+    akrelate/relate/relate
+    akscicomp-discourse/scicomp-discourse/scicomp-discourse
+)
 
-for backupname in laptop server/ermine grison relate scicomp-discourse; do
+for backupname in ${BACKUPS[@]}; do
     echo "------------------------------------------------------"
     echo "$backupname"
     echo "------------------------------------------------------"
