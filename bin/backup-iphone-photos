@@ -1,0 +1,14 @@
+#! /bin/bash
+
+set -eo pipefail
+
+echo "Make sure iphone is mounted at ~/mnt/iphone: ifuse ~/mnt/iphone"
+echo "[ENTER]"
+read ENTER
+
+eval "$(restic-setup-auth cbphone/pictures/iphone)"
+restic backup --verbose --one-file-system \
+  "$HOME/mnt/iphone/DCIM" \
+  "$HOME/mnt/iphone/PhotoData" \
+  --exclude "$HOME/mnt/iphone/PhotoData/Caches" \
+  --exclude "$HOME/mnt/iphone/PhotoData/Thumbnails"
