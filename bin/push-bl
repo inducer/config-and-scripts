@@ -1,0 +1,11 @@
+#! /bin/bash
+
+set -eo pipefail
+
+basedpyright --writebaseline || true
+BRANCH="bpr-baseline-$(date +%Y-%m-%d)"
+git switch -c "$BRANCH"
+git commit .basedpyright/baseline.json -m "Update baseline"
+echo "[PRESS ENTER]"
+read ENTER
+git push github "$BRANCH"
