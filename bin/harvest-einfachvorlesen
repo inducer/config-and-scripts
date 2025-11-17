@@ -1,13 +1,17 @@
 #! /usr/bin/env python3
 
-import tempfile
-import os
 import argparse
-import tomllib
-from subprocess import run
-from urllib.parse import urlparse
+import os
 from pathlib import Path
-from bs4 import BeautifulSoup
+from subprocess import run
+from typing import TYPE_CHECKING
+
+import tomllib
+from bs4 import BeautifulSoup, Tag
+
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def main():
@@ -25,59 +29,70 @@ def main():
 
     outpath = Path(args.output_dir)
 
-    for folder, urls in control.items():
-        for url in urls:
-            with tempfile.TemporaryDirectory() as tmpdirname:
-                tmppath = Path(tmpdirname)
+    for folder, filenames in control.items():
+        filenames: Sequence[str]
+        for filename in filenames:
+            filename = Path(filename).absolute()
+            with open(filename) as inf:
+                html = inf.read()
+            soup = BeautifulSoup(html, "html.parser")
 
-                purl = urlparse(url)
-                assert purl.path[0] == "/"
-                fn = purl.path[1:]
-                if purl.query:
-                    fn = f"{fn}?{purl.query}"
-                htmlpath = tmppath / purl.netloc / fn
+            for div in soup.find_all("div", {"class": "story_pdf"}):
+                div.decompose()
 
-                run([
-                    "wget", "-p", "-k",
-                    "--exclude-directories=/themes",
-                    url],
-                    cwd=tmpdirname, check=True)
+            h1, = soup.find_all("h1")[-1:]
+            assert h1.parent is not None
+            geschichte_div = h1.parent.parent
 
-                with open(htmlpath) as inf:
-                    html = inf.read()
-                soup = BeautifulSoup(html, "html.parser")
+            if geschichte_div is None:
+                raise ValueError("story div not found")
 
-                for div in soup.find_all("div", {"class": "story_pdf"}):
-                    div.decompose()
+            content: list[str] = []
 
-                geschichte_div = None
+            def recurse(el: Tag):
+                if el.name == "div":
+                    for ch in el.contents:
+                        # assert isinstance(ch, Tag), ch
+                        if isinstance(ch, Tag):
+                            recurse(ch)
+                elif el.name in ["h1", "h2"]:
+                    lev = int(el.name[1:])
+                    content.append(f"{'#' * lev} {el.text}")
+                elif el.name == "img":
+                    src = el.attrs["src"]
+                    if "reader_light" in src:
+                        return
 
-                for div in soup.find_all("div"):
-                    if "geschichte" in div.get("class", []):
-                        geschichte_div = div
-                        break
+                    content.append(f"![]({src})")
+                elif el.name == "span":
+                    if el.text.startswith("Du hast Lust auf noch mehr"):
+                        return
 
-                if geschichte_div is None:
-                    raise ValueError("story div not found")
+                    content.append(el.text)
+                elif el.name in ["a", "svg", "button"]:
+                    return
+                else:
+                    raise ValueError(f"unexpected tag type: '{el.name}'")
 
-                for p in geschichte_div.find_all("p"):
-                    if "headline" in p.get("class", []):
-                        p.name = "h3"
+            recurse(geschichte_div)
+            print("\n".join(content))
 
-                clean_htmlpath = (
-                    tmppath / purl.netloc / purl.path[1:]).with_suffix(".readable.html")
-                with open(clean_htmlpath, "w") as outf:
-                    outf.write(str(geschichte_div))
+            soup_filename = filename.parent / f"{filename.stem}-soup.html"
+            with open(soup_filename, "w") as outf:
+                outf.write(soup.prettify())
 
-                htmlpath_noquery =  tmppath / purl.netloc / purl.path[1:]
+            clean_filename = filename.parent / f"{filename.stem}.md"
+            with open(clean_filename, "w") as outf:
+                outf.write("\n\n".join(content))
 
-                outpath_story = outpath / folder
-                outpath_story.mkdir(parents=True, exist_ok=True)
-                run(["pandoc", clean_htmlpath,
-                    "-o", str(outpath_story / (htmlpath_noquery.stem + ".epub"))],
-                    cwd=clean_htmlpath.parent, check=True)
+            outpath_story = outpath / folder
+            outpath_story.mkdir(parents=True, exist_ok=True)
+            pandoc_cmdline = ["pandoc", clean_filename,
+                "-o", str(outpath_story / (filename.stem + ".epub"))]
+            print(pandoc_cmdline)
+            run(pandoc_cmdline,
+                cwd=clean_filename.parent, check=True)
 
 
 if __name__ == "__main__":
     main()
-
