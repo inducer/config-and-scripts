@@ -7,3 +7,4 @@ flatpak install com.github.tchx84.Flatseal
 flatpak install org.freecadweb.FreeCAD
 flatpak install no.mifi.losslesscut
 flatpak install com.bitwarden.desktop
+flatpak install flathub rocks.koreader.KOReader
