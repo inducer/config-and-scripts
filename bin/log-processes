@@ -1,0 +1,71 @@
+#!/usr/bin/env -S uv run --script
+#
+# /// script
+# dependencies = [
+#   "psutil",
+#   "typed-argparse",
+# ]
+# ///
+
+import csv
+import time
+
+import psutil
+import typed_argparse as tap
+
+
+class Args(tap.TypedArgs):
+    output_file: str = tap.arg(default="process-log.csv")
+    period: float = tap.arg(default=10.)
+
+
+def run(args: Args):
+    with open(args.output_file, "w", newline="") as csvfile:
+        csvw = csv.writer(csvfile)
+
+        wrote_header = False
+
+        while True:
+            t = time.time()
+            for proc in psutil.process_iter():
+                try:
+                    minfo = proc.memory_full_info()
+                except Exception:
+                    minfo = ()
+                if not wrote_header:
+                    if minfo:
+                        names = (
+                            "time",
+                            "pid",
+                            "name",
+                            "num_threads",
+                            "create_time",
+                            "status",
+                            *minfo._fields,
+                        )
+                        csvw.writerow(names)
+                        wrote_header = True
+                    else:
+                        continue
+
+                data = (
+                        t,
+                        proc.pid,
+                        proc.name(),
+                        proc.num_threads(),
+                        proc.create_time(),
+                        proc.status(),
+                        *minfo,
+                    )
+                csvw.writerow(data)
+
+            csvfile.flush()
+            time.sleep(args.period)
+
+
+def main():
+    tap.Parser(Args).bind(run).run()
+
+
+if __name__ == "__main__":
+    main()
