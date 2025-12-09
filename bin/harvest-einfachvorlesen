@@ -77,7 +77,6 @@ def main():
                     raise ValueError(f"unexpected tag type: '{el.name}'")
 
             recurse(geschichte_div)
-            print("\n".join(content))
 
             soup_filename = filename.parent / f"{filename.stem}-soup.html"
             with open(soup_filename, "w") as outf:
