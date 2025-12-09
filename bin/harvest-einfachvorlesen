@@ -64,6 +64,8 @@ def main():
                         return
 
                     content.append(f"![]({src})")
+                elif el.name == "canvas":
+                    pass
                 elif el.name == "span":
                     if el.text.startswith("Du hast Lust auf noch mehr"):
                         return
