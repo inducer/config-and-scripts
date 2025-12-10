@@ -48,16 +48,20 @@ def run(args: Args):
                     else:
                         continue
 
-                data = (
-                        t,
-                        proc.pid,
-                        proc.name(),
-                        proc.num_threads(),
-                        proc.create_time(),
-                        proc.status(),
-                        *minfo,
-                    )
-                csvw.writerow(data)
+                try:
+                    data = (
+                            t,
+                            proc.pid,
+                            proc.name(),
+                            proc.num_threads(),
+                            proc.create_time(),
+                            proc.status(),
+                            *minfo,
+                        )
+                    csvw.writerow(data)
+                except Exception:
+                    # processes can disappear, leading to failures above
+                    pass
 
             csvfile.flush()
             time.sleep(args.period)
