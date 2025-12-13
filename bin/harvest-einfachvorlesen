@@ -88,8 +88,11 @@ def main():
 
             outpath_story = outpath / folder
             outpath_story.mkdir(parents=True, exist_ok=True)
+            out_filename = str(
+                    outpath_story
+                        / (filename.stem.replace(" - einfach vorlesen!", "") + ".epub"))
             pandoc_cmdline = ["pandoc", clean_filename,
-                "-o", str(outpath_story / (filename.stem + ".epub"))]
+                "-o", out_filename]
             print(pandoc_cmdline)
             run(pandoc_cmdline,
                 cwd=clean_filename.parent, check=True)
