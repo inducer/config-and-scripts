@@ -1,0 +1,68 @@
+#!/usr/bin/env -S uv run --script
+#
+# /// script
+# dependencies = [
+# ]
+# ///
+
+
+from difflib import unified_diff
+import sys
+
+
+OTHER_PREFIX = "<<<<<<< "
+BASE_PREFIX = "||||||| "
+MINE_PREFIX = "======="
+END_PREFIX = ">>>>>>> "
+
+
+def main():
+    other: list[str] = []
+    base: list[str] = []
+    mine: list[str] = []
+
+    other_descr: str = "other"
+    base_descr: str = "base"
+    mine_descr: str = "mine"
+
+    append_list: list[str] | None = None
+
+    for ln in sys.stdin.readlines():
+        ln = ln.rstrip()
+
+        if ln.startswith(OTHER_PREFIX):
+            other_descr = ln[len(OTHER_PREFIX):]
+            append_list = other
+        elif ln.startswith(BASE_PREFIX):
+            base_descr = ln[len(BASE_PREFIX):]
+            append_list = base
+        elif ln.startswith(MINE_PREFIX):
+            append_list = mine
+        elif ln.startswith(END_PREFIX):
+            mine_descr = ln[len(END_PREFIX):]
+            break
+        else:
+            if append_list is not None:
+                append_list.append(ln)
+
+    def process(lines: list[str]) -> list[str]:
+        words = " ".join(lines).split()
+        return [w + "\n" for w  in words]
+
+    other = process(other)
+    base = process(base)
+    mine = process(mine)
+
+    _ = sys.stdout.writelines(
+        unified_diff(base, other,
+                     fromfile=str(base_descr), tofile=str(other_descr)))
+
+    print(79 * "#")
+
+    _ = sys.stdout.writelines(
+        unified_diff(base, mine,
+                     fromfile=str(base_descr), tofile=str(mine_descr)))
+
+
+if __name__ == "__main__":
+    main()
