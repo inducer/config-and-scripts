@@ -11,6 +11,7 @@ if command -v steamos-readonly > /dev/null; then
   pacman -S usb_modeswitch
 fi
 
+mkdir -p /etc/usb_modeswitch.d
 cat > /etc/usb_modeswitch.d/046d:c26d <<EOF
 # Logitech G923 Racing Wheel
 DefaultVendor=0x046d
