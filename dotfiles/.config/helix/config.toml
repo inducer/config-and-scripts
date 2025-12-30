@@ -49,3 +49,7 @@ display-progress-messages = true
 [keys.normal.space]
 i = ":toggle lsp.display-inlay-hints"
 W = ":reflow"
+
+# Custom command for word count of selection.
+# https://github.com/helix-editor/helix/discussions/10211#discussioncomment-14063590
+A-w = "@<A-|>tee /tmp/helix-wc.file<ret>:sh cat /tmp/helix-wc.file | wc -w<ret>"
