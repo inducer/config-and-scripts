@@ -24,7 +24,8 @@
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
-   ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
+   ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3"
+    "DeepSkyBlue" "gray50"])
  '(async-bytecomp-package-mode t)
  '(auto-save-visited-mode t)
  '(browse-url-browser-function 'browse-url-generic)
@@ -41,12 +42,18 @@
  '(global-auto-revert-mode t)
  '(gnus-alias-default-identity "uofi")
  '(gnus-alias-identity-alist
-   '(("uofi" "" "\"Andreas Kloeckner\" <andreask@illinois.edu>" "University of Illinois" nil "" "Andreas Kloeckner\12Room 4318 (Siebel Center), University of Illinois at Urbana-Champaign\12https://andreask.cs.illinois.edu/aboutme\12+1-217-244-6401")
-     ("tician" "" "\"Andreas Kloeckner\" <mathem@tician.de>" "" nil "" "")
+   '(("uofi" "" "\"Andreas Kloeckner\" <andreask@illinois.edu>"
+      "University of Illinois" nil ""
+      "Andreas Kloeckner\12Room 4318 (Siebel Center), University of Illinois at Urbana-Champaign\12https://andreask.cs.illinois.edu/aboutme\12+1-217-244-6401")
+     ("tician" "" "\"Andreas Kloeckner\" <mathem@tician.de>" "" nil ""
+      "")
      ("de" "" "\"Andreas Kloeckner\" <mathem@tiker.net>" "" nil "" "")
-     ("inform" "" "\"Andreas Kloeckner\" <inform@tiker.net>" "" nil "" "")
-     ("lists" "" "\"Andreas Kloeckner\" <lists@informa.tiker.net>" "" nil "" "")
-     ("cna" "" "Cabral Bigman & Andreas Kloeckner <cna@tiker.net>" "" nil "" "")))
+     ("inform" "" "\"Andreas Kloeckner\" <inform@tiker.net>" "" nil ""
+      "")
+     ("lists" "" "\"Andreas Kloeckner\" <lists@informa.tiker.net>" ""
+      nil "" "")
+     ("cna" "" "Cabral Bigman & Andreas Kloeckner <cna@tiker.net>" ""
+      nil "" "")))
  '(hl-sexp-background-color "#efebe9")
  '(ispell-dictionary "en_US")
  '(ispell-highlight-face 'flyspell-incorrect)
@@ -65,92 +72,68 @@
    '((OpenPGP
       (sign
        ("mathem@tician.de" "900A958D9A0ACA58B1468F2471AA298BCA171145")
-       ("andreask@illinois.edu" "900A958D9A0ACA58B1468F2471AA298BCA171145"))
+       ("andreask@illinois.edu"
+        "900A958D9A0ACA58B1468F2471AA298BCA171145"))
       (encrypt
        ("mathem@tician.de" "900A958D9A0ACA58B1468F2471AA298BCA171145")))
-     (CMS
-      (sign)
-      (encrypt))))
+     (CMS (sign) (encrypt))))
  '(mml-secure-openpgp-encrypt-to-self t)
  '(notmuch-address-command 'internal)
  '(notmuch-archive-tags '("-inbox" "+archived"))
  '(notmuch-fcc-dirs "offlineimap-badger/Sent -inbox +sent -unread")
  '(notmuch-saved-searches
-   '((:name "Inbox" :query "tag:inbox and not tag:draft and not tag:deleted")
+   '((:name "Inbox" :query
+            "tag:inbox and not tag:draft and not tag:deleted")
      (:name "Waiting" :query "tag:waiting")
      (:name "Flagged" :query "tag:flagged")
-     (:name "Snoozed" :query "tag:snoozed or tag:evesnoozed or tag:weeksnoozed")
+     (:name "Snoozed" :query
+            "tag:snoozed or tag:evesnoozed or tag:weeksnoozed")
      (:name "Recommendation letters" :query "tag:snoozed")
      (:name "To-Do Later" :query "tag:todolater")))
  '(notmuch-search-oldest-first nil)
  '(notmuch-show-indent-messages-width 0)
  '(notmuch-show-text/html-blocked-images ".*")
  '(notmuch-tag-formats
-   '(("unread"
-      (propertize tag 'face 'notmuch-tag-unread))
+   '(("unread" (propertize tag 'face 'notmuch-tag-unread))
      ("flagged"
-      (notmuch-tag-format-image-data tag
-                                     (notmuch-tag-star-icon))
+      (notmuch-tag-format-image-data tag (notmuch-tag-star-icon))
       (propertize tag 'face 'notmuch-tag-flagged))
-     ("uillinois"
-      (notmuch-apply-face tag
-                          '(:foreground "dark blue")))
-     ("github"
-      (notmuch-apply-face tag
-                          '(:foreground "deep sky blue")))
-     ("teaching"
-      (notmuch-apply-face tag
-                          '(:foreground "magenta")))))
+     ("uillinois" (notmuch-apply-face tag '(:foreground "dark blue")))
+     ("github" (notmuch-apply-face tag '(:foreground "deep sky blue")))
+     ("teaching" (notmuch-apply-face tag '(:foreground "magenta")))))
  '(notmuch-tagging-keys
    '(("a" notmuch-archive-tags "Archive")
      ("u" notmuch-show-mark-read-tags "Mark read")
-     ("f"
-      ("+flagged")
-      "Flag")
-     ("s"
-      ("+spam" "-inbox")
-      "Mark as spam")
-     ("D"
-      ("+deleted" "-inbox")
-      "Delete")
-     ("e"
-      ("+evesnoozed" "-inbox")
-      "Snooze until evening")
-     ("n"
-      ("+snoozed" "-inbox")
-      "Snooze until tomorrow")
-     ("w"
-      ("+weeksnoozed" "-inbox")
-      "Snooze until Monday")
-     ("R"
-      ("+reclet" "-inbox")
-      "Recommendation letter to-do")
-     ("l"
-      ("+todolater" "-inbox")
+     ("f" ("+flagged") "Flag") ("s" ("+spam" "-inbox") "Mark as spam")
+     ("D" ("+deleted" "-inbox") "Delete")
+     ("e" ("+evesnoozed" "-inbox") "Snooze until evening")
+     ("n" ("+snoozed" "-inbox") "Snooze until tomorrow")
+     ("w" ("+weeksnoozed" "-inbox") "Snooze until Monday")
+     ("R" ("+reclet" "-inbox") "Recommendation letter to-do")
+     ("l" ("+todolater" "-inbox")
       "Mark as to be done later, tracked via Org")))
  '(nrepl-message-colors
-   '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
+   '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3"
+     "#94BFF3" "#DC8CC3"))
  '(olivetti-body-width 100)
  '(org-agenda-custom-commands
    '(("ct" "TODOs sorted by state, priority, effort" todo "*"
-      ((org-agenda-overriding-header "TODOs sorted by state, priority, effort")
+      ((org-agenda-overriding-header
+        "TODOs sorted by state, priority, effort")
        (org-agenda-sorting-strategy
         '(todo-state-down priority-down effort-up))
-       (org-agenda-skip-function
-        '(org-agenda-skip-entry-if 'deadline))))))
+       (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))))))
  '(org-agenda-files
-   '("/home/andreas/org/notes.org" "/home/andreas/org/todo.org" "/home/andreas/org/ideas.org"))
+   '("/home/andreas/org/notes.org" "/home/andreas/org/todo.org"
+     "/home/andreas/org/ideas.org"))
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-sticky t)
  '(org-agenda-window-setup 'current-window)
  '(org-beamer-environments-extra '(("hidden" "h" "\\begin{hidden}" "\\end{hidden}")))
  '(org-capture-templates
-   '(("n" "Note" entry
-      (file "~/org/notes.org")
-      "** %?")
-     ("t" "To-do item" entry
-      (file "~/org/todo.org")
+   '(("n" "Note" entry (file "~/org/notes.org") "** %?")
+     ("t" "To-do item" entry (file "~/org/todo.org")
       "* TODO %i%?\12SCHEDULED: %t DEADLINE: %t\12%a")))
  '(org-capture-use-agenda-date t)
  '(org-enforce-todo-checkbox-dependencies t)
@@ -158,8 +141,9 @@
  '(org-format-latex-header
    "\\documentclass{article}\12\\usepackage[usenames]{color}\12[PACKAGES]\12[DEFAULT-PACKAGES]\12\\pagestyle{empty}             % do not remove\12% The settings below are copied from fullpage.sty\12\\setlength{\\textwidth}{\\paperwidth}\12\\addtolength{\\textwidth}{-3cm}\12\\setlength{\\oddsidemargin}{1.5cm}\12\\addtolength{\\oddsidemargin}{-2.54cm}\12\\setlength{\\evensidemargin}{\\oddsidemargin}\12\\setlength{\\textheight}{\\paperheight}\12\\addtolength{\\textheight}{-\\headheight}\12\\addtolength{\\textheight}{-\\headsep}\12\\addtolength{\\textheight}{-\\footskip}\12\\addtolength{\\textheight}{-3cm}\12\\setlength{\\topmargin}{1.5cm}\12\\addtolength{\\topmargin}{-2.54cm}\12\\usepackage{tikz}\12\\usetikzlibrary{calc}\12\\usetikzlibrary{positioning}\12\\usetikzlibrary{shapes.geometric}\12\\usetikzlibrary{shapes.arrows}\12\\usetikzlibrary{shadows}\12\12\\newcommand{\\abs}[1]{\\left| #1 \\right|}\12\\newcommand{\\norm}[1]{\\left\\| #1 \\right\\|}\12\\newcommand{\\ip}[1]{\\left\\langle #1, \\right\\rangle}\12\\newcommand{\\mathd}{\\mathrm{d}}\12\12\\let\\B=\\mathbf\12\\let\\b=\\mathbf\12\\let\\op=\\operatorname")
  '(org-format-latex-options
-   '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-                 ("begin" "$1" "$" "$$" "\\(" "\\[")))
+   '(:foreground default :background default :scale 2.0 :html-foreground
+                 "Black" :html-background "Transparent" :html-scale
+                 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(org-loop-over-headlines-in-active-region t)
  '(org-pretty-entities t)
  '(org-pretty-entities-include-sub-superscripts nil)
@@ -200,24 +184,12 @@
  '(user-mail-address "andreas@tiker.net")
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
-   '((20 . "#BC8383")
-     (40 . "#CC9393")
-     (60 . "#DFAF8F")
-     (80 . "#D0BF8F")
-     (100 . "#E0CF9F")
-     (120 . "#F0DFAF")
-     (140 . "#5F7F5F")
-     (160 . "#7F9F7F")
-     (180 . "#8FB28F")
-     (200 . "#9FC59F")
-     (220 . "#AFD8AF")
-     (240 . "#BFEBBF")
-     (260 . "#93E0E3")
-     (280 . "#6CA0A3")
-     (300 . "#7CB8BB")
-     (320 . "#8CD0D3")
-     (340 . "#94BFF3")
-     (360 . "#DC8CC3")))
+   '((20 . "#BC8383") (40 . "#CC9393") (60 . "#DFAF8F") (80 . "#D0BF8F")
+     (100 . "#E0CF9F") (120 . "#F0DFAF") (140 . "#5F7F5F")
+     (160 . "#7F9F7F") (180 . "#8FB28F") (200 . "#9FC59F")
+     (220 . "#AFD8AF") (240 . "#BFEBBF") (260 . "#93E0E3")
+     (280 . "#6CA0A3") (300 . "#7CB8BB") (320 . "#8CD0D3")
+     (340 . "#94BFF3") (360 . "#DC8CC3")))
  '(vc-annotate-very-old-color "#DC8CC3")
  '(warning-suppress-types '((comp) (comp))))
 ;(custom-set-faces
