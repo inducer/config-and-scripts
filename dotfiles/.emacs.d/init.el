@@ -161,8 +161,8 @@
                 evil-org flycheck flycheck-pycheckers focus
                 gruvbox-theme helm htmlize leuven-theme magit
                 magit-delta markdown-mode monokai-theme nord-theme
-                notmuch nyx-theme olivetti org org-contrib ox-gfm
-                ox-json zenburn-theme))
+                notmuch nyx-theme olivetti org org-contrib
+                org-super-agenda ox-gfm ox-json zenburn-theme))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(printer-name "PDF")
  '(ps-paper-type 'letter)
@@ -423,6 +423,33 @@
        (ensc/mailcap-mime-data-filter 'ensc/no-pdf-doc-view-filter))))
 
 ; }}}
+
+(org-super-agenda-mode)
+(setq org-super-agenda-groups
+       '(
+         (:name "Today"  ; Optionally specify section name
+                :time-grid t
+                :deadline past
+                :deadline today
+                :date today)  ; Items that have this TODO keyword
+         (:name "Has Deadline"
+                ;; Single arguments given alone
+                :deadline t
+                )
+         (:name "Quick"  ; Optionally specify section name
+                :tag "quick"
+                )
+         ;; Set order of multiple groups at once
+         ;; Groups supply their own section names when none are given
+         (:priority "A")
+         (:priority<= "B"
+                      ;; Show this section after "Today" and "Important", because
+                      ;; their order is unspecified, defaulting to 0. Sections
+                      ;; are displayed lowest-number-first.
+                      :order 1)
+         ;; After the last group, the agenda will display items that didn't
+         ;; match any of these groups, with the default order position of 99
+         ))
 
 ; {{{ key bindings
 
