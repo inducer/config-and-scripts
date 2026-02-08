@@ -6,5 +6,8 @@
         "lager": ["dotfiles-shop"],
         "tripel": ["dotfiles-shop"],
         "bock": ["dotfiles-shop"],
+        "doppelbock": ["dotfiles-shop"],
+        "ipa": ["dotfiles-shop"],
+        "maerzen": ["dotfiles-shop"],
         "commas_at_the_end": []
 }
