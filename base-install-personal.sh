@@ -42,6 +42,7 @@ PACKAGES=(
   texmacs
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
   texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk texlive-extra-utils
+  pdfarranger
   chktex dvidvi fragmaster lacheck latexmk purifyeps texlive-luatex
   pandoc
   mc zoxide # broot
