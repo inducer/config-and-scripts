@@ -28,7 +28,7 @@ regex = " -> [_0-9a-zA-Z,|\\[\\] ]+"
 
 [env]
 # This makes 256-color support in tmux work
-TERM = "xterm-256color"
+# TERM = "xterm-256color"
 
 [keyboard]
 # https://dylancastillo.co/til/fix-claude-code-shift-enter-alacritty.html
