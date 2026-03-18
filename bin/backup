@@ -29,6 +29,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/from-bolt" \
             --exclude "$HOME/.local/" \
             --exclude "$HOME/.cache" \
+            --exclude "$HOME/.arduino*" \
             --exclude "$HOME/.wine" \
             --exclude "$HOME/.PlayOnLinux" \
             --exclude "$HOME/Downloads" \
@@ -49,6 +50,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/work/django/relate/contrib/jupyterlite" \
             --exclude "$HOME/work/django/relate/bulk-storage" \
             --exclude "$HOME/pack/miniforge3" \
+            --exclude "$HOME/nc/software/games/assetto-corsa-mods" \
             --exclude ".mypy_cache"
 fi
 
