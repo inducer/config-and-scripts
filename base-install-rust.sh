@@ -19,7 +19,7 @@ ci --git https://codeberg.org/mergiraf/mergiraf.git
 ci yazi-build
 
 # https://tectonic-typesetting.github.io/book/latest/howto/build-tectonic/external-dep-install.html
-CXXFLAGS="-std=c++20" ci tectonic -F external-harfbuzz
+CXXFLAGS="-std=c++20" ci --git https://github.com/tectonic-typesetting/tectonic.git tectonic -F external-harfbuzz
 (cd "$HOME/.cargo/bin" && ln -s tectonic nextonic)
 
 ci --git https://github.com/latex-lsp/texlab
