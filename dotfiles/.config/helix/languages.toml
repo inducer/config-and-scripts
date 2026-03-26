@@ -2,6 +2,10 @@
 command = "efm-langserver"
 # config.documentFormatting = true
 
+[language-server.biome]
+command = "npx"
+args = ["biome", "lsp-proxy"]
+
 [language-server.ruff]
 command = "ruff"
 args = ["server", "--preview"]
@@ -80,7 +84,7 @@ language-servers = [
 [[language]]
 name = "javascript"
 language-servers = [
-  { name = "efm", only-features = [ "diagnostics" ] },
+  { name = "biome" },
   { name = "typescript-language-server", except-features = [ "format" ] },
 ]
 [[language]]
