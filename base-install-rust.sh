@@ -17,6 +17,7 @@ ci skim
 ci difftastic
 ci --git https://codeberg.org/mergiraf/mergiraf.git
 ci yazi-build
+ci lowfi --features mpris
 
 # https://tectonic-typesetting.github.io/book/latest/howto/build-tectonic/external-dep-install.html
 CXXFLAGS="-std=c++20" ci --git https://github.com/tectonic-typesetting/tectonic.git tectonic -F external-harfbuzz
