@@ -51,7 +51,8 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/work/django/relate/bulk-storage" \
             --exclude "$HOME/pack/miniforge3" \
             --exclude "$HOME/nc/software/games/assetto-corsa-mods" \
-            --exclude ".mypy_cache"
+            --exclude ".mypy_cache" \
+            --exclude ".lake"
 fi
 
 # vim: shiftwidth=4
