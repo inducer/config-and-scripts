@@ -224,6 +224,14 @@
   (lambda (prompt collection initial-input)
     (completing-read prompt (cons initial-input collection) nil t nil 'notmuch-address-history)))
 
+; Disable org-lint as part of flycheck
+; https://stackoverflow.com/a/79897658
+(use-package flycheck
+  :init (global-flycheck-mode 1)
+  :custom
+  (flycheck-disabled-checkers '(org-lint))
+)
+
 (when (string= system-name "arc")
   (require 'notmuch)
   (require 'org-notmuch)
