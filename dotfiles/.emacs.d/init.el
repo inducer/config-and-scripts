@@ -218,6 +218,12 @@
 ; }}}
 
 ; set up various stuff -----------------------------------------------------
+; https://notmuchmail.org/emacstips/
+; improve helm/notmuch interop
+(setq notmuch-address-selection-function
+  (lambda (prompt collection initial-input)
+    (completing-read prompt (cons initial-input collection) nil t nil 'notmuch-address-history)))
+
 (when (string= system-name "arc")
   (require 'notmuch)
   (require 'org-notmuch)
