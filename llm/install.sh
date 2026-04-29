@@ -3,5 +3,4 @@
 uv venv --python 3.12 --seed
 source .venv/bin/activate
 uv pip install vllm --torch-backend=auto
-uv pip install lm-proxy
 # git clone https://github.com/vllm-project/vllm.git vllm-git --depth 1
