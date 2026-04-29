@@ -1,0 +1,4 @@
+#! /bin/bash
+
+source ~/vllm/.venv/bin/activate
+python -m lm_proxy --config ~/vllm/lm-proxy.toml
