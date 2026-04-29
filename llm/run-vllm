@@ -12,7 +12,10 @@ PORT=$((8001 + INSTANCE))
 
 export HF_TOKEN="$(cat $HOME/.huggingface-token)"
 
+mapfile -t API_KEYS < <(grep -vE '^\s*(#|$)' $HOME/.vllm-api-keys )
+
 source ~/vllm/.venv/bin/activate
+
 # 80GB
 #MODEL="google/gemma-4-31B-it"
 
@@ -38,42 +41,47 @@ source ~/vllm/.venv/bin/activate
 # 	--kv-cache-dtype fp8
 # )
 
-# --max-model-len 262144
-# Too big of a KV cache
-
 if test "$INSTANCE" = 0; then
-	MODEL="Qwen/Qwen3.6-35B-A3B-FP8"
-	MODEL_ARGS=(
-	  --max-model-len 32768
-	  --reasoning-parser qwen3
-	  --enable-auto-tool-choice
-	  --tool-call-parser qwen3_coder
-	  --gpu-memory-utilization 0.45
-	)
+    MODEL_ARGS=(
+        --max-model-len 32768
+        --reasoning-parser qwen3
+        --tool-call-parser qwen3_coder
+        --gpu-memory-utilization 0.40
+        --max-num-batched-tokens 4096
+        --block-size 32
+        #--dtype fp8
+        "Qwen/Qwen3.6-35B-A3B-FP8"
+    )
 fi
 
-# very slow
 if test "$INSTANCE" = 1; then
-	MODEL="Qwen/Qwen3.6-27B-FP8"
-	MODEL_ARGS=(
-	  --max-model-len 8192
-	  --reasoning-parser qwen3
-	  --enable-auto-tool-choice
-	  --tool-call-parser qwen3_coder
-	  --gpu-memory-utilization 0.45
-	)
+    MODEL_ARGS=(
+        # --max-model-len 16384
+        --reasoning-parser qwen3
+        --tool-call-parser qwen3_coder
+        --gpu-memory-utilization 0.5
+        --max-num-batched-tokens 4096
+        #--dtype fp8
+        "Qwen/Qwen3.6-27B-FP8"
+    )
 fi
 
-# conserve memory, turn off
-# --enable-prefix-caching
+ARGS=(
+    --enable-sleep-mode
+    --api-key "${API_KEYS[@]}"
+    --host 127.0.0.1
+    --port "$PORT"
+    --max-num-seqs 4
+    --enable-prefix-caching 
+    --kv-cache-dtype fp8
+    --enable-auto-tool-choice
 
-vllm serve \
-	 --enable-sleep-mode \
-	 --api-key "$( cat $HOME/.vllm-api-key )" \
-	 --host 127.0.0.1 \
-	 --port "$PORT" \
-	 --max-num-seqs 2 \
-	 --enable-chunked-prefill \
-	 --dtype auto \
-	 "${MODEL_ARGS[@]}" \
-	 "$MODEL"
+    # Avoid, only use if OOM for prompts
+    # --enable-chunked-prefill
+
+    "${MODEL_ARGS[@]}"
+)
+
+vllm serve "${ARGS[@]}"
+
+# vim: sw=4 expandtab
