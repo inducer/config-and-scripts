@@ -34,5 +34,41 @@
     "bindings": {
       "ctrl-shift-s": "git::Switch"
     }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-g down": "git::Pull"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-g up": "git::Push"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-\\": "pane::SplitRight"
+    }
+  },
+  {
+    "context": "vim_mode == literal",
+    "unbind": {
+      "ctrl-\\": [
+        "vim::Literal",
+        [
+          "ctrl-\\",
+          "\u001c"
+        ]
+      ]
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-\\": "workspace::NewCenterTerminal"
+    }
   }
 ]
