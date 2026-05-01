@@ -8,20 +8,24 @@
 #   "PyYAML",
 #   "typed_argparse",
 #   "uvicorn",
+#   "cachetools",
 # ]
 # ///
 
 
 import asyncio
 import secrets
+from dataclasses import dataclass
+from fnmatch import fnmatch
 
 import httpx
 import typed_argparse as tap
 import uvicorn
 import yaml
+from cachetools import TTLCache, cached
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 """
@@ -37,7 +41,6 @@ This script provides a FastAPI-based proxy that:
 
 
 class Backend(BaseModel):
-    name: str
     base_url: str
     api_key: str
 
@@ -48,16 +51,24 @@ class Backend(BaseModel):
 
 
 class ClientConfig(BaseModel):
-    allowed_models: list[str]
-    backend: str | None = None
+    allowed_models: list[str]  | None = None
+    allowed_backends: list[str] | None = None
 
 
 class ProxyConfig(BaseModel):
     listen_host: str = "127.0.0.1"
     listen_port: int = 8000
-    backends: list[Backend] = Field(min_length=1)
+    backends: dict[str, Backend] = Field(min_length=1)
     client_keys: dict[str, ClientConfig]
-    model_backend_map: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def validate_allowed_backends(self):
+        for client_cfg in self.client_keys.values():
+            if client_cfg.allowed_backends is not None:
+                for backend in client_cfg.allowed_backends:
+                    if backend not in self.backends:
+                        raise ValueError(f"Backend {backend} not found")
+        return self
 
 
 # -------------------------
@@ -84,20 +95,6 @@ def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
         raise HTTPException(status_code=403, detail="Invalid API key")
 
     return matched_config
-
-
-# -------------------------
-# ROUTING
-# -------------------------
-
-def pick_backend(config: ProxyConfig, model: str) -> Backend:
-    if model in config.model_backend_map:
-        name = config.model_backend_map[model]
-        for b in config.backends:
-            if b.name == name:
-                return b
-
-    raise HTTPException(status_code=500, detail="No backend found for model")
 
 
 # -------------------------
@@ -133,32 +130,72 @@ async def stream_passthrough(
             yield chunk
 
 
-async def list_models(request: Request, config: ProxyConfig):
-    client_cfg = authenticate(request, config)
+@dataclass
+class ModelDesc:
+    id: str
+    backend: str
+    data: dict[str, object]
 
+
+async def list_models_for_backend(
+        config: ProxyConfig,
+        backend_name: str,
+        client: httpx.AsyncClient
+    ) -> list[ModelDesc]:
+    backend = config.backends[backend_name]
+    url = f"{backend.base_url}/v1/models"
+    headers = {"Authorization": f"Bearer {backend.api_key}"}
+    resp = await client.get(url, headers=headers, timeout=10.0)
+    if resp.status_code != 200:
+        return []
+    data = resp.json()
+    return [ModelDesc(id=model.get("id"), backend=backend_name, data=model)
+        for model in data.get("data", []) if isinstance(model.get("id"), str)]
+
+
+async def list_models(config: ProxyConfig):
     async with httpx.AsyncClient(http2=False) as client:
         # Fetch from all backends in parallel
-        tasks = []
-        for backend in config.backends:
-            url = f"{backend.base_url}/v1/models"
-            headers = {"Authorization": f"Bearer {backend.api_key}"}
-            tasks.append(client.get(url, headers=headers, timeout=10.0))
+        responses = await asyncio.gather(*[
+            list_models_for_backend(config, be_name, client)
+            for be_name in config.backends], return_exceptions=True)
 
-        responses = await asyncio.gather(*tasks, return_exceptions=True)
+    return {
+        be_name: [
+            model
+            for resp in responses
+            if isinstance(resp, list)
+            for model in resp
+            if model.backend == be_name
+        ]
+        for be_name in config.backends
+    }
 
-    all_models = {}
-    for resp in responses:
-        if isinstance(resp, httpx.Response) and resp.status_code == 200:
-            data = resp.json()
-            for model in data.get("data", []):
-                model_id = model.get("id")
-                if not isinstance(model_id, str):
-                    continue
-                if (model_id in client_cfg.allowed_models
-                        and model_id not in all_models):
-                    all_models[model_id] = model
 
-    return {"object": "list", "data": list(all_models.values())}
+@cached(cache=TTLCache(maxsize=100, ttl=60))
+def list_models_cached(config: ProxyConfig):
+    return asyncio.run(list_models(config))
+
+
+def model_to_backends_cached() -> dict[str, set[str]]:
+    return {
+        backend: {model.id for model in models}
+        for backend, models in list_models_cached().items()
+    }
+
+
+def is_model_allowed(model: str, client_cfg: ClientConfig) -> bool:
+    if client_cfg.allowed_models is None:
+        return True
+    return any(fnmatch(model, pat) for pat in client_cfg.allowed_models)
+
+
+def pick_backend(config: ProxyConfig, client_cfg: ClientConfig, model: str) -> Backend:
+    for be_name in client_cfg.allowed_backends or []:
+        if model in model_to_backends_cached()[be_name]:
+            return config.backends[be_name]
+
+    raise HTTPException(status_code=500, detail="No backend found for model")
 
 
 async def generic_proxy(request: Request, config: ProxyConfig, path: str):
@@ -175,10 +212,10 @@ async def generic_proxy(request: Request, config: ProxyConfig, path: str):
     if not model:
         raise HTTPException(status_code=400, detail="Missing model")
 
-    if model not in client_cfg.allowed_models:
+    if not is_model_allowed(model, client_cfg):
         raise HTTPException(status_code=403, detail="Model not allowed")
 
-    backend = pick_backend(config, model)
+    backend = pick_backend(config, client_cfg, model)
 
     headers = dict(request.headers)
     headers.pop("host", None)  # let httpx set it
@@ -230,7 +267,15 @@ def run(args: Args):
 
     @app.get("/v1/models")
     async def list_models_inner(request: Request):
-        return await list_models(request, config)
+        all_models = await list_models(config)
+
+        client_cfg = authenticate(request, config)
+        filtered_models = [model
+            for be_name in config.backends
+            for model in all_models[be_name]
+            if is_model_allowed(model.id, client_cfg)
+        ]
+        return {"object": "list", "data": filtered_models}
 
     for url in [
                 "/v1/chat/completions",
