@@ -4,100 +4,75 @@
 # dependencies = [
 #   "httpx",
 #   "fastapi",
+#   "pydantic",
+#   "PyYAML",
+#   "typed_argparse",
+#   "uvicorn",
 # ]
 # ///
 
-import itertools
 
 import httpx
+import typed_argparse as tap
+import uvicorn
+import yaml
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
+from pydantic import BaseModel, Field, field_validator
 
 
-app = FastAPI()
+class Backend(BaseModel):
+    name: str
+    base_url: str
+    api_key: str
 
-# -------------------------
-# CONFIG
-# -------------------------
-
-
-class Backend:
-    def __init__(self, name: str, base_url: str, api_key: str):
-        self.name = name
-        self.base_url = base_url.rstrip("/")
-        self.api_key = api_key
+    @field_validator("base_url")
+    @classmethod
+    def strip_slash(cls, v: str) -> str:
+        return v.rstrip("/")
 
 
-# Example: two vLLM instances
-BACKENDS: list[Backend] = [
-    Backend("vllm-a", "http://10.0.0.1:8000", "UPSTREAM_KEY_A"),
-    Backend("vllm-b", "http://10.0.0.2:8000", "UPSTREAM_KEY_B"),
-]
+class ClientConfig(BaseModel):
+    allowed_models: list[str]
+    backend: str | None = None
 
-# round-robin iterator
-backend_cycle = itertools.cycle(BACKENDS)
 
-# client API keys → allowed models / routing policy
-CLIENT_KEYS: dict[str, dict] = {
-    "client-key-1": {
-        "allowed_models": ["model-a", "model-b"],
-        "strategy": "round_robin",
-    },
-    "client-key-2": {
-        "allowed_models": ["model-a"],
-        "strategy": "sticky",  # example
-        "backend": "vllm-a",
-    },
-}
-
-# optional: model → backend mapping
-MODEL_BACKEND_MAP = {
-    # "model-a": "vllm-a",
-    # "model-b": "vllm-b",
-}
+class ProxyConfig(BaseModel):
+    listen_host: str = "127.0.0.1"
+    listen_port: int = 8000
+    backends: list[Backend] = Field(min_length=1)
+    client_keys: dict[str, ClientConfig]
+    model_backend_map: dict[str, str] = Field(default_factory=dict)
 
 
 # -------------------------
 # AUTH
 # -------------------------
 
-def authenticate(request: Request) -> dict:
+def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
     auth = request.headers.get("authorization")
     if not auth or not auth.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing API key")
 
     key = auth.split()[1]
-    if key not in CLIENT_KEYS:
+    if key not in config.client_keys:
         raise HTTPException(status_code=403, detail="Invalid API key")
 
-    return CLIENT_KEYS[key]
+    return config.client_keys[key]
 
 
 # -------------------------
 # ROUTING
 # -------------------------
 
-def pick_backend(client_cfg: dict, model: str) -> Backend:
-    # model-based routing first
-    if model in MODEL_BACKEND_MAP:
-        name = MODEL_BACKEND_MAP[model]
-        for b in BACKENDS:
+def pick_backend(config: ProxyConfig, client_cfg: ClientConfig, model: str) -> Backend:
+    if model in config.model_backend_map:
+        name = config.model_backend_map[model]
+        for b in config.backends:
             if b.name == name:
                 return b
 
-    strategy = client_cfg.get("strategy", "round_robin")
-
-    if strategy == "round_robin":
-        return next(backend_cycle)
-
-    if strategy == "sticky":
-        name = client_cfg["backend"]
-        for b in BACKENDS:
-            if b.name == name:
-                return b
-
-    # fallback
-    return next(backend_cycle)
+    raise HTTPException(status_code=500, detail="No backend found for model")
 
 
 # -------------------------
@@ -126,34 +101,32 @@ async def stream_passthrough(
     ) as resp:
         # pass through status + headers
         if resp.status_code != 200:
-            text = await resp.aread()
-            yield text
+            yield await resp.aread()
             return
 
         async for chunk in resp.aiter_bytes():
             yield chunk
 
 
-@app.post("/v1/chat/completions")
-async def chat_completions(request: Request):
-    client_cfg = authenticate(request)
+async def chat_completions(request: Request, config: ProxyConfig):
+    client_cfg = authenticate(request, config)
 
     body = await request.body()
 
     # parse just enough to route (do NOT mutate)
     try:
         json_body = await request.json()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid JSON")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid JSON") from e
 
     model = json_body.get("model")
     if not model:
         raise HTTPException(status_code=400, detail="Missing model")
 
-    if model not in client_cfg["allowed_models"]:
+    if model not in client_cfg.allowed_models:
         raise HTTPException(status_code=403, detail="Model not allowed")
 
-    backend = pick_backend(client_cfg, model)
+    backend = pick_backend(config, client_cfg, model)
 
     headers = dict(request.headers)
     headers.pop("host", None)  # let httpx set it
@@ -186,3 +159,28 @@ async def chat_completions(request: Request):
                 status_code=resp.status_code,
                 content=resp.json(),
             )
+
+
+class Args(tap.TypedArgs):
+    config: str = Field()
+
+
+def run(args: Args):
+    with open(args.config) as f:
+        data = yaml.safe_load(f)
+    config = ProxyConfig(**data)
+    app = FastAPI()
+
+    @app.post("/v1/chat/completions")
+    async def chat_completions_inner(request: Request):
+        return await chat_completions(request, config)
+
+    uvicorn.run(app, host=config.listen_host, port=config.listen_port)
+
+
+def main():
+    tap.Parser(Args).bind(run).run()
+
+
+if __name__ == "__main__":
+    main()
