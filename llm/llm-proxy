@@ -23,6 +23,18 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field, field_validator
 
 
+"""
+llm-proxy: A lightweight OpenAI-compatible proxy for routing requests to
+(for example) multiple vLLM backends.
+
+This script provides a FastAPI-based proxy that:
+1. Authenticates clients using Bearer tokens.
+2. Filters available models based on the client's API key.
+3. Routes requests to specific vLLM backends based on the requested model.
+4. Supports streaming and non-streaming responses for Chat, Completions, and Embeddings.
+"""
+
+
 class Backend(BaseModel):
     name: str
     base_url: str
