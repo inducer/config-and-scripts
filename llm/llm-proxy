@@ -13,6 +13,7 @@
 
 
 import asyncio
+import secrets
 
 import httpx
 import typed_argparse as tap
@@ -69,10 +70,20 @@ def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
         raise HTTPException(status_code=401, detail="Missing API key")
 
     key = auth.split()[1]
-    if key not in config.client_keys:
+
+    # To prevent timing attacks:
+    # 1. Use secrets.compare_digest for constant-time comparison.
+    # 2. Iterate through all keys to ensure the processing time is
+    # independent of whether a match is found.
+    matched_config = None
+    for client_key, client_cfg in config.client_keys.items():
+        if secrets.compare_digest(client_key, key):
+            matched_config = client_cfg
+
+    if matched_config is None:
         raise HTTPException(status_code=403, detail="Invalid API key")
 
-    return config.client_keys[key]
+    return matched_config
 
 
 # -------------------------
@@ -150,12 +161,11 @@ async def list_models(request: Request, config: ProxyConfig):
     return {"object": "list", "data": list(all_models.values())}
 
 
-async def chat_completions(request: Request, config: ProxyConfig):
+async def generic_proxy(request: Request, config: ProxyConfig, path: str):
     client_cfg = authenticate(request, config)
 
     body = await request.body()
 
-    # parse just enough to route (do NOT mutate)
     try:
         json_body = await request.json()
     except Exception as e:
@@ -174,20 +184,19 @@ async def chat_completions(request: Request, config: ProxyConfig):
     headers.pop("host", None)  # let httpx set it
 
     async with httpx.AsyncClient(http2=False) as client:
-        # streaming or not?
         if json_body.get("stream", False):
             return StreamingResponse(
                 stream_passthrough(
                     client,
                     backend,
-                    "/v1/chat/completions",
+                    path,
                     headers,
                     body,
                 ),
                 media_type="text/event-stream",
             )
         else:
-            url = f"{backend.base_url}/v1/chat/completions"
+            url = f"{backend.base_url}{path}"
             headers["authorization"] = f"Bearer {backend.api_key}"
 
             resp = await client.post(
@@ -207,6 +216,12 @@ class Args(tap.TypedArgs):
     config: str = Field()
 
 
+def add_proxy_route(app: FastAPI, path: str, config: ProxyConfig):
+    @app.post(path)
+    async def gen_proxy_route(request: Request):
+        return await generic_proxy(request, config, path)
+
+
 def run(args: Args):
     with open(args.config) as f:
         data = yaml.safe_load(f)
@@ -217,9 +232,12 @@ def run(args: Args):
     async def list_models_inner(request: Request):
         return await list_models(request, config)
 
-    @app.post("/v1/chat/completions")
-    async def chat_completions_inner(request: Request):
-        return await chat_completions(request, config)
+    for url in [
+                "/v1/chat/completions",
+                "/v1/completions",
+                "/v1/embeddings",
+            ]:
+        add_proxy_route(app, url, config)
 
     uvicorn.run(app, host=config.listen_host, port=config.listen_port)
 
