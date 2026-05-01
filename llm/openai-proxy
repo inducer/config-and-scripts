@@ -15,6 +15,7 @@
 
 import asyncio
 import secrets
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from fnmatch import fnmatch
 
@@ -22,7 +23,7 @@ import httpx
 import typed_argparse as tap
 import uvicorn
 import yaml
-from cachetools import TTLCache, cached
+from cachetools import TTLCache
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -70,10 +71,6 @@ class ProxyConfig(BaseModel):
                         raise ValueError(f"Backend {backend} not found")
         return self
 
-
-# -------------------------
-# AUTH
-# -------------------------
 
 def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
     auth = request.headers.get("authorization")
@@ -172,15 +169,25 @@ async def list_models(config: ProxyConfig):
     }
 
 
-@cached(cache=TTLCache(maxsize=100, ttl=60))
-def list_models_cached(config: ProxyConfig):
-    return asyncio.run(list_models(config))
+async def list_models_cached(config: ProxyConfig):
+    cache: TTLCache[None, dict[str, list[ModelDesc]]] | None = \
+    getattr(config, "list_models_cache", None)
+    if cache is None:
+        cache = TTLCache(maxsize=100, ttl=60)
+        object.__setattr__(config, "list_models_cache", cache)
+
+    result = cache.get(None)
+    if result is None:
+        result = await list_models(config)
+        cache[None] = result
+
+    return result
 
 
-def model_to_backends_cached() -> dict[str, set[str]]:
+async def model_to_backends_cached(config: ProxyConfig) -> dict[str, set[str]]:
     return {
         backend: {model.id for model in models}
-        for backend, models in list_models_cached().items()
+        for backend, models in (await list_models_cached(config)).items()
     }
 
 
@@ -190,9 +197,19 @@ def is_model_allowed(model: str, client_cfg: ClientConfig) -> bool:
     return any(fnmatch(model, pat) for pat in client_cfg.allowed_models)
 
 
-def pick_backend(config: ProxyConfig, client_cfg: ClientConfig, model: str) -> Backend:
-    for be_name in client_cfg.allowed_backends or []:
-        if model in model_to_backends_cached()[be_name]:
+async def pick_backend(
+        config: ProxyConfig,
+        client_cfg: ClientConfig,
+        model: str
+) -> Backend:
+    backends = (
+        client_cfg.allowed_backends
+        if client_cfg.allowed_backends is not None
+        else config.backends)
+
+    model_to_backends = await model_to_backends_cached(config)
+    for be_name in backends:
+        if model in model_to_backends[be_name]:
             return config.backends[be_name]
 
     raise HTTPException(status_code=500, detail="No backend found for model")
@@ -215,38 +232,39 @@ async def generic_proxy(request: Request, config: ProxyConfig, path: str):
     if not is_model_allowed(model, client_cfg):
         raise HTTPException(status_code=403, detail="Model not allowed")
 
-    backend = pick_backend(config, client_cfg, model)
+    backend = await pick_backend(config, client_cfg, model)
 
     headers = dict(request.headers)
     headers.pop("host", None)  # let httpx set it
 
-    async with httpx.AsyncClient(http2=False) as client:
-        if json_body.get("stream", False):
-            return StreamingResponse(
-                stream_passthrough(
-                    client,
-                    backend,
-                    path,
-                    headers,
-                    body,
-                ),
-                media_type="text/event-stream",
-            )
-        else:
-            url = f"{backend.base_url}{path}"
-            headers["authorization"] = f"Bearer {backend.api_key}"
+    client = request.app.state.client
 
-            resp = await client.post(
-                url,
-                headers=headers,
-                content=body,
-                timeout=None,
-            )
+    if json_body.get("stream", False):
+        return StreamingResponse(
+            stream_passthrough(
+                client,
+                backend,
+                path,
+                headers,
+                body,
+            ),
+            media_type="text/event-stream",
+        )
+    else:
+        url = f"{backend.base_url}{path}"
+        headers["authorization"] = f"Bearer {backend.api_key}"
 
-            return JSONResponse(
-                status_code=resp.status_code,
-                content=resp.json(),
-            )
+        resp = await client.post(
+            url,
+            headers=headers,
+            content=body,
+            timeout=None,
+        )
+
+        return JSONResponse(
+            status_code=resp.status_code,
+            content=resp.json(),
+        )
 
 
 class Args(tap.TypedArgs):
@@ -263,7 +281,14 @@ def run(args: Args):
     with open(args.config) as f:
         data = yaml.safe_load(f)
     config = ProxyConfig(**data)
-    app = FastAPI()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        async with httpx.AsyncClient(http2=False) as client:
+            app.state.client = client
+            yield
+
+    app = FastAPI(lifespan=lifespan)
 
     @app.get("/v1/models")
     async def list_models_inner(request: Request):
