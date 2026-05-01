@@ -1,23 +1,24 @@
+listen_host: "127.0.0.1"
+listen_port: 8000
+
 backends:
-  - name: vllm-a
+  vllm-a:
     base_url: http://10.0.0.1:8000
     api_key: UPSTREAM_KEY_A
-  - name: vllm-b
+  vllm-b:
     base_url: http://10.0.0.2:8000
     api_key: UPSTREAM_KEY_B
 
 client_keys:
   client-key-1:
     allowed_models:
-      - model-a
-      - model-b
-    strategy: round_robin
+      - "model*"
+      - "model-b"
+    allowed_backends:
+      - vllm-a
+      - vllm-b
   client-key-2:
     allowed_models:
-      - model-a
-    strategy: sticky
-    backend: vllm-a
-
-model_backend_map:
-  # model-a: vllm-a
-  # model-b: vllm-b
+      - "other-model*"
+    allowed_backends:
+      - vllm-a
