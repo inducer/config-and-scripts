@@ -275,7 +275,7 @@ def run(args: Args):
             for model in all_models[be_name]
             if is_model_allowed(model.id, client_cfg)
         ]
-        return {"object": "list", "data": filtered_models}
+        return {"object": "list", "data": [model.data for model in filtered_models]}
 
     for url in [
                 "/v1/chat/completions",
