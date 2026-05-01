@@ -47,6 +47,7 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/go" \
             --exclude "$HOME/VirtualBox VMs" \
             --exclude "$HOME/bulk/camprocess" \
+            --exclude "$HOME/src/env-3.1*" \
             --exclude "$HOME/work/django/relate/contrib/jupyterlite" \
             --exclude "$HOME/work/django/relate/bulk-storage" \
             --exclude "$HOME/pack/miniforge3" \
