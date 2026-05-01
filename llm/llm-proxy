@@ -12,6 +12,8 @@
 # ///
 
 
+import asyncio
+
 import httpx
 import typed_argparse as tap
 import uvicorn
@@ -65,7 +67,7 @@ def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
 # ROUTING
 # -------------------------
 
-def pick_backend(config: ProxyConfig, client_cfg: ClientConfig, model: str) -> Backend:
+def pick_backend(config: ProxyConfig, model: str) -> Backend:
     if model in config.model_backend_map:
         name = config.model_backend_map[model]
         for b in config.backends:
@@ -108,6 +110,34 @@ async def stream_passthrough(
             yield chunk
 
 
+async def list_models(request: Request, config: ProxyConfig):
+    client_cfg = authenticate(request, config)
+
+    async with httpx.AsyncClient(http2=False) as client:
+        # Fetch from all backends in parallel
+        tasks = []
+        for backend in config.backends:
+            url = f"{backend.base_url}/v1/models"
+            headers = {"Authorization": f"Bearer {backend.api_key}"}
+            tasks.append(client.get(url, headers=headers, timeout=10.0))
+
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+    all_models = {}
+    for resp in responses:
+        if isinstance(resp, httpx.Response) and resp.status_code == 200:
+            data = resp.json()
+            for model in data.get("data", []):
+                model_id = model.get("id")
+                if not isinstance(model_id, str):
+                    continue
+                if (model_id in client_cfg.allowed_models
+                        and model_id not in all_models):
+                    all_models[model_id] = model
+
+    return {"object": "list", "data": list(all_models.values())}
+
+
 async def chat_completions(request: Request, config: ProxyConfig):
     client_cfg = authenticate(request, config)
 
@@ -126,7 +156,7 @@ async def chat_completions(request: Request, config: ProxyConfig):
     if model not in client_cfg.allowed_models:
         raise HTTPException(status_code=403, detail="Model not allowed")
 
-    backend = pick_backend(config, client_cfg, model)
+    backend = pick_backend(config, model)
 
     headers = dict(request.headers)
     headers.pop("host", None)  # let httpx set it
@@ -170,6 +200,10 @@ def run(args: Args):
         data = yaml.safe_load(f)
     config = ProxyConfig(**data)
     app = FastAPI()
+
+    @app.get("/v1/models")
+    async def list_models_inner(request: Request):
+        return await list_models(request, config)
 
     @app.post("/v1/chat/completions")
     async def chat_completions_inner(request: Request):
