@@ -250,7 +250,7 @@ async def generic_proxy(request: Request, config: ProxyConfig, path: str):
 
 
 class Args(tap.TypedArgs):
-    config: str = Field()
+    config: str = tap.arg(positional=True)
 
 
 def add_proxy_route(app: FastAPI, path: str, config: ProxyConfig):
