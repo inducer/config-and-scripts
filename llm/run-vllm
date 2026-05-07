@@ -40,6 +40,7 @@ source ~/vllm/.venv/bin/activate
 # 	--max-model-len 131072
 # 	--kv-cache-dtype fp8
 # )
+COMMAND=(vllm serve)
 
 if test "$INSTANCE" = 0; then
     MODEL_ARGS=(
@@ -55,14 +56,33 @@ if test "$INSTANCE" = 0; then
 fi
 
 if test "$INSTANCE" = 1; then
+    # MODEL_ARGS=(
+    #     # --max-model-len 16384
+    #     --reasoning-parser qwen3
+    #     --tool-call-parser qwen3_coder
+    #     --gpu-memory-utilization 0.5
+    #     --max-num-batched-tokens 4096
+    #     #--dtype fp8
+    #     "Qwen/Qwen3.6-27B-FP8"
+    # )
     MODEL_ARGS=(
-        # --max-model-len 16384
-        --reasoning-parser qwen3
-        --tool-call-parser qwen3_coder
+        --max-model-len 32768
+        --reasoning-parser gemma4
+        --tool-call-parser gemma4
+        --chat-template  ~/vllm/vllm-git/examples/tool_chat_template_gemma4.jinja
         --gpu-memory-utilization 0.5
-        --max-num-batched-tokens 4096
-        #--dtype fp8
-        "Qwen/Qwen3.6-27B-FP8"
+        --max-num-batched-tokens 4095
+        # --limit-mm-per-prompt image=4,audio=1
+        # --speculative-config '{"model": "gg-hf-am/gemma-4-31B-it-assistant", "num_speculative_tokens": 4}'
+
+        # not significantly faster than fp8 dynamic (7t/s)
+        # nvidia/Gemma-4-31B-IT-NVFP4
+        
+        # usable but kind of slow (6.5t/s)
+        RedHatAI/gemma-4-31B-it-FP8-Dynamic
+        
+        # too large as one of two models
+        # google/gemma-4-31B-it 
     )
 fi
 
@@ -82,6 +102,6 @@ ARGS=(
     "${MODEL_ARGS[@]}"
 )
 
-vllm serve "${ARGS[@]}"
+"${COMMAND[@]}" "${ARGS[@]}"
 
 # vim: sw=4 expandtab
