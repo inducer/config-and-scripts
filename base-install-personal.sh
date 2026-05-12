@@ -12,7 +12,7 @@ PACKAGES=(
   netcat-traditional elinks
   iucode-tool
   rsync cronie wireguard
-  etckeeper logrotate gnupg2 scdaemon keepassxc-full
+  etckeeper logrotate gnupg2 scdaemon keepassxc-full rbw
   htop btop iotop-c iftop tcpdump mtr ncdu rsync unison unison-gtk s-tui
   alsa-ucm-conf
   ioping fio nvme-cli parallel

@@ -1,3 +1,0 @@
-#! /bin/bash
-
-exec flatpak run --env=BW_SESSION="$BW_SESSION" --command=bw com.bitwarden.desktop "$@"
