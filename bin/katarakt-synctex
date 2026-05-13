@@ -1,0 +1,84 @@
+#!/usr/bin/env -S uv run --script
+#
+# /// script
+# dependencies = [
+#     "dbus-python",
+#     "typed-argparse",
+# ]
+# ///
+
+import subprocess
+import sys
+from pathlib import Path
+
+import dbus
+import typed_argparse as tap
+
+
+# 1. Argument definition
+class Args(tap.TypedArgs):
+    pdf_file: str = tap.arg(positional=True)
+    page_nr: int = tap.arg(positional=True)
+    x: float = tap.arg(positional=True)
+    y: float = tap.arg(positional=True)
+    cmd: str = tap.arg(
+        default="katarakt",
+        help="Command to run if no katarakt instance is found")
+
+
+def run_katarakt(cmd: str, target_file: Path, page_nr: int):
+    subprocess.run([
+        cmd,
+        "--page", str(page_nr),
+        str(target_file),
+    ], check=True)
+
+
+def runner(args: Args):
+    bus = dbus.SessionBus()
+
+    service_names = bus.list_names()
+    if not service_names:
+        print("No services found on the bus")
+        sys.exit(1)
+
+    target_file = Path(args.pdf_file).absolute().resolve()
+
+    # Filter for katarakt services
+    katarakt_services = [name for name in service_names if name.startswith("katarakt.")]
+    # empty OK, handled below
+
+    found_service = None
+    for service in katarakt_services:
+        try:
+            # Assuming the object path is always "/" as per qdbus output provided
+            obj = bus.get_object(service, "/")
+            interface = dbus.Interface(obj, "katarakt.SourceCorrelate")
+
+            fpath = interface.filepath()
+            if fpath:
+                fpath = Path(fpath).absolute().resolve()
+                if fpath == target_file:
+                    found_service = (service, obj)
+                    break
+        except dbus.DBusException:
+            # Some services might not have the interface or the method, skip them
+            continue
+
+    if not found_service:
+        print(f"No katarakt service found for {target_file}, "
+            f"running {args.cmd} instead")
+        run_katarakt(args.cmd, target_file, args.page_nr)
+        sys.exit(0)
+
+    _service_name, obj = found_service
+    interface = dbus.Interface(obj, "katarakt.SourceCorrelate")
+    interface.view(str(target_file), int(args.page_nr), float(args.x), float(args.y))
+
+
+def main():
+    tap.Parser(Args).bind(runner).run()
+
+
+if __name__ == "__main__":
+    main()
