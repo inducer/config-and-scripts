@@ -73,7 +73,9 @@ PACKAGES=(
   libelf-dev dwarves
   dconf-editor
   restic
-  katarakt
+  # katarakt
+  zathura zathura-djvu zathura-pdf-poppler zathura-ps
+  
   geeqie darktable chafa exif
   nebula
   yubikey-manager yubikey-manager-qt
