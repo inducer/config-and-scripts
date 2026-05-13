@@ -22,9 +22,10 @@ PACKAGES=(
   zsh
   moreutils gawk bat mutt
   tig subversion mercurial git-lfs gh glab git-absorb git-autofixup git-delta repo meld
+  lazygit
   qgit
   curl yt-dlp
-  mlocate pwgen
+  plocate pwgen
   libgmp-dev libmpfr-dev
   libhwy-dev
   libpq-dev libjemalloc-dev
@@ -41,9 +42,9 @@ PACKAGES=(
   silversearcher-ag ripgrep fzf fd-find
   texmacs
   texlive-xetex texlive-publishers texlive-science texlive-bibtex-extra biber
-  texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk texlive-extra-utils
+  texlive-fonts-extra cm-super dvipng latexdiff psutils pdftk-java texlive-extra-utils
   pdfarranger
-  chktex dvidvi fragmaster lacheck latexmk purifyeps texlive-luatex
+  chktex fragmaster lacheck latexmk purifyeps texlive-luatex
   pandoc
   mc zoxide # broot
   graphviz inkscape gnucash audacity gimp krita
@@ -51,12 +52,12 @@ PACKAGES=(
   libocct-{ocaf,data-exchange,draw,foundation,modeling-algorithms,modeling-data,visualization}-dev
   libopenmpi-dev openmpi-common mpich libmpich-dev
   systemd-coredump
-  likwid cpufrequtils linux-perf time numactl libunwind-dev
+  likwid linux-perf time numactl libunwind-dev
   linux-cpupower cpupower-gui cpuid
   ffmpeg ffmpegthumbnailer vlc
   ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind
   libtbb-dev
-  build-essential packaging-dev pkgconf ninja-build cmake cmake-curses-gui
+  build-essential pkgconf ninja-build cmake cmake-curses-gui
   gcc-multilib
   llvm-dev libclang-dev ispc gdb strace ltrace valgrind
   libblas-dev liblapack-dev libopenblas-dev liblapack-doc
@@ -69,7 +70,7 @@ PACKAGES=(
   npm yarnpkg
   golang
   octave paraview
-  qemu-system qemu-user-static virtualbox-qt
+  qemu-system
   libelf-dev dwarves
   dconf-editor
   restic
@@ -87,7 +88,7 @@ PACKAGES=(
   libdbus-glib-1-2
 
   # xournal++ wants these
-  libcairo-dev libgtk-3-dev libpoppler-glib-dev portaudio19-dev libsndfile-dev \
+  libcairo2-dev libgtk-3-dev libpoppler-glib-dev portaudio19-dev libsndfile1-dev \
   libxml2-dev liblua5.3-dev libzip-dev librsvg2-dev gettext lua-lgi \
   libgtksourceview-4-dev help2man
 

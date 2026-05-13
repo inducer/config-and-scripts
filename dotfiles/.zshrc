@@ -230,16 +230,7 @@ source <(zoxide init zsh)
 lg()
 {
     export LAZYGIT_NEW_DIR_FILE=~/.lazygit/newdir
-
-    local manual_loc=$HOME/pack/lazygit/lazygit
-    local manual_shared_loc=$HOME/shared/pack/lazygit/lazygit
-    if test -x "$manual_loc"; then
-      "$manual_loc" "$@"
-    elif test -x "$manual_shared_loc"; then
-      "$manual_shared_loc" "$@"
-    else
-      lazygit "$@"
-    fi
+    lazygit "$@"
 
     if [ -f $LAZYGIT_NEW_DIR_FILE ]; then
             # cd "$(cat $LAZYGIT_NEW_DIR_FILE)"
