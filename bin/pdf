@@ -1,3 +1,4 @@
 #! /bin/bash
 
-exec ~/pack/katarakt/katarakt "$@"
+# exec ~/pack/katarakt/katarakt "$@"
+exec zathura "$@"
