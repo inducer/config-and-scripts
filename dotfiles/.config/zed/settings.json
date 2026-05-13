@@ -33,6 +33,28 @@
   "git_panel": {
     "dock": "left"
   },
+  "lsp": {
+    "texlab": {
+      "settings": {
+        "texlab": {
+          "build": {
+            "onSave": true,
+            "forwardSearchAfter": true,
+          },
+          "forwardSearch": {
+            "executable": "zathura",
+            "args": [
+              "--synctex-forward",
+              "%l:1:%f",
+              "-x",
+              "zed %%{input}:%%{line}",
+              "%p"
+            ]
+          }
+        }
+      }
+    }
+  },
   "language_models": {
     "openai_compatible": {
       "GB10 vLLM": {
