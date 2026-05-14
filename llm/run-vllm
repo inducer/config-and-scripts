@@ -57,12 +57,13 @@ if test "$INSTANCE" = 0; then
         --max-model-len 65536
         --reasoning-parser gemma4
         --tool-call-parser gemma4
-        --chat-template  ~/vllm/vllm-git/examples/tool_chat_template_gemma4.jinja
+        --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4095
         --gpu-memory-utilization 0.35
         # --max-num-batched-tokens 4096
         # --block-size 32
         #--dtype fp8
+        # --speculative-config '{"model": "google/gemma-4-26B-A4B-it-assistant", "num_speculative_tokens": 1}'
         nvidia/Gemma-4-26B-A4B-NVFP4
     )
 fi
@@ -81,11 +82,11 @@ if test "$INSTANCE" = 1; then
         --max-model-len 131072
         --reasoning-parser gemma4
         --tool-call-parser gemma4
-        --chat-template  ~/vllm/vllm-git/examples/tool_chat_template_gemma4.jinja
+        --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4095
         --gpu-memory-utilization 0.5
         # --limit-mm-per-prompt image=4,audio=1
-        # --speculative-config '{"model": "gg-hf-am/gemma-4-31B-it-assistant", "num_speculative_tokens": 4}'
+        # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 1}'
 
         # not significantly faster than fp8 dynamic (7t/s)
         # nvidia/Gemma-4-31B-IT-NVFP4
