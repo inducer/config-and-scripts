@@ -108,7 +108,9 @@ if test "$INSTANCE" = 1; then
         # nvidia/Gemma-4-31B-IT-NVFP4
         
         # usable but kind of slow (6.5t/s)
-        RedHatAI/gemma-4-31B-it-FP8-Dynamic
+        # RedHatAI/gemma-4-31B-it-FP8-Dynamic
+        
+        RedHatAI/gemma-4-31B-it-NVFP4
         
         # too large as one of two models
         # google/gemma-4-31B-it 
