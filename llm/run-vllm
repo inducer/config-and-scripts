@@ -4,8 +4,8 @@ set -euo pipefail
 
 INSTANCE="${1:-}"
 
-if ! (test "$INSTANCE" = "0" || test "$INSTANCE" = 1); then
-	echo "usage: $0 INSTANCE_NR (0 or 1)"
+if ! (test "$INSTANCE" = "0" || test "$INSTANCE" = 1 || test "$INSTANCE" = 2); then
+	echo "usage: $0 INSTANCE_NR (0, 1, 2)"
 	exit 1
 fi
 PORT=$((8001 + INSTANCE))
@@ -47,19 +47,27 @@ if test "$INSTANCE" = 0; then
     #     --max-model-len 32768
     #     --reasoning-parser qwen3
     #     --tool-call-parser qwen3_coder
+    #     --enable-auto-tool-choice
     #     --gpu-memory-utilization 0.40
+    #     --enable-prefix-caching 
+    #     --kv-cache-dtype fp8
     #     # --max-num-batched-tokens 4096
     #     # --block-size 32
     #     #--dtype fp8
+    #     --max-num-seqs 16
     #     "Qwen/Qwen3.6-35B-A3B-FP8"
     # )
     MODEL_ARGS=(
         --max-model-len 65536
         --reasoning-parser gemma4
         --tool-call-parser gemma4
+        --enable-auto-tool-choice
         --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4095
-        --gpu-memory-utilization 0.35
+        --gpu-memory-utilization 0.25
+        --enable-prefix-caching 
+        --kv-cache-dtype fp8
+        --max-num-seqs 16
         # --max-num-batched-tokens 4096
         # --block-size 32
         #--dtype fp8
@@ -73,18 +81,26 @@ if test "$INSTANCE" = 1; then
     #     # --max-model-len 16384
     #     --reasoning-parser qwen3
     #     --tool-call-parser qwen3_coder
+    #     --enable-auto-tool-choice
     #     --gpu-memory-utilization 0.5
     #     --max-num-batched-tokens 4096
     #     #--dtype fp8
+    #     --enable-prefix-caching 
+    #     --kv-cache-dtype fp8
+    #     --max-num-seqs 16
     #     "Qwen/Qwen3.6-27B-FP8"
     # )
     MODEL_ARGS=(
         --max-model-len 131072
         --reasoning-parser gemma4
         --tool-call-parser gemma4
+        --enable-auto-tool-choice
         --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4095
-        --gpu-memory-utilization 0.5
+        --gpu-memory-utilization 0.45
+        --enable-prefix-caching 
+        --kv-cache-dtype fp8
+        --max-num-seqs 16
         # --limit-mm-per-prompt image=4,audio=1
         # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 1}'
 
@@ -99,18 +115,20 @@ if test "$INSTANCE" = 1; then
     )
 fi
 
+if test "$INSTANCE" = 2; then
+    MODEL_ARGS=(
+        --max-model-len 8192
+        --gpu-memory-utilization 0.13
+        --max-num-seqs 4
+        ~/quant/zeta-2.1-FP8-BLOCK
+    )
+fi
+
 ARGS=(
     --enable-sleep-mode
     --api-key "${API_KEYS[@]}"
     --host 127.0.0.1
     --port "$PORT"
-    --max-num-seqs 16
-    --enable-prefix-caching 
-    --kv-cache-dtype fp8
-    --enable-auto-tool-choice
-
-    # Avoid, only use if OOM for prompts
-    # --enable-chunked-prefill
 
     "${MODEL_ARGS[@]}"
 )
