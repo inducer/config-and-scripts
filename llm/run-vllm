@@ -97,7 +97,7 @@ if test "$INSTANCE" = 1; then
         --enable-auto-tool-choice
         --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4095
-        --gpu-memory-utilization 0.45
+        --gpu-memory-utilization 0.35
         --enable-prefix-caching 
         --kv-cache-dtype fp8
         --max-num-seqs 16
