@@ -122,6 +122,7 @@ if test "$INSTANCE" = 2; then
         --max-model-len 8192
         --gpu-memory-utilization 0.13
         --max-num-seqs 4
+        --kv-cache-dtype fp8
         ~/quant/zeta-2.1-FP8-BLOCK
     )
 fi
