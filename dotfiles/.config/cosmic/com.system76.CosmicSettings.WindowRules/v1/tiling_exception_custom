@@ -1,0 +1,8 @@
+
+[
+  (
+    enabled: true,
+    appid: "firefox",
+    title: "^Bild-im-Bild"
+  ),
+]
