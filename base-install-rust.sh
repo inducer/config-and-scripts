@@ -16,6 +16,7 @@ ci tealdeer
 ci skim
 ci difftastic
 ci --git https://codeberg.org/mergiraf/mergiraf.git
+ci --git https://github.com/estin/cos-cli.git
 ci yazi-build
 ci lowfi --features mpris
 
