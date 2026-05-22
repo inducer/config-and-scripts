@@ -2,4 +2,8 @@
 
 cd ~/ds4
 
-exec ./ds4-server --host 10.33.1.5 --kv-disk-dir ~/.cache/ds4/kv --kv-disk-space-mb 8192
+exec ./ds4-server \
+  --ctx 131072 \
+  --host 10.33.1.5 \
+  --kv-disk-dir ~/.cache/ds4/kv \
+  --kv-disk-space-mb 8192
