@@ -7,10 +7,24 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "cli_default_open_behavior": "existing_window",
+  "agent_buffer_font_size": 14.5,
+  "agent_ui_font_size": 15.0,
   "remove_trailing_whitespace_on_save": false,
   "ssh_connections": [
     {
       "host": "dell-pro-max-1",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/andreas/config-and-scripts"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "red",
       "args": [],
       "projects": [
         {
@@ -57,31 +71,43 @@
   },
   "language_models": {
     "openai_compatible": {
-      "GB10 vLLM": {
+      "GB10": {
         "api_url": "http://10.33.1.4:8000/v1",
         "available_models": [
           {
             "name": "nvidia/Gemma-4-26B-A4B-NVFP4",
-            "max_tokens": 65536,
-            //"max_output_tokens": 32000,
-            //"max_completion_tokens": 200000,
+            "max_tokens": 524288,
             "capabilities": {
               "tools": true,
-              "images": true,
+              "images": false,
               "parallel_tool_calls": false,
               "prompt_cache_key": true,
-              "chat_completions": true
+              "chat_completions": true,
+              "interleaved_reasoning": true
             }
           },
           {
-            "name": "RedHatAI/gemma-4-31B-it-FP8-Dynamic",
-            "max_tokens": 131072,
+            "name": "RedHatAI/gemma-4-31B-it-NVFP4",
+            "max_tokens": 524288,
             "capabilities": {
               "tools": true,
-              "images": true,
+              "images": false,
               "parallel_tool_calls": false,
               "prompt_cache_key": true,
-              "chat_completions": true
+              "chat_completions": true,
+              "interleaved_reasoning": true
+            }
+          },
+          {
+            "name": "deepseek-v4-flash",
+            "max_tokens": 524288,
+            "capabilities": {
+              "tools": true,
+              "images": false,
+              "parallel_tool_calls": false,
+              "prompt_cache_key": true,
+              "chat_completions": true,
+              "interleaved_reasoning": true
             }
           }
         ]
@@ -111,8 +137,9 @@
   "edit_predictions": {
     "provider": "zed",
     "open_ai_compatible_api": {
-      "model": "Qwen/Qwen3.6-35B-A3B-FP8",
-      "api_url": "http://10.33.1.4:8000/v1"
+      "prompt_format": "zeta2_1",
+      "model": "/home/andreas/quant/zeta-2.1-FP8-BLOCK",
+      "api_url": "http://10.33.1.4:8000/v1/completions"
     },
     "mode": "eager"
   },
@@ -126,8 +153,8 @@
   "agent": {
     "dock": "left",
     "inline_assistant_model": {
-      "provider": "openrouter",
-      "model": "google/gemini-3-flash-preview",
+      "provider": "GB10",
+      "model": "nvidia/Gemma-4-26B-A4B-NVFP4",
       "enable_thinking": false
     },
     "tool_permissions": {
@@ -145,8 +172,8 @@
       }
     },
     "default_model": {
-      "provider": "GB10 vLLM",
-      "model": "RedHatAI/gemma-4-31B-it-FP8-Dynamic",
+      "provider": "GB10",
+      "model": "deepseek-v4-flash",
       "enable_thinking": false
     },
     "favorite_models": [
@@ -217,8 +244,8 @@
       "type": "registry"
     }
   },
-  "ui_font_size": 17.0,
-  "buffer_font_size": 15.5,
+  "ui_font_size": 15.0,
+  "buffer_font_size": 14.5,
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte",
