@@ -34,7 +34,6 @@ llm-proxy: A lightweight OpenAI-compatible proxy for routing requests to
 (for example) multiple vLLM backends.
 
 This script provides a FastAPI-based proxy that:
-1. Authenticates clients using Bearer tokens.
 2. Filters available models based on the client's API key.
 3. Routes requests to specific vLLM backends based on the requested model.
 4. Supports streaming and non-streaming responses for Chat, Completions, and Embeddings.
@@ -43,7 +42,7 @@ This script provides a FastAPI-based proxy that:
 
 class Backend(BaseModel):
     base_url: str
-    api_key: str
+    api_key: str | None = None
 
     @field_validator("base_url")
     @classmethod
@@ -98,6 +97,14 @@ def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
 # CORE PROXY LOGIC
 # -------------------------
 
+def add_auth_header(headers: dict[str, str], backend: Backend) -> dict[str, str]:
+    return {
+        **headers,
+        **({"authorization": f"Bearer {backend.api_key}"}
+            if backend.api_key is not None else {}),
+    }
+
+
 async def stream_passthrough(
     client: httpx.AsyncClient,
     backend: Backend,
@@ -108,8 +115,7 @@ async def stream_passthrough(
     url = f"{backend.base_url}{path}"
 
     # override auth header for upstream
-    headers = dict(headers)
-    headers["authorization"] = f"Bearer {backend.api_key}"
+    headers = add_auth_header(headers, backend)
 
     async with client.stream(
         "POST",
@@ -141,7 +147,8 @@ async def list_models_for_backend(
     ) -> list[ModelDesc]:
     backend = config.backends[backend_name]
     url = f"{backend.base_url}/v1/models"
-    headers = {"Authorization": f"Bearer {backend.api_key}"}
+    headers = add_auth_header({}, backend)
+
     resp = await client.get(url, headers=headers, timeout=10.0)
     if resp.status_code != 200:
         return []
@@ -252,7 +259,7 @@ async def generic_proxy(request: Request, config: ProxyConfig, path: str):
         )
     else:
         url = f"{backend.base_url}{path}"
-        headers["authorization"] = f"Bearer {backend.api_key}"
+        headers = add_auth_header(headers, backend)
 
         resp = await client.post(
             url,
