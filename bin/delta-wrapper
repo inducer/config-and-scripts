@@ -3,5 +3,9 @@
 if ! command -v delta &> /dev/null; then
     exec less "$@"
 else
-    exec delta "--$TERMINAL_LIGHTNESS" "$@"
+    if ! test "$TERMINAL_LIGHTNESS" == ""; then
+        exec delta "--$TERMINAL_LIGHTNESS" "$@"
+    else
+        exec delta "$@"
+    fi
 fi
