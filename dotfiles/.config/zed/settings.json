@@ -122,7 +122,14 @@
   },
   "languages": {
     "Python": {
-      "preferred_line_length": 88
+      "preferred_line_length": 88,
+      "language_servers": [
+        //"ty",
+        // "pyrefly",
+        "basedpyright",
+        "ruff",
+        // "..."
+      ]
     }
   },
   "ui_font_weight": 400.0,
