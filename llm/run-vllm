@@ -119,11 +119,24 @@ fi
 
 if test "$INSTANCE" = 2; then
     MODEL_ARGS=(
-        --max-model-len 8192
+        # --max-model-len 8192
         --gpu-memory-utilization 0.13
-        --max-num-seqs 4
-        --kv-cache-dtype fp8
-        ~/quant/zeta-2.1-FP8-BLOCK
+        --max-num-seqs 24
+        
+        # INSTRUCTIONS HAVE THIS: WHY?
+        # --trust-remote-code
+
+        --dtype bfloat16
+        LeaderboardModel1/zeta-2.1-autoround-W4A16
+        
+        # --tensor_parallel_size 1
+        
+        # zed-industries/zeta-2.1
+        # --served-model-name zeta-2.1-FP8
+        # ~/quant/zeta-2.1-FP8-BLOCK
+        
+        # --served-model-name Qwen2.5-Coder-1.5B-FP8
+        # ~/quant/Qwen2.5-Coder-1.5B-FP8-BLOCK
     )
 fi
 
