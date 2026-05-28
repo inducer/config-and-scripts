@@ -105,12 +105,12 @@ if test "$INSTANCE" = 1; then
         # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 1}'
 
         # not significantly faster than fp8 dynamic (7t/s)
-        # nvidia/Gemma-4-31B-IT-NVFP4
+        nvidia/Gemma-4-31B-IT-NVFP4
         
         # usable but kind of slow (6.5t/s)
         # RedHatAI/gemma-4-31B-it-FP8-Dynamic
         
-        RedHatAI/gemma-4-31B-it-NVFP4
+        # RedHatAI/gemma-4-31B-it-NVFP4
         
         # too large as one of two models
         # google/gemma-4-31B-it 
