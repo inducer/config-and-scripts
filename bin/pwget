@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# wait for window shape to settle
+sleep 0.2
+
+# Dependencies check
+for cmd in rbw jq sk; do
+    if ! command -v "$cmd" &> /dev/null; then
+        echo "Error: Required command '$cmd' is not installed."
+        exit 1
+    fi
+done
+
+# Detect clipboard tool
+if command -v wl-copy &> /dev/null; then
+    CLIPPER="wl-copy"
+elif command -v xclip &> /dev/null; then
+    CLIPPER="xclip -selection clipboard"
+else
+    echo "Error: No clipboard tool found (install xclip or wl-clipboard)"
+    exit 1
+fi
+
+# Use a unique string like ":::ID:::" to separate data
+selection=$(rbw list --raw | jq -r '.[] | "\(.name) [Password] ::: \(.id) ::: pass", "\(.name) [Username] ::: \(.user) ::: user"' | sk)
+
+if [ -z "$selection" ]; then
+    exit 0
+fi
+
+# Extract the 2nd and 3rd parts using awk
+target_id=$(echo "$selection" | awk -F ' ::: ' '{print $2}')
+action_type=$(echo "$selection" | awk -F ' ::: ' '{print $3}')
+
+if [ "$action_type" == "pass" ]; then
+    rbw get "$target_id" | $CLIPPER
+    echo "Password copied."
+elif [ "$action_type" == "user" ]; then
+    echo "$target_id" | $CLIPPER
+    echo "Username copied."
+fi
