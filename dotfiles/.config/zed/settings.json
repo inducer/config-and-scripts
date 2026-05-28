@@ -143,10 +143,10 @@
   },
   "format_on_save": "off",
   "edit_predictions": {
-    "provider": "zed",
+    "provider": "open_ai_compatible_api",
     "open_ai_compatible_api": {
       "prompt_format": "zeta2_1",
-      "model": "/home/andreas/quant/zeta-2.1-FP8-BLOCK",
+      "model": "LeaderboardModel1/zeta-2.1-autoround-W4A16",
       "api_url": "http://10.33.1.4:8000/v1/completions"
     },
     "mode": "eager"
