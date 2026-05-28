@@ -70,5 +70,11 @@
     "bindings": {
       "ctrl-\\": "workspace::NewCenterTerminal"
     }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-shift-a": "editor::ToggleBlockComments"
+    }
   }
 ]
