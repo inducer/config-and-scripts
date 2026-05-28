@@ -87,7 +87,7 @@
             }
           },
           {
-            "name": "RedHatAI/gemma-4-31B-it-NVFP4",
+            "name": "nvidia/Gemma-4-31B-IT-NVFP4",
             "max_tokens": 524288,
             "capabilities": {
               "tools": true,
