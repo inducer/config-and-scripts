@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Provides an interactive CLI interface to browse Bitwarden/rbw vault entries
-# and copy either the password or the username of a selected entry to the system
-# clipboard. 
 
 # wait for window shape to settle
 sleep 0.2
@@ -24,9 +21,8 @@ else
     exit 1
 fi
 
-selection=$( \
-    rbw list --raw  \
-    | jq -r '.[] | "\(.name) [Password] ::: \(.user) ::: \(.id) ::: pass", "\(.name) [Username] ::: \(.user) ::: \(.id) ::: user"'  \
+selection=$(rbw list --raw \
+    | jq -r '.[] | "\(.name) [Password] ::: \(.user) ::: pass ::: \(.id)", "\(.name) [Username] ::: \(.user) ::: user ::: \(.id)"' \
     | sk)
 
 if [ -z "$selection" ]; then
@@ -34,15 +30,14 @@ if [ -z "$selection" ]; then
 fi
 
 # Extract parts using awk
-# Format: Display ::: User/Value ::: ID ::: Action
 username_value=$(echo "$selection" | awk -F ' ::: ' '{print $2}')
-target_id=$(echo "$selection" | awk -F ' ::: ' '{print $3}')
-action_type=$(echo "$selection" | awk -F ' ::: ' '{print $4}')
+action_type=$(echo "$selection" | awk -F ' ::: ' '{print $3}')
+target_id=$(echo "$selection" | awk -F ' ::: ' '{print $4}')
 
 if [ "$action_type" == "pass" ]; then
-    rbw get "$target_id" | $CLIPPER
+    rbw get "$target_id" | tr -d '\n' | $CLIPPER
     echo "Password copied."
 elif [ "$action_type" == "user" ]; then
-    echo "$username_value" | $CLIPPER
+    echo -n "$username_value" | $CLIPPER
     echo "Username copied."
 fi
