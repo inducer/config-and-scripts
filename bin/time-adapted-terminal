@@ -36,7 +36,7 @@ import = [
   "~/.config/alacritty/base.toml",
 ]
 EOF
-alacritty "$@"
+exec alacritty "$@"
 
 # KITTY_CONF_PATH=$HOME/.config/kitty
 
