@@ -8,22 +8,22 @@
 #   "PyYAML",
 #   "typed_argparse",
 #   "uvicorn",
-#   "cachetools",
 # ]
 # ///
 
 
 import asyncio
 import secrets
+import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from fnmatch import fnmatch
+from typing import Generic, TypeAlias, TypeVar
 
 import httpx
 import typed_argparse as tap
 import uvicorn
 import yaml
-from cachetools import TTLCache
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -140,6 +140,29 @@ class ModelDesc:
     data: dict[str, object]
 
 
+T = TypeVar("T")
+
+
+class ValueWithTTL(Generic[T]):
+    ttl: float
+    data: T | None
+    expires_at: float
+
+    def __init__(self, ttl: float):
+        self.ttl = ttl
+        self.data = None
+        self.expires_at = 0
+
+    def get(self):
+        if self.data is not None and time.time() < self.expires_at:
+            return self.data
+        return None
+
+    def set(self, value: T):
+        self.data = value
+        self.expires_at = time.time() + self.ttl
+
+
 async def list_models_for_backend(
         config: ProxyConfig,
         backend_name: str,
@@ -155,6 +178,9 @@ async def list_models_for_backend(
     data = resp.json()
     return [ModelDesc(id=model.get("id"), backend=backend_name, data=model)
         for model in data.get("data", []) if isinstance(model.get("id"), str)]
+
+
+BackendToModelList: TypeAlias = dict[str, list[ModelDesc]]
 
 
 async def list_models(config: ProxyConfig):
@@ -177,16 +203,17 @@ async def list_models(config: ProxyConfig):
 
 
 async def list_models_cached(config: ProxyConfig):
-    cache: TTLCache[None, dict[str, list[ModelDesc]]] | None = \
-    getattr(config, "list_models_cache", None)
-    if cache is None:
-        cache = TTLCache(maxsize=100, ttl=60)
-        object.__setattr__(config, "list_models_cache", cache)
+    ttl_store_name = "list_models_ttl_store"
+    ttl_store: ValueWithTTL[BackendToModelList] | None = getattr(
+        config, ttl_store_name, None)
+    if ttl_store is None:
+        ttl_store = ValueWithTTL(ttl=60)
+        object.__setattr__(config, ttl_store_name, ttl_store)
 
-    result = cache.get(None)
+    result = ttl_store.get()
     if result is None:
         result = await list_models(config)
-        cache[None] = result
+        ttl_store.set(result)
 
     return result
 
