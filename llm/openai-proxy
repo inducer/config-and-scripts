@@ -190,6 +190,10 @@ async def list_models(config: ProxyConfig):
             list_models_for_backend(config, be_name, client)
             for be_name in config.backends], return_exceptions=True)
 
+    for be_name, resp in zip(config.backends, responses, strict=True):
+        if not isinstance(resp, list):
+            print(f"Exception response from {be_name}: \n{resp}")
+
     return {
         be_name: [
             model
