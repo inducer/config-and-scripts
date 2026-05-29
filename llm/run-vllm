@@ -62,7 +62,7 @@ if test "$INSTANCE" = 0; then
         --reasoning-parser gemma4
         --tool-call-parser gemma4
         --enable-auto-tool-choice
-        --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
+        # --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4096
         --gpu-memory-utilization 0.25
         --enable-prefix-caching 
@@ -95,7 +95,7 @@ if test "$INSTANCE" = 1; then
         --reasoning-parser gemma4
         --tool-call-parser gemma4
         --enable-auto-tool-choice
-        --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
+        # --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4096
         --gpu-memory-utilization 0.35
         --enable-prefix-caching 
