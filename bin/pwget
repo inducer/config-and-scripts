@@ -1,43 +1,188 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S uv run --script
+#
+# /// script
+# dependencies = [
+#   "textual",
+#   "pyperclip",
+#   "pydantic",
+# ]
+# ///
 
-# wait for window shape to settle
-sleep 0.2
+"""
+Password List Viewer - rbw TUI frontend
 
-# Dependencies check
-for cmd in rbw jq sk; do
-    if ! command -v "$cmd" &> /dev/null; then
-        echo "Error: Required command '$cmd' is not installed."
-        exit 1
-    fi
-done
+Lists all passwords from `rbw list --raw`, provides a fuzzy search box,
+and allows copying the password or username of the selected entry.
+"""
 
-# Detect clipboard tool
-if command -v wl-copy &> /dev/null; then
-    CLIPPER="wl-copy"
-elif command -v xclip &> /dev/null; then
-    CLIPPER="xclip -selection clipboard"
-else
-    echo "Error: No clipboard tool found (install xclip or wl-clipboard)"
-    exit 1
-fi
+import json
+import subprocess
+import sys
+from typing import Any, Literal
 
-selection=$(rbw list --raw \
-    | jq -r '.[] | "\(.name) [Password] ::: \(.user) ::: pass ::: \(.id)", "\(.name) [Username] ::: \(.user) ::: user ::: \(.id)"' \
-    | sk)
+from pydantic import BaseModel, Field, model_validator
+from pyperclip import copy as clipboard_copy
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.containers import Vertical
+from textual.widgets import Footer, Input, Label, ListItem, ListView
 
-if [ -z "$selection" ]; then
-    exit 0
-fi
 
-# Extract parts using awk
-username_value=$(echo "$selection" | awk -F ' ::: ' '{print $2}')
-action_type=$(echo "$selection" | awk -F ' ::: ' '{print $3}')
-target_id=$(echo "$selection" | awk -F ' ::: ' '{print $4}')
+class PasswordEntry(BaseModel):
+    """Representation of an rbw password entry."""
+    id: str
+    name: str
+    user: str | None = None
+    folder: str | None = None
+    uris: list[str] = Field(default_factory=list)
+    type: Literal["Login", "Card", "Identity", "Note"]
 
-if [ "$action_type" == "pass" ]; then
-    rbw get "$target_id" | tr -d '\n' | $CLIPPER
-    echo "Password copied."
-elif [ "$action_type" == "user" ]; then
-    echo -n "$username_value" | $CLIPPER
-    echo "Username copied."
-fi
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_uris(cls, data: Any) -> Any:
+        if isinstance(data, dict) and data.get("uris") is None:
+            data["uris"] = []
+        return data
+
+
+class PasswordItem(ListItem):
+    """Custom ListItem to store the password entry ID."""
+    def __init__(self, label: str, entry_id: str) -> None:
+        super().__init__(Label(label))
+        self.entry_id = entry_id
+
+
+# -----------------------------------------------------------------------------
+
+def get_raw_list() -> list[PasswordEntry]:
+    """Run `rbw list --raw` and return the parsed JSON list as Pydantic models."""
+    try:
+        result = subprocess.run(
+            ["rbw", "list", "--raw"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"Error running rbw list: {e.stderr}", file=sys.stderr)
+        sys.exit(1)
+    except FileNotFoundError:
+        print("rbw not found. Please install rbw first.", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        data = json.loads(result.stdout)
+        return [PasswordEntry.model_validate(entry) for entry in data]
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"Invalid data from rbw: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def get_password(uuid: str) -> str:
+    """Run `rbw get UUID` and return the password."""
+    try:
+        result = subprocess.run(
+            ["rbw", "get", uuid],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting password: {e.stderr}", file=sys.stderr)
+        return ""
+    return result.stdout.rstrip("\n")
+
+
+def fuzzy_match(query: str, entry: PasswordEntry) -> bool:
+    """Check if `query` is a case-insensitive substring of any relevant field."""
+    q = query.lower()
+    name = entry.name.lower()
+    user = (entry.user or "").lower()
+    uris = " ".join(entry.uris).lower()
+    return q in name or q in user or q in uris
+
+# -----------------------------------------------------------------------------
+
+
+class PasswordListApp(App):
+    """Main TUI application."""
+
+    BINDINGS = [
+        Binding("ctrl+u", "copy_username", "Copy username", show=False),
+    ]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.entries: list[PasswordEntry] = get_raw_list()
+        self.filtered: list[PasswordEntry] = list(self.entries)  # start with all
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            yield Input(placeholder="Search…", id="search")
+            yield ListView(id="list")
+            yield Footer()
+
+    def on_mount(self) -> None:
+        self._update_list(self.filtered)
+
+    def _update_list(self, entries: list[PasswordEntry]) -> None:
+        """Replace the ListView items with the given entries."""
+        list_view = self.query_one("#list", ListView)
+        list_view.clear()
+        for entry in entries:
+            label = f"{entry.name} ({entry.user})" if entry.user else entry.name
+            list_view.append(PasswordItem(label, entry.id))
+        if entries:
+            list_view.index = 0
+        else:
+            list_view.index = None
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        """Filter entries when the search text changes."""
+        query = event.value.strip()
+        if query:
+            self.filtered = [e for e in self.entries if fuzzy_match(query, e)]
+        else:
+            self.filtered = list(self.entries)
+        self._update_list(self.filtered)
+
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        """When Enter is pressed in the search box, select the topmost entry."""
+        list_view = self.query_one("#list", ListView)
+        if list_view.children:
+            list_view.index = 0
+            # Focus the list so that further Enter presses work on the list.
+            self.set_focus(list_view)
+
+    def on_listview_selected(self, event: ListView.Selected) -> None:
+        """Copy the password of the selected entry."""
+        if event.item and isinstance(event.item, PasswordItem):
+            uuid = event.item.entry_id
+            password = get_password(uuid)
+            if password:
+                clipboard_copy(password)
+                self.notify("Password copied to clipboard", timeout=2)
+
+    def action_copy_username(self) -> None:
+        """Copy the username of the currently selected entry."""
+        list_view = self.query_one("#list", ListView)
+        highlighted = list_view.highlighted_child
+        if highlighted is None:
+            self.notify("No entry selected", timeout=2)
+            return
+
+        index = list_view.index
+        if index is not None and index < len(self.filtered):
+            user = self.filtered[index].user
+            if user:
+                clipboard_copy(user)
+                self.notify("Username copied to clipboard", timeout=2)
+            else:
+                self.notify("No username for this entry", timeout=2)
+
+# -----------------------------------------------------------------------------
+
+
+if __name__ == "__main__":
+    app = PasswordListApp()
+    app.run()
