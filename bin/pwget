@@ -87,13 +87,28 @@ def fuzzy_match(query: str, entry: PasswordEntry) -> bool:
     return q in name or q in user or q in uris
 
 
-class PasswordButton(urwid.Button):
-    """Custom button to store the entry data."""
+class PasswordListItem(urwid.Text):
+    """Custom text widget that acts like a button for the list."""
 
-    def __init__(self, entry: PasswordEntry, callback):
+    def __init__(self, entry: PasswordEntry):
         self.entry = entry
         label = f"{entry.name} ({entry.user})" if entry.user else entry.name
-        super().__init__(label, on_press=callback)
+        super().__init__(label)
+
+    def selectable(self):
+        return True
+
+    def keypress(self, size, key):
+        if key == "enter":
+            self._emit("click")
+            return None
+        if key == "ctrl u":
+            self._emit("copy_user")
+            return None
+        return key
+
+
+urwid.register_signal(PasswordListItem, ["click", "copy_user"])
 
 
 class PasswordApp:
@@ -159,12 +174,20 @@ class PasswordApp:
     def update_list(self):
         widgets = []
         for entry in self.filtered_entries:
-            btn = PasswordButton(entry, self.on_item_selected)
-            widgets.append(urwid.AttrMap(btn, "selected", "body"))
+            btn = PasswordListItem(entry)
+            urwid.connect_signal(btn, "click", self.on_item_selected)
+            urwid.connect_signal(btn, "copy_user", self.on_item_copy_user)
+            widgets.append(urwid.AttrMap(btn, "body", "selected"))
 
         self.list_walker[:] = widgets
         if widgets:
             self.list_box.set_focus(0)
+
+    def on_item_selected(self, button):
+        self.copy_password(button.entry)
+
+    def on_item_copy_user(self, button):
+        self.copy_username_for_entry(button.entry)
 
     def on_search_change(self, widget, query):
         self.filtered_entries = [e for e in self.all_entries if fuzzy_match(query, e)]
@@ -179,25 +202,16 @@ class PasswordApp:
             clipboard_copy(password)
             self.show_overlay(f"Copied password for {entry.name}")
 
+    def copy_username_for_entry(self, entry: PasswordEntry):
+        if entry.user:
+            clipboard_copy(entry.user)
+            self.show_overlay(f"Copied username: {entry.user}")
+        else:
+            self.show_overlay("No username for this entry")
+
     def copy_first_username(self):
         if self.filtered_entries:
-            entry = self.filtered_entries[0]
-            if entry.user:
-                clipboard_copy(entry.user)
-                self.show_overlay(f"Copied username: {entry.user}")
-            else:
-                self.show_overlay("No username for this entry")
-
-    def copy_username(self):
-        focus_index = self.list_box.focus_position
-        if focus_index is not None:
-            focus_widget = self.list_box[focus_index]
-            entry = focus_widget.base_widget.entry
-            if entry.user:
-                clipboard_copy(entry.user)
-                self.show_overlay(f"Copied username: {entry.user}")
-            else:
-                self.show_overlay("No username for this entry")
+            self.copy_username_for_entry(self.filtered_entries[0])
 
     def show_overlay(self, message):
         """Briefly show a message overlay."""
@@ -216,16 +230,18 @@ class PasswordApp:
     def unhandled_input(self, key):
         if key in ("q", "Q", "esc"):
             raise urwid.ExitMainLoop()
-        if key == "ctrl u":
-            self.copy_username()
+
         if key == "down" and self.view.focus_position == "header":
             self.view.focus_position = "body"
+            return
+
         if (
             key == "up"
             and self.view.focus_position == "body"
-            and self.list_box.focus == 0
+            and self.list_box.focus_position == 0
         ):
             self.view.focus_position = "header"
+            return
 
     def run(self):
         self.loop = urwid.MainLoop(
