@@ -27,6 +27,7 @@ from pyperclip import copy as clipboard_copy
 
 class PasswordEntry(BaseModel):
     """Representation of an rbw password entry."""
+
     id: str
     name: str
     user: str | None = None
@@ -58,12 +59,7 @@ def get_raw_list() -> list[PasswordEntry]:
         print("rbw not found. Please install rbw first.", file=sys.stderr)
         sys.exit(1)
 
-    try:
-        data = json.loads(result.stdout)
-        return [PasswordEntry.model_validate(entry) for entry in data]
-    except (json.JSONDecodeError, ValueError) as e:
-        print(f"Invalid data from rbw: {e}", file=sys.stderr)
-        sys.exit(1)
+    return [PasswordEntry.model_validate(entry) for entry in json.loads(result.stdout)]
 
 
 def get_password(uuid: str) -> str:
@@ -93,6 +89,7 @@ def fuzzy_match(query: str, entry: PasswordEntry) -> bool:
 
 class PasswordButton(urwid.Button):
     """Custom button to store the entry data."""
+
     def __init__(self, entry: PasswordEntry, callback):
         self.entry = entry
         label = f"{entry.name} ({entry.user})" if entry.user else entry.name
@@ -106,23 +103,43 @@ class PasswordApp:
 
         # UI Elements
         self.search_edit = urwid.Edit(("caption", "Search: "))
+
+        original_keypress = self.search_edit.keypress
+
+        def search_keypress(size, key):
+            if key == "enter":
+                if self.filtered_entries:
+                    self.copy_password(self.filtered_entries[0])
+                return None
+            if key == "ctrl u":
+                if self.filtered_entries:
+                    self.copy_first_username()
+                return None
+            return original_keypress(size, key)
+
+        self.search_edit.keypress = search_keypress
+
         self.list_walker = urwid.SimpleFocusListWalker([])
         self.list_box = urwid.ListBox(self.list_walker)
 
         # Header and Footer
-        header = urwid.AttrWrap(self.search_edit, "editbx")
+        header = urwid.AttrMap(self.search_edit, "editbx")
         footer_text = [
-            ("key", "ENTER"), " copy pass  ",
-            ("key", "CTRL+U"), " copy user  ",
-            ("key", "ESC/Q"), " quit",
+            ("key", "ENTER"),
+            " copy pass  ",
+            ("key", "CTRL+U"),
+            " copy user  ",
+            ("key", "ESC/Q"),
+            " quit",
         ]
-        footer = urwid.AttrWrap(urwid.Text(footer_text), "footer")
+        footer = urwid.AttrMap(urwid.Text(footer_text), "footer")
 
         # Layout
         self.view = urwid.Frame(
-            body=urwid.AttrWrap(self.list_box, "body"),
+            body=urwid.AttrMap(self.list_box, "body"),
             header=header,
-            footer=footer
+            footer=footer,
+            focus_part="header",
         )
 
         # Palette
@@ -143,16 +160,14 @@ class PasswordApp:
         widgets = []
         for entry in self.filtered_entries:
             btn = PasswordButton(entry, self.on_item_selected)
-            widgets.append(urwid.AttrWrap(btn, "body", "selected"))
+            widgets.append(urwid.AttrMap(btn, "selected", "body"))
 
         self.list_walker[:] = widgets
         if widgets:
             self.list_box.set_focus(0)
 
     def on_search_change(self, widget, query):
-        self.filtered_entries = [
-            e for e in self.all_entries if fuzzy_match(query, e)
-        ]
+        self.filtered_entries = [e for e in self.all_entries if fuzzy_match(query, e)]
         self.update_list()
 
     def on_item_selected(self, button):
@@ -164,9 +179,19 @@ class PasswordApp:
             clipboard_copy(password)
             self.show_overlay(f"Copied password for {entry.name}")
 
+    def copy_first_username(self):
+        if self.filtered_entries:
+            entry = self.filtered_entries[0]
+            if entry.user:
+                clipboard_copy(entry.user)
+                self.show_overlay(f"Copied username: {entry.user}")
+            else:
+                self.show_overlay("No username for this entry")
+
     def copy_username(self):
-        focus_widget, _ = self.list_box.get_focus()
-        if focus_widget:
+        focus_index = self.list_box.focus_position
+        if focus_index is not None:
+            focus_widget = self.list_box[focus_index]
             entry = focus_widget.base_widget.entry
             if entry.user:
                 clipboard_copy(entry.user)
@@ -179,9 +204,7 @@ class PasswordApp:
         text = urwid.Text(f"\n {message} \n", align="center")
         fill = urwid.Filler(urwid.LineBox(text))
         overlay = urwid.Overlay(
-            fill, self.view,
-            "center", ("relative", 60),
-            "middle", ("relative", 20)
+            fill, self.view, "center", ("relative", 60), "middle", ("relative", 20)
         )
 
         def remove_overlay(loop, data):
@@ -197,14 +220,16 @@ class PasswordApp:
             self.copy_username()
         if key == "down" and self.view.focus_position == "header":
             self.view.focus_position = "body"
-        if key == "up" and self.view.focus_position == "body" and self.list_box.get_focus()[1] == 0:
+        if (
+            key == "up"
+            and self.view.focus_position == "body"
+            and self.list_box.focus == 0
+        ):
             self.view.focus_position = "header"
 
     def run(self):
         self.loop = urwid.MainLoop(
-            self.view,
-            self.palette,
-            unhandled_input=self.unhandled_input
+            self.view, self.palette, unhandled_input=self.unhandled_input
         )
         self.loop.run()
 
