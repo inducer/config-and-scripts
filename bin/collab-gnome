@@ -1,0 +1,62 @@
+#! /usr/bin/env python3
+
+import sys
+import re
+import subprocess
+from dataclasses import dataclass
+
+CONNECTOR_RE = re.compile(r"^(e?DP-[0-9])\s")
+
+
+@dataclass(frozen=True)
+class Connector:
+    name: str
+    three_letter: str
+    vendor: str
+    serial: str
+
+
+def get_connector_info() -> list[Connector]:
+    result = []
+    p = subprocess.run(["gnome-randr"], stdout=subprocess.PIPE, check=True)
+    for ln in p.stdout.split(b"\n"):
+        m = CONNECTOR_RE.match(ln.decode())
+        if m:
+            words = ln.decode().split()
+            result.append(Connector(
+                              name=words[0],
+                              three_letter=words[1],
+                              vendor=words[2],
+                              serial=words[-1],
+                          ))
+
+    return result
+
+
+
+
+
+
+
+def main():
+    cnx = get_connector_info()
+
+    dell_connector, = [c for c in cnx if c.vendor == "DELL"]
+    lg_connector, = [c for c in cnx if c.vendor == "LG"]
+
+    if sys.argv[1] == "1":
+        subprocess.run(["gnome-randr",
+                       "--output", dell_connector.name, "--auto",
+                       "--output", lg_connector.name, "--off",
+                   ], check=True)
+    elif sys.argv[1] == "0":
+        subprocess.run(["gnome-randr",
+                       "--output", dell_connector.name, "--off",
+                       "--output", lg_connector.name, "--auto",
+                   ], check=True)
+    else:
+        raise ValueError(f"unexpected arg: {sys.argv[1]} (must be 0 or 1)")
+
+
+if __name__ == "__main__":
+    main()

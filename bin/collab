@@ -1,59 +1,153 @@
-#! /usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+#
+# /// script
+# dependencies = [
+#   "ckdl",
+#   "pydantic",
+# ]
+# ///
 
-import sys
-import re
 import subprocess
-from dataclasses import dataclass
+import sys
 
-CONNECTOR_RE = re.compile(r"^(e?DP-[0-9])\s")
+import ckdl
+from pydantic import BaseModel, Field
 
 
-@dataclass(frozen=True)
-class Connector:
+class Mode(BaseModel):
+    width: int
+    height: int
+    refresh: int
+    current: bool = False
+    preferred: bool = False
+
+
+class Description(BaseModel):
+    make: str | None = None
+    model: str | None = None
+
+
+class Output(BaseModel):
     name: str
-    three_letter: str
-    vendor: str
-    serial: str
+    enabled: bool = True
+    description: Description | None = None
+    physical_width: int | None = Field(None, alias="physical_w")
+    physical_height: int | None = Field(None, alias="physical_h")
+    position_x: int | None = Field(None, alias="position_x")
+    position_y: int | None = Field(None, alias="position_y")
+    scale: float = 1.0
+    transform: str | None = None
+    adaptive_sync_support: bool | None = None
+    adaptive_sync: bool | None = None
+    xwayland_primary: bool | None = None
+    serial_number: str | None = None
+    modes: list[Mode] = []
 
 
-def get_connector_info() -> list[Connector]:
-    result = []
-    p = subprocess.run(["gnome-randr"], stdout=subprocess.PIPE, check=True)
-    for ln in p.stdout.split(b"\n"):
-        m = CONNECTOR_RE.match(ln.decode())
-        if m:
-            words = ln.decode().split()
-            result.append(Connector(
-                              name=words[0],
-                              three_letter=words[1],
-                              vendor=words[2],
-                              serial=words[-1],
-                          ))
-
-    return result
+class RandrConfig(BaseModel):
+    outputs: list[Output]
 
 
+def get_cosmic_randr_config() -> RandrConfig:
+    """
+    Runs 'cosmic-randr list --kdl', parses the KDL output,
+    and validates it into a RandrConfig Pydantic model.
+    """
+    result = subprocess.run(
+        ["cosmic-randr", "list", "--kdl"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
 
+    kdl_data = ckdl.parse(result.stdout)
 
+    outputs = []
+    # The KDL structure is a list of 'output' nodes at the root
+    for node in kdl_data:
+        if node.name == "output":
+            # The first argument is the output name (e.g., "DP-4")
+            name = node.args[0]
 
+            # Collect attributes (e.g., enabled=#false)
+            properties = dict(node.properties.items())
+
+            # Collect child nodes
+            children = {}
+            modes: list[Mode] = []
+            for child in node.children:
+                if child.name == "description":
+                    children["description"] = child.properties
+                elif child.name == "physical":
+                    children["physical"] = child.args
+                elif child.name == "position":
+                    children["position"] = child.args
+                elif child.name == "scale":
+                    children["scale"] = child.args[0] if child.args else None
+                elif child.name == "transform":
+                    children["transform"] = child.args[0] if child.args else None
+                elif child.name == "adaptive_sync_support":
+                    children["adaptive_sync_support"] = \
+                        child.args[0] if child.args else None
+                elif child.name == "adaptive_sync":
+                    children["adaptive_sync"] = child.args[0] if child.args else None
+                elif child.name == "xwayland_primary":
+                    children["xwayland_primary"] = child.args[0] if child.args else None
+                elif child.name == "serial_number":
+                    children["serial_number"] = child.args[0] if child.args else None
+                elif child.name == "modes":
+                    modes = []
+                    for m_node in child.children:
+                        if m_node.name == "mode":
+                            # mode width height refresh [properties]
+                            modes.append(Mode(
+                                width=int(m_node.args[0]),
+                                height=int(m_node.args[1]),
+                                refresh=int(m_node.args[2]),
+                                current=m_node.properties.get("current", False),
+                                preferred=m_node.properties.get("preferred", False)
+                            ))
+                        else:
+                            raise ValueError(f"Unexpected child name: {m_node.name}")
+                    children["modes"] = modes
+
+            outputs.append(Output(
+                name=name,
+                enabled=properties.get("enabled", True),
+                description=Description(
+                    **children["description"]) if "description" in children else None,
+                physical_w=(children["physical"][0] if "physical" in children
+                    and len(children["physical"]) > 0 else None),
+                physical_h=(children["physical"][1] if "physical" in children
+                    and len(children["physical"]) > 1 else None),
+                position_x=(children["position"][0] if "position" in children
+                    and len(children["position"]) > 0 else None),
+                position_y=(children["position"][1] if "position" in children
+                    and len(children["position"]) > 1 else None),
+                scale=(float(children["scale"]) if "scale" in children
+                    and children["scale"] is not None else 1.0),
+                transform=children.get("transform"),
+                adaptive_sync_support=children.get("adaptive_sync_support"),
+                adaptive_sync=children.get("adaptive_sync"),
+                xwayland_primary=children.get("xwayland_primary"),
+                serial_number=children.get("serial_number"),
+                modes=children.get("modes", [])
+            ))
+
+    return RandrConfig(outputs=outputs)
 
 
 def main():
-    cnx = get_connector_info()
-
-    dell_connector, = [c for c in cnx if c.vendor == "DELL"]
-    lg_connector, = [c for c in cnx if c.vendor == "LG"]
+    config = get_cosmic_randr_config()
+    dell_output, = [o for o in config.outputs if o.serial_number == "7JNY5375343S"]
+    lg_output, = [o for o in config.outputs if o.serial_number == "0x000447D8"]
 
     if sys.argv[1] == "1":
-        subprocess.run(["gnome-randr",
-                       "--output", dell_connector.name, "--auto",
-                       "--output", lg_connector.name, "--off",
-                   ], check=True)
+        subprocess.run(["cosmic-randr", "enable", dell_output.name], check=True)
+        subprocess.run(["cosmic-randr", "disable", lg_output.name], check=True)
     elif sys.argv[1] == "0":
-        subprocess.run(["gnome-randr",
-                       "--output", dell_connector.name, "--off",
-                       "--output", lg_connector.name, "--auto",
-                   ], check=True)
+        subprocess.run(["cosmic-randr", "enable", lg_output.name], check=True)
+        subprocess.run(["cosmic-randr", "disable", dell_output.name], check=True)
     else:
         raise ValueError(f"unexpected arg: {sys.argv[1]} (must be 0 or 1)")
 
