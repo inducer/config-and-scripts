@@ -5,6 +5,7 @@
 #   "urwid",
 #   "pyperclip",
 #   "pydantic",
+#   "RapidFuzz",
 # ]
 # ///
 
@@ -23,6 +24,7 @@ from typing import Any, Literal
 import urwid
 from pydantic import BaseModel, Field, model_validator
 from pyperclip import copy as clipboard_copy
+from rapidfuzz import fuzz
 
 
 class PasswordEntry(BaseModel):
@@ -79,12 +81,22 @@ def get_password(uuid: str) -> str:
 
 
 def fuzzy_match(query: str, entry: PasswordEntry) -> bool:
-    """Check if `query` is a case-insensitive substring of any relevant field."""
-    q = query.lower()
-    name = entry.name.lower()
-    user = (entry.user or "").lower()
-    uris = " ".join(entry.uris).lower()
-    return q in name or q in user or q in uris
+    """
+    Check if `query` fuzzy-matches any relevant field using rapidfuzz.
+
+    Combines name, user, and URIs into a single string and scores it
+    against the query using `fuzz.WRatio`. A score above 50 counts as a match.
+    """
+    if not query:
+        return True
+    combined = f"{entry.name} {entry.user or ''} {' '.join(entry.uris)}"
+    return fuzz.WRatio(query, combined) > 50
+
+
+def match_score(query: str, entry: PasswordEntry) -> float:
+    """Return the fuzzy match score for an entry against a non-empty query."""
+    combined = f"{entry.name} {entry.user or ''} {' '.join(entry.uris)}"
+    return fuzz.WRatio(query, combined)
 
 
 class PasswordListItem(urwid.Text):
@@ -183,14 +195,17 @@ class PasswordApp:
         if widgets:
             self.list_box.set_focus(0)
 
-    def on_item_selected(self, button):
-        self.copy_password(button.entry)
-
     def on_item_copy_user(self, button):
         self.copy_username_for_entry(button.entry)
 
     def on_search_change(self, widget, query):
-        self.filtered_entries = [e for e in self.all_entries if fuzzy_match(query, e)]
+        if query:
+            scored = [(match_score(query, e), e)
+                for e in self.all_entries if fuzzy_match(query, e)]
+            scored.sort(key=lambda x: x[0], reverse=True)
+            self.filtered_entries = [e for _, e in scored]
+        else:
+            self.filtered_entries = list(self.all_entries)
         self.update_list()
 
     def on_item_selected(self, button):
