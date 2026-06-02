@@ -1,0 +1,3 @@
+#! /bin/bash
+
+"$HOME/bin/time-adapted-terminal" -e "$HOME/bin/pwget"
