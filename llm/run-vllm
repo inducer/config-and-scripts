@@ -68,6 +68,8 @@ if test "$INSTANCE" = 0; then
         --enable-prefix-caching 
         --kv-cache-dtype fp8
         --max-num-seqs 16
+        --quantization modelopt
+
         # --max-num-batched-tokens 4096
         # --block-size 32
         #--dtype fp8
@@ -101,6 +103,8 @@ if test "$INSTANCE" = 1; then
         --enable-prefix-caching 
         --kv-cache-dtype fp8
         --max-num-seqs 16
+        --quantization modelopt 
+        
         # --limit-mm-per-prompt image=4,audio=1
         # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 1}'
 
@@ -110,6 +114,7 @@ if test "$INSTANCE" = 1; then
         # usable but kind of slow (6.5t/s)
         # RedHatAI/gemma-4-31B-it-FP8-Dynamic
         
+        # seems a bit dumber than the nvidia quant
         # RedHatAI/gemma-4-31B-it-NVFP4
         
         # too large as one of two models
