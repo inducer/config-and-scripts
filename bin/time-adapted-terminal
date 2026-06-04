@@ -1,22 +1,13 @@
 #! /bin/bash
 
-set -e
+set -euo pipefail
 
-HOUR=$(date +%H)
+TERMINAL_LIGHTNESS="$(get-desktop-lightness)"
+export TERMINAL_LIGHTNESS
 
-HOUR=${HOUR#0}
-
-#GNOME_COLOR_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme)"
-COSMIC_THEME_IS_DARK="$(cat "$HOME/.config/cosmic/com.system76.CosmicTheme.Mode/v1/is_dark")"
-
-#if [[ ($HOUR -ge 6 && $HOUR -lt 20) && ! -e $HOME/.force-dark-terminal ]]; then
-# if [[ "$GNOME_COLOR_SCHEME" == "'default'" && ! -e $HOME/.force-dark-terminal ]]; then
-if [[ "$COSMIC_THEME_IS_DARK" == "false" && ! -e $HOME/.force-dark-terminal ]]; then
-  export TERMINAL_LIGHTNESS="light"
-  # TERMCOLORS=theme-brewer-light-v2
+if [[ "$TERMINAL_LIGHTNESS" == "light" ]]; then
   TERMCOLORS=alabaster
 else
-  export TERMINAL_LIGHTNESS="dark"
   # TERMCOLORS=theme-solarized-dark
   TERMCOLORS=google
 fi

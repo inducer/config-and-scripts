@@ -1,0 +1,18 @@
+#! /bin/bash
+
+set -euo pipefail
+
+HOUR=$(date +%H)
+
+HOUR=${HOUR#0}
+
+#GNOME_COLOR_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme)"
+COSMIC_THEME_IS_DARK="$(cat "$HOME/.config/cosmic/com.system76.CosmicTheme.Mode/v1/is_dark")"
+
+# if [[ ($HOUR -ge 6 && $HOUR -lt 20) && ! -e $HOME/.force-dark-terminal ]]; then
+# if [[ "$GNOME_COLOR_SCHEME" == "'default'" && ! -e $HOME/.force-dark-terminal ]]; then
+if [[ "$COSMIC_THEME_IS_DARK" == "false" && ! -e $HOME/.force-dark-terminal ]]; then
+    echo "light"
+else
+    echo "dark"
+fi
