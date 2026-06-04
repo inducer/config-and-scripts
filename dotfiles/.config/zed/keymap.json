@@ -76,5 +76,64 @@
     "unbind": {
       "alt-shift-a": "editor::ToggleBlockComments"
     }
+  },
+  {
+    "context": "(vim_mode== helix_normal) && !menu",
+      "bindings": {
+      "space g": [
+        "task::Spawn",
+        {
+          "task_name": "LazyGit",
+          "reveal_target": "center"
+        }
+      ]
+    }
+  },
+  {
+    "context": "vim_mode==helix_normal && !menu",
+    "bindings": {
+      "space t": [
+        "task::Spawn",
+        {
+          "task_name": "BasedPyright"
+        }
+      ]
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-k ctrl-h": "workspace::ActivatePaneLeft"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-k ctrl-k": "workspace::ActivatePaneUp"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-k ctrl-j": "workspace::ActivatePaneDown"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-k ctrl-j": "editor::UnfoldAll"
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-k ctrl-l": "editor::ToggleFold"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-k ctrl-l": "workspace::ActivatePaneRight"
+    }
   }
 ]
