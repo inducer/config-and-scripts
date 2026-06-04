@@ -1,0 +1,8 @@
+#! /bin/bash
+
+set -euo pipefail
+
+TERMINAL_LIGHTNESS="$(get-desktop-lightness)"
+export TERMINAL_LIGHTNESS
+
+exec lazygit "$@"
