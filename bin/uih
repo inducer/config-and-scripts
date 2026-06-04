@@ -1,0 +1,3 @@
+#! /bin/bash
+
+exec ~/work/uih/uih
