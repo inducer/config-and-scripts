@@ -11,6 +11,16 @@
         "use_new_terminal": true
     },  
     {
+        "label": "Unicode table",
+        "command": "uih",
+        "hide": "on_success",
+        "reveal_target": "center",
+        "show_summary": false,
+        "show_command": false,
+        "allow_concurrent_runs": false,
+        "use_new_terminal": true
+    },  
+    {
         "label": "BasedPyright",
         "command": "basedpyright",
         "env": { "LANG": "" },

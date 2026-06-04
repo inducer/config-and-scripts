@@ -90,6 +90,18 @@
     }
   },
   {
+    "context": "(vim_mode== helix_normal) && !menu",
+      "bindings": {
+      "space u": [
+        "task::Spawn",
+        {
+          "task_name": "Unicode table",
+          "reveal_target": "center"
+        }
+      ]
+    }
+  },
+  {
     "context": "vim_mode==helix_normal && !menu",
     "bindings": {
       "space t": [
