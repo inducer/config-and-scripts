@@ -1,8 +1,13 @@
 #! /bin/bash
 
+set -euo pipefail
+
 if ! command -v delta &> /dev/null; then
     exec less "$@"
 else
+    if test "${TERMINAL_LIGHTNESS:-}" == ""; then
+        TERMINAL_LIGHTNESS="$(get-desktop-lightness)"
+    fi
     if ! test "$TERMINAL_LIGHTNESS" == ""; then
         exec delta "--$TERMINAL_LIGHTNESS" "$@"
     else

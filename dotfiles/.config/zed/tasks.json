@@ -2,7 +2,7 @@
 [
     {
         "label": "LazyGit",
-        "command": "lazygit-lightness",
+        "command": "lazygit",
         "hide": "on_success",
         "reveal_target": "center",
         "show_summary": false,
