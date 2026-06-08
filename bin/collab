@@ -7,6 +7,7 @@
 # ]
 # ///
 
+from pprint import pprint
 import subprocess
 import sys
 
@@ -140,7 +141,10 @@ def get_cosmic_randr_config() -> RandrConfig:
 def main():
     config = get_cosmic_randr_config()
     dell_output, = [o for o in config.outputs if o.serial_number == "7JNY5375343S"]
-    lg_output, = [o for o in config.outputs if o.serial_number == "0x000447D8"]
+    lg_output, = [o for o in config.outputs
+            if o.description is not None
+            and o.description.model == "LG HDR 4K"
+        ]
 
     if sys.argv[1] == "1":
         subprocess.run(["cosmic-randr", "enable", dell_output.name], check=True)
