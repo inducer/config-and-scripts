@@ -117,10 +117,13 @@ class PasswordListItem(urwid.Text):
         if key == "ctrl u":
             self._emit("copy_user")
             return None
+        if key == "ctrl d":
+            self._emit("copy_id")
+            return None
         return key
 
 
-urwid.register_signal(PasswordListItem, ["click", "copy_user"])
+urwid.register_signal(PasswordListItem, ["click", "copy_user", "copy_id"])
 
 
 class PasswordApp:
@@ -142,6 +145,10 @@ class PasswordApp:
                 if self.filtered_entries:
                     self.copy_first_username()
                 return None
+            if key == "ctrl d":
+                if self.filtered_entries:
+                    self.copy_first_id()
+                return None
             return original_keypress(size, key)
 
         self.search_edit.keypress = search_keypress
@@ -156,6 +163,8 @@ class PasswordApp:
             " copy pass  ",
             ("key", "CTRL+U"),
             " copy user  ",
+            ("key", "CTRL+D"),
+            " copy id    ",
             ("key", "ESC/Q"),
             " quit",
         ]
@@ -189,6 +198,7 @@ class PasswordApp:
             btn = PasswordListItem(entry)
             urwid.connect_signal(btn, "click", self.on_item_selected)
             urwid.connect_signal(btn, "copy_user", self.on_item_copy_user)
+            urwid.connect_signal(btn, "copy_id", self.on_item_copy_id)
             widgets.append(urwid.AttrMap(btn, "body", "selected"))
 
         self.list_walker[:] = widgets
@@ -197,6 +207,9 @@ class PasswordApp:
 
     def on_item_copy_user(self, button):
         self.copy_username_for_entry(button.entry)
+
+    def on_item_copy_id(self, button):
+        self.copy_id_for_entry(button.entry)
 
     def on_search_change(self, widget, query):
         if query:
@@ -224,9 +237,17 @@ class PasswordApp:
         else:
             self.show_overlay("No username for this entry")
 
+    def copy_id_for_entry(self, entry: PasswordEntry):
+        clipboard_copy(entry.id)
+        self.show_overlay(f"Copied ID: {entry.id}")
+
     def copy_first_username(self):
         if self.filtered_entries:
             self.copy_username_for_entry(self.filtered_entries[0])
+
+    def copy_first_id(self):
+        if self.filtered_entries:
+            self.copy_id_for_entry(self.filtered_entries[0])
 
     def show_overlay(self, message):
         """Briefly show a message overlay."""
