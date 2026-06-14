@@ -1,0 +1,133 @@
+#! /usr/bin/env python3
+
+import argparse
+import datetime
+import os
+import subprocess
+from typing import Any
+from warnings import warn
+
+from babybuddy import JsonAPI
+
+
+class ProcareAPI(JsonAPI):
+    auth_type = "Bearer"
+
+    def __init__(self, key: str,
+                 base_url: str = "https://api-school.procareconnect.com/api/web"
+             ) -> None:
+        super().__init__(base_url, key)
+
+    def kids(self):
+        return self._request("GET", "/parent/kids/").json()
+
+    def daily_activities(self,
+                         kid_id: str,
+                         date: datetime.date,
+                         ) -> list[Any]:
+        params = {"kid_id": kid_id}
+        if date is not None:
+            params["filters[daily_activity][date_to]"] = date.isoformat()
+        page = 1
+        result = []
+
+        while True:
+            params["page"] = str(page)
+            response = self._request(
+                 "GET", "/parent/daily_activities/",
+                 params=params).json()
+            resp_activities = response["daily_activities"]
+            resp_activities_date = [
+                act
+                for act in resp_activities
+                if act["activity_date"] == date.isoformat()
+            ]
+            result.extend(resp_activities_date)
+
+            if len(resp_activities_date) < len(resp_activities):
+                # We've exhausted the activities for the day, return.
+                return result
+
+            page += 1
+
+
+def grab_media(date: datetime.date, media_url: str) -> str:
+    import requests
+    response = requests.get(media_url)
+    response.raise_for_status()
+    mimetype = response.headers["content-type"]
+
+    from urllib.parse import urlparse
+    bn = os.path.basename(urlparse(media_url).path)
+    unexpanded_fn = ("~/nc/shared/cbal/kiddo/procare-pics/"
+                       f"{date.year}/{date.month:02d}/{bn}")
+    fn = os.path.expanduser(unexpanded_fn)
+
+    if mimetype == "video/mp4" and not fn.endswith(".mp4"):
+        fn += ".mp4"
+
+    os.makedirs(os.path.dirname(fn), exist_ok=True)
+
+
+    if os.path.exists(fn):
+        print(f"ALREADY EXISTS? refusing to overwrite {fn}")
+        return unexpanded_fn
+
+    with open(fn, "wb") as f:
+        f.write(response.content)
+    subprocess.check_call(
+        ["exiftool", f"-AllDates={date.year}:{date.month}:{date.day} 12:00:00", fn]
+    )
+    print(f"NEW MEDIA DOWNLOADED: {unexpanded_fn}")
+
+    return unexpanded_fn
+
+
+def grab(args):
+    pc_client = ProcareAPI(args.procare_key)
+
+    date = datetime.date.fromisoformat(args.date)
+
+    for pc_kid in pc_client.kids()["kids"]:
+        pc_kid_id = pc_kid["id"]
+
+        activities = pc_client.daily_activities(pc_kid_id, date=date)
+
+        activities = sorted(
+            activities,
+            key=lambda act: datetime.datetime.fromisoformat(act["activity_time"]))
+
+        for act in activities:
+            if act.get("photo_url"):
+                grab_media(date, act["photo_url"])
+            subact = act.get("activiable")
+            if subact and subact.get("photo_url"):
+                grab_media(date, subact["photo_url"])
+
+
+
+
+def main():
+    parser = argparse.ArgumentParser(
+            description="Download pictures from ProCare")
+    parser.add_argument("--procare-key", metavar="KEY", required=True)
+
+    subp = parser.add_subparsers()
+
+    parser_grab = subp.add_parser("grab")
+    parser_grab.add_argument("date", metavar="YYYY-MM-DD")
+    parser_grab.set_defaults(func=grab)
+
+    args = parser.parse_args()
+
+    if not hasattr(args, "func"):
+        parser.print_usage()
+        import sys
+        sys.exit(1)
+
+    import sys
+    sys.exit(args.func(args))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,12 @@
+#! /bin/bash
+
+if test "$1" = ""; then
+	DATE="$(date "+%Y-%m-%d")"
+else
+	DATE="$1"
+fi
+shift
+
+exec grab-procare-pics \
+	--procare-key="$(cat ~/.procare-api-key )" \
+	grab "$DATE"
