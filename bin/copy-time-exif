@@ -1,0 +1,18 @@
+#! /bin/bash
+
+ORIG="$1"
+NEW="$2"
+
+if ! test -f "$NEW"; then
+  echo "usage: $0 <orig_file> <new_file>"
+  exit 1
+fi
+
+exiftool \
+ -overwrite_original \
+ -tagsFromFile "$ORIG"\
+ -DateTimeOriginal -CreateDate -ModifyDate \
+ -SubSecTimeOriginal -SubSecTime -SubSecTimeDigitized \
+ -OffsetTimeOriginal -OffsetTime -OffsetTimeDigitized \
+ -AllDates \
+ "$NEW"
