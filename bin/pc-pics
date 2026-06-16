@@ -7,6 +7,9 @@ else
 fi
 shift
 
-exec grab-procare-pics \
+grab-procare-pics \
 	--procare-key="$(cat ~/.procare-api-key )" \
 	grab "$DATE"
+
+source ~/src/current-env/bin/activate
+immichpy assets upload --show-progress --album-name "Adi ProCare" ~/nc/shared/cbal/kiddo/procare-pics
