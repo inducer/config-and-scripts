@@ -89,7 +89,7 @@
             }
           },
           {
-            "name": "nvidia/Gemma-4-31B-IT-NVFP4",
+            "name": "google/gemma-4-31B-it-qat-w4a16-ct",
             "max_tokens": 524288,
             "capabilities": {
               "tools": true,
