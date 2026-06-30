@@ -22,22 +22,44 @@ fi
 
 unset backupname
 
+declare -A rest_password_ids
+rest_password_ids["akserver"]="f9d430a2-62de-475d-8ffb-2d62ed8e51d4"
+rest_password_ids["akscicomp-discourse"]="eb1ddfb3-5f16-4c5c-bbbc-2df5d4e14ea3"
+rest_password_ids["akrelate"]="ea0a12ab-463d-4fb0-b89e-ecb4e4ec5a33"
+rest_password_ids["akgrison"]="8624c80a-3725-4c05-8c36-8e3fe7008e64"
+rest_password_ids["cbphone"]="a7a6ad22-c8bf-46ec-b947-ca94c42c99a9"
+
+declare -A repo_password_ids
+repo_password_ids["akserver/server"]="27aed5d4-5c52-4a14-b491-324261faa2d8"
+repo_password_ids["akscicomp-discourse/scicomp-discourse"]="3c6c7392-4905-4802-91da-49dd9d2cfe8e"
+repo_password_ids["akrelate/relate"]="5cf3e576-3854-4bd5-862a-1f9840067b9b"
+repo_password_ids["akgrison/grison"]="2e22bc02-91be-4f82-86bd-32e5365a881e"
+repo_password_ids["cbphone/phone"]="ab86bf00-ff58-42af-a043-396af5d5c690"
+
 if test "$RESTIC_REPONAME" = "aklaptop/laptop"; then
-  RESTIC_REPOSITORY="rest:https://aklaptop:$(cat $HOME/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
+  RESTIC_REPOSITORY="rest:https://aklaptop:$(cat "$HOME"/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
   RESTIC_PASSWORD_FILE=$HOME/.restic-password
 else
-  RESTIC_REPO_ACCESS_PASSWORD=""
-  while test -z "$RESTIC_REPO_ACCESS_PASSWORD" ; do
-      read -p "Repo REST access password: " -r -s RESTIC_REPO_ACCESS_PASSWORD
-      >&2 echo
-  done
-  RESTIC_PASSWORD=""
-  while test -z "$RESTIC_PASSWORD" ; do
-      read -p "Repo password: " -r -s RESTIC_PASSWORD
-      >&2 echo
-  done
+  if ! rbw unlocked; then
+      rbw unlock
+      # trap 'rbw lock' EXIT
+  fi
 
-  USERNAME="$(dirname $RESTIC_REPONAME)"
+  rest_pw_id="${rest_password_ids["$(dirname "$RESTIC_REPONAME")"]}"
+  if test "$rest_pw_id" = ""; then
+    echo "REST password id for $RESTIC_REPONAME not found"
+    exit 1
+  fi
+
+  RESTIC_REPO_ACCESS_PASSWORD="$(rbw get "$rest_pw_id")"
+  repo_pw_id="${repo_password_ids["$RESTIC_REPONAME"]}"
+  if test "$repo_pw_id" = ""; then
+    echo "repo password id for $RESTIC_REPONAME not found"
+    exit 1
+  fi
+  RESTIC_PASSWORD="$(rbw get "$repo_pw_id")"
+
+  USERNAME="$(dirname "$RESTIC_REPONAME")"
   RESTIC_REPOSITORY="rest:https://$USERNAME:${RESTIC_REPO_ACCESS_PASSWORD}@10.33.2.2:8000/$RESTIC_REPONAME"
 fi
 
@@ -49,4 +71,3 @@ export RESTIC_REPOSITORY="$RESTIC_REPOSITORY"
 export RESTIC_PASSWORD_FILE="$RESTIC_PASSWORD_FILE"
 export RESTIC_PASSWORD="$RESTIC_PASSWORD"
 EOF
-
