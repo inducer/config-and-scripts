@@ -283,7 +283,17 @@ class PasswordApp:
         self.loop = urwid.MainLoop(
             self.view, self.palette, unhandled_input=self.unhandled_input
         )
+        self.loop.set_alarm_in(30, self.check_lock)
         self.loop.run()
+
+    def check_lock(self, loop, data):
+        """Check if rbw is unlocked; if not, quit the app."""
+        try:
+            subprocess.run(["rbw", "unlocked"], check=True, capture_output=True)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            raise urwid.ExitMainLoop() from None
+
+        loop.set_alarm_in(30, self.check_lock)
 
 
 if __name__ == "__main__":
