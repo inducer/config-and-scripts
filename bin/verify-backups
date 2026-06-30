@@ -40,7 +40,7 @@ function check_snapshots()
 }
 BACKUPS=(
     laptop
-    akserver/server/ermine
+    akserver/server/sable
     akgrison/grison/grison
     akrelate/relate/relate
     akscicomp-discourse/scicomp-discourse/scicomp-discourse
