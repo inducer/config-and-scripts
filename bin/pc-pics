@@ -12,4 +12,4 @@ grab-procare-pics \
 	grab "$DATE"
 
 source ~/src/current-env/bin/activate
-immichpy assets upload --show-progress --album-name "Adi ProCare" ~/nc/shared/cbal/kiddo/procare-pics
+immichpy assets upload --show-progress --album-name "Adi Kita" ~/nc/shared/cbal/kiddo/procare-pics
