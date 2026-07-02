@@ -1,0 +1,18 @@
+#! /bin/bash
+
+TARGET_PATH="$HOME/tmp/fakebackup"
+restic-rest-server \
+    --path "$TARGET_PATH" \
+    --append-only \
+    --no-auth \
+    --listen arc.nebula.tiker.net:8282 \
+    --log "$TARGET_PATH/restic-rest.log" \
+    --tls \
+    --tls-cert "$HOME/config/restic/cert.pem" \
+    --tls-key "$HOME/config/restic/key.pem" &
+
+SERVER_PID=$!
+
+trap 'kill $SERVER_PID 2>/dev/null' EXIT
+
+ssh -t sable sudo /etc/restic-backup.sh arc
