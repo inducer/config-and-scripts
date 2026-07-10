@@ -8,7 +8,11 @@ count=1
 for i in *.[jJ][pP][gG] ; do
     if test -f "$i"; then
         echo "$count: $i"
-        heif-enc "$i" -o "$TGTDIR/${i%%.[jJ][pP][gG]}.heic"
+        outfile="$TGTDIR/${i%%.[jJ][pP][gG]}.heic"
+        heif-enc "$i" -o "$outfile"
+        MN="$(echo "binary maker notes, base64 of gzip, newlines are ^: " && exiftool -MakerNotes "$i" -b |gzip -c | base64 | tr '\n' '^' )"
+        # https://github.com/immich-app/immich/issues/29766
+        exiftool -overwrite_original -MakerNotes= "-UserComment=$MN" "$outfile"
         count=$((count+1))
     fi
 done
