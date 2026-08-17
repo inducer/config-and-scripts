@@ -7,6 +7,14 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "terminal": {
+    "env": {
+      "EDITOR": "zed",
+      "VISUAL": "zed"
+      // "EDITOR": "zed --wait",
+      // "VISUAL": "zed --wait"
+    }
+  },
   "colorize_brackets": true,
   "which_key": {"enabled": true},
   "cli_default_open_behavior": "existing_window",
