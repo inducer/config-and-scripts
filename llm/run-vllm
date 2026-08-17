@@ -101,9 +101,9 @@ if test "$INSTANCE" = 1; then
         --max-num-batched-tokens 4096
         --gpu-memory-utilization 0.35
         --enable-prefix-caching 
-        --kv-cache-dtype fp8
+        # --kv-cache-dtype fp8
         --max-num-seqs 16
-        --quantization modelopt 
+        # --quantization modelopt 
         
         # --limit-mm-per-prompt image=4,audio=1
         # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 1}'
