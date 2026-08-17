@@ -152,6 +152,7 @@
   },
   "format_on_save": "off",
   "edit_predictions": {
+    "allow_data_collection": "no",
     "provider": "open_ai_compatible_api",
     "open_ai_compatible_api": {
       "prompt_format": "zeta2_1",
