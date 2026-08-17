@@ -34,7 +34,7 @@ repo_password_ids["akserver/server"]="27aed5d4-5c52-4a14-b491-324261faa2d8"
 repo_password_ids["akscicomp-discourse/scicomp-discourse"]="3c6c7392-4905-4802-91da-49dd9d2cfe8e"
 repo_password_ids["akrelate/relate"]="5cf3e576-3854-4bd5-862a-1f9840067b9b"
 repo_password_ids["akgrison/grison"]="2e22bc02-91be-4f82-86bd-32e5365a881e"
-repo_password_ids["cbphone/phone"]="ab86bf00-ff58-42af-a043-396af5d5c690"
+repo_password_ids["cbphone/pictures"]="ab86bf00-ff58-42af-a043-396af5d5c690"
 
 if test "$RESTIC_REPONAME" = "aklaptop/laptop"; then
   RESTIC_REPOSITORY="rest:https://aklaptop:$(cat "$HOME"/.restic-repo-password)@10.33.2.2:8000/aklaptop/laptop"
