@@ -5,7 +5,7 @@ set -e
 function with_echo()
 {
   echo "$@"
-  $@
+  "$@"
 }
 PACKAGES=(
   spectre-meltdown-checker smartmontools
