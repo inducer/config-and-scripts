@@ -56,24 +56,40 @@ if test "$INSTANCE" = 0; then
     #     --max-num-seqs 16
     #     "Qwen/Qwen3.6-35B-A3B-FP8"
     # )
+    # MODEL_ARGS=(
+    #     --max-model-len 65536
+    #     --reasoning-parser gemma4
+    #     --tool-call-parser gemma4
+    #     --enable-auto-tool-choice
+    #     # --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
+    #     --max-num-batched-tokens 4096
+    #     --gpu-memory-utilization 0.25
+    #     --enable-prefix-caching 
+    #     --kv-cache-dtype fp8
+    #     --max-num-seqs 16
+    #     --quantization modelopt
+
+    #     # --max-num-batched-tokens 4096
+    #     # --block-size 32
+    #     #--dtype fp8
+    #     # --speculative-config '{"model": "google/gemma-4-26B-A4B-it-assistant", "num_speculative_tokens": 1}'
+    #     nvidia/Gemma-4-26B-A4B-NVFP4
+    # )
+    PORT=8001
     MODEL_ARGS=(
-        --max-model-len 65536
-        --reasoning-parser gemma4
-        --tool-call-parser gemma4
+        --max-model-len 262144
+        --reasoning-parser qwen3
+        --tool-call-parser qwen3_coder
         --enable-auto-tool-choice
-        # --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
-        --max-num-batched-tokens 4096
-        --gpu-memory-utilization 0.25
+        --gpu-memory-utilization 0.35
         --enable-prefix-caching 
         --kv-cache-dtype fp8
-        --max-num-seqs 16
-        --quantization modelopt
-
+        --speculative-config '{"method":"mtp","num_speculative_tokens":3}'
         # --max-num-batched-tokens 4096
         # --block-size 32
         #--dtype fp8
-        # --speculative-config '{"model": "google/gemma-4-26B-A4B-it-assistant", "num_speculative_tokens": 1}'
-        nvidia/Gemma-4-26B-A4B-NVFP4
+        # --max-num-seqs 8
+        "Qwen/Qwen3.8-27B-FP8"
     )
 fi
 
