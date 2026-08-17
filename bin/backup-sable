@@ -1,6 +1,6 @@
 #! /bin/bash
 
-TARGET_PATH="$HOME/tmp/fakebackup"
+TARGET_PATH="/run/media/andreas/allions-srv-bkup/restic"
 restic-rest-server \
     --path "$TARGET_PATH" \
     --append-only \
