@@ -147,5 +147,23 @@
     "bindings": {
       "ctrl-k ctrl-l": "workspace::ActivatePaneRight"
     }
+  },
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      "space shift-g": "go_to_line::Toggle"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "unbind": {
+      "ctrl-g": "go_to_line::Toggle"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "ctrl-p": "file_finder::Toggle"
+    }
   }
 ]
