@@ -106,7 +106,7 @@ if test "$INSTANCE" = 1; then
         # --quantization modelopt 
         
         # --limit-mm-per-prompt image=4,audio=1
-        # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 1}'
+        --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 2}'
 
         # nvidia/Gemma-4-31B-IT-NVFP4
         
