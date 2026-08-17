@@ -51,8 +51,11 @@ if [[ $sourced = 0 ]]; then
             --exclude "$HOME/work/django/relate/contrib/jupyterlite" \
             --exclude "$HOME/work/django/relate/bulk-storage" \
             --exclude "$HOME/pack/miniforge3" \
-            --exclude "$HOME/nc/software/games/assetto-corsa-mods" \
+            --exclude "$HOME/nc/software/games/driving" \
+            --exclude "$HOME/pack/cosmic-*" \
             --exclude ".mypy_cache" \
+            --exclude "target/debug" \
+            --exclude "target/release" \
             --exclude ".lake"
 fi
 
