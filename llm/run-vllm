@@ -8,7 +8,6 @@ if ! (test "$INSTANCE" = "0" || test "$INSTANCE" = 1 || test "$INSTANCE" = 2); t
 	echo "usage: $0 INSTANCE_NR (0, 1, 2)"
 	exit 1
 fi
-PORT=$((8001 + INSTANCE))
 
 export HF_TOKEN="$(cat $HOME/.huggingface-token)"
 
@@ -79,6 +78,7 @@ if test "$INSTANCE" = 0; then
 fi
 
 if test "$INSTANCE" = 1; then
+    PORT=8002
     # MODEL_ARGS=(
     #     # --max-model-len 16384
     #     --reasoning-parser qwen3
@@ -124,6 +124,7 @@ if test "$INSTANCE" = 1; then
 fi
 
 if test "$INSTANCE" = 2; then
+    PORT=8001
     MODEL_ARGS=(
         # --max-model-len 8192
         --gpu-memory-utilization 0.13
