@@ -18,8 +18,8 @@
   "colorize_brackets": true,
   "which_key": {"enabled": true},
   "cli_default_open_behavior": "existing_window",
-  "agent_buffer_font_size": 14.5,
-  "agent_ui_font_size": 15.0,
+  "agent_buffer_font_size": 15.5,
+  "agent_ui_font_size": 16.0,
   "remove_trailing_whitespace_on_save": false,
   "ssh_connections": [
     {
@@ -261,8 +261,8 @@
       "type": "registry"
     }
   },
-  "ui_font_size": 15.0,
-  "buffer_font_size": 14.5,
+  "ui_font_size": 16.0,
+  "buffer_font_size": 15.5,
   "theme": {
     "mode": "system",
     "light": "Catppuccin Latte",
