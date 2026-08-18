@@ -109,20 +109,21 @@ if test "$INSTANCE" = 1; then
     #     "Qwen/Qwen3.6-27B-FP8"
     # )
     MODEL_ARGS=(
-        --max-model-len 131072
+        --max-model-len 40000
+        # --max-model-len 262144
         --reasoning-parser gemma4
         --tool-call-parser gemma4
         --enable-auto-tool-choice
         # --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
         --max-num-batched-tokens 4096
-        --gpu-memory-utilization 0.35
+        --gpu-memory-utilization 0.3
         --enable-prefix-caching 
         # --kv-cache-dtype fp8
-        --max-num-seqs 16
+        # --max-num-seqs 16
         # --quantization modelopt 
         
         # --limit-mm-per-prompt image=4,audio=1
-        --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 2}'
+        # --speculative-config '{"model": "google/gemma-4-31B-it-assistant", "num_speculative_tokens": 2}'
 
         # nvidia/Gemma-4-31B-IT-NVFP4
         
@@ -140,7 +141,7 @@ if test "$INSTANCE" = 1; then
 fi
 
 if test "$INSTANCE" = 2; then
-    PORT=8001
+    PORT=8003
     MODEL_ARGS=(
         # --max-model-len 8192
         --gpu-memory-utilization 0.13
