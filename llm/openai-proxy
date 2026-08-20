@@ -25,7 +25,7 @@ import typed_argparse as tap
 import uvicorn
 import yaml
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
@@ -38,6 +38,17 @@ This script provides a FastAPI-based proxy that:
 3. Routes requests to specific vLLM backends based on the requested model.
 4. Supports streaming and non-streaming responses for Chat, Completions, and Embeddings.
 """
+
+# Upstream timeouts: fail fast when connecting, but allow long-running
+# generations (the read timeout applies between chunks of a streamed
+# response).
+UPSTREAM_TIMEOUT = httpx.Timeout(
+    connect=10.0, read=600.0, write=60.0, pool=10.0)
+
+# Reject request bodies larger than this before reading them in full and
+# forwarding them upstream (Nginx's client_max_body_size should be set to
+# a similar or smaller value).
+MAX_BODY_BYTES = 64 * 1024 * 1024  # 64 MiB
 
 
 class Backend(BaseModel):
@@ -76,15 +87,20 @@ def authenticate(request: Request, config: ProxyConfig) -> ClientConfig:
     if not auth or not auth.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing API key")
 
-    key = auth.split()[1]
+    key = auth[len("Bearer "):].strip()
+    if not key:
+        raise HTTPException(status_code=401, detail="Missing API key")
 
     # To prevent timing attacks:
     # 1. Use secrets.compare_digest for constant-time comparison.
     # 2. Iterate through all keys to ensure the processing time is
     # independent of whether a match is found.
+    # Keys are compared as UTF-8 bytes, so that an attacker-supplied
+    # non-ASCII key cannot make the comparison raise.
+    key_bytes = key.encode("utf-8")
     matched_config = None
     for client_key, client_cfg in config.client_keys.items():
-        if secrets.compare_digest(client_key, key):
+        if secrets.compare_digest(client_key.encode("utf-8"), key_bytes):
             matched_config = client_cfg
 
     if matched_config is None:
@@ -105,32 +121,86 @@ def add_auth_header(headers: dict[str, str], backend: Backend) -> dict[str, str]
     }
 
 
-async def stream_passthrough(
+# Headers that must not be forwarded to the upstream backends:
+# - authorization is replaced by the backend's own key
+# - hop-by-hop headers (RFC 7230 section 6.1) only apply to a single
+#   connection
+# - host, content-length, and accept-encoding are managed by httpx
+#   (accept-encoding is dropped so upstream never gzip-compresses the
+#   response, which would break the passthrough)
+STRIPPED_HEADERS = frozenset({
+    "accept-encoding",
+    "authorization",
+    "connection",
+    "content-length",
+    "host",
+    "keep-alive",
+    "proxy-authenticate",
+    "proxy-authorization",
+    "proxy-connection",
+    "te",
+    "trailers",
+    "transfer-encoding",
+    "upgrade",
+    "x-real-ip",
+})
+
+
+def client_headers(request: Request) -> dict[str, str]:
+    """Client request headers, minus anything the proxy must not forward."""
+    headers = {
+        key: value
+        for key, value in request.headers.items()
+        if key not in STRIPPED_HEADERS
+    }
+    # Don't trust a client-supplied client address: append/overwrite it
+    # with the address of the direct connection (which is the reverse
+    # proxy when deployed behind one).
+    client = request.client
+    if client is not None:
+        prev_xff = headers.pop("x-forwarded-for", None)
+        headers["x-forwarded-for"] = (
+            f"{prev_xff}, {client.host}" if prev_xff else client.host)
+        headers["x-real-ip"] = client.host
+    return headers
+
+
+async def open_upstream_stream(
     client: httpx.AsyncClient,
     backend: Backend,
     path: str,
-    headers: dict,
+    headers: dict[str, str],
     body: bytes,
-):
-    url = f"{backend.base_url}{path}"
-
-    # override auth header for upstream
-    headers = add_auth_header(headers, backend)
-
-    async with client.stream(
+) -> httpx.Response:
+    """Send the request upstream and return the open streaming response."""
+    request = client.build_request(
         "POST",
-        url,
-        headers=headers,
+        f"{backend.base_url}{path}",
+        headers=add_auth_header(headers, backend),
         content=body,
-        timeout=None,
-    ) as resp:
-        # pass through status + headers
-        if resp.status_code != 200:
-            yield await resp.aread()
-            return
+        timeout=UPSTREAM_TIMEOUT,
+    )
+    return await client.send(request, stream=True)
 
+
+async def stream_upstream_body(resp: httpx.Response):
+    try:
         async for chunk in resp.aiter_bytes():
             yield chunk
+    finally:
+        await resp.aclose()
+
+
+def upstream_error_response(resp: httpx.Response) -> Response:
+    """Forward an upstream error body, preserving its status code."""
+    try:
+        return JSONResponse(status_code=resp.status_code, content=resp.json())
+    except ValueError:
+        return Response(
+            status_code=resp.status_code,
+            content=resp.text,
+            media_type=resp.headers.get("content-type", "text/plain"),
+        )
 
 
 @dataclass
@@ -250,21 +320,38 @@ async def pick_backend(
         if model in model_to_backends[be_name]:
             return config.backends[be_name]
 
-    raise HTTPException(status_code=500, detail="No backend found for model")
+    raise HTTPException(status_code=404, detail="Model not found")
 
 
 async def generic_proxy(request: Request, config: ProxyConfig, path: str):
     client_cfg = authenticate(request, config)
 
+    # Reject oversized bodies before reading them in full (Nginx's
+    # client_max_body_size is the second line of defense for chunked
+    # bodies whose content-length lies about their size).
+    content_length = request.headers.get("content-length")
+    if content_length is not None:
+        try:
+            if int(content_length) > MAX_BODY_BYTES:
+                raise HTTPException(
+                    status_code=413, detail="Request body too large")
+        except ValueError:
+            pass
+
     body = await request.body()
+    if len(body) > MAX_BODY_BYTES:
+        raise HTTPException(status_code=413, detail="Request body too large")
 
     try:
         json_body = await request.json()
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid JSON") from e
 
+    if not isinstance(json_body, dict):
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+
     model = json_body.get("model")
-    if not model:
+    if not isinstance(model, str) or not model:
         raise HTTPException(status_code=400, detail="Missing model")
 
     if not is_model_allowed(model, client_cfg):
@@ -272,32 +359,42 @@ async def generic_proxy(request: Request, config: ProxyConfig, path: str):
 
     backend = await pick_backend(config, client_cfg, model)
 
-    headers = dict(request.headers)
-    headers.pop("host", None)  # let httpx set it
-
+    headers = client_headers(request)
     client = request.app.state.client
 
     if json_body.get("stream", False):
+        try:
+            resp = await open_upstream_stream(client, backend, path,
+                                              headers, body)
+        except httpx.HTTPError as e:
+            raise HTTPException(
+                status_code=502, detail="Backend unavailable") from e
+
+        if resp.status_code != 200:
+            await resp.aread()
+            error = upstream_error_response(resp)
+            await resp.aclose()
+            return error
+
         return StreamingResponse(
-            stream_passthrough(
-                client,
-                backend,
-                path,
-                headers,
-                body,
-            ),
+            stream_upstream_body(resp),
             media_type="text/event-stream",
         )
     else:
         url = f"{backend.base_url}{path}"
-        headers = add_auth_header(headers, backend)
+        try:
+            resp = await client.post(
+                url,
+                headers=add_auth_header(headers, backend),
+                content=body,
+                timeout=UPSTREAM_TIMEOUT,
+            )
+        except httpx.HTTPError as e:
+            raise HTTPException(
+                status_code=502, detail="Backend unavailable") from e
 
-        resp = await client.post(
-            url,
-            headers=headers,
-            content=body,
-            timeout=None,
-        )
+        if resp.status_code != 200:
+            return upstream_error_response(resp)
 
         return JSONResponse(
             status_code=resp.status_code,
@@ -326,13 +423,21 @@ def run(args: Args):
             app.state.client = client
             yield
 
-    app = FastAPI(lifespan=lifespan)
+    # Disable the built-in docs and OpenAPI endpoints: this app is
+    # exposed to the internet and must not disclose its API surface to
+    # unauthenticated clients.
+    app = FastAPI(
+        lifespan=lifespan,
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
 
     @app.get("/v1/models")
     async def list_models_inner(request: Request):
-        all_models = await list_models(config)
-
         client_cfg = authenticate(request, config)
+
+        all_models = await list_models_cached(config)
         filtered_models = [model
             for be_name in config.backends
             for model in all_models[be_name]
@@ -347,7 +452,15 @@ def run(args: Args):
             ]:
         add_proxy_route(app, url, config)
 
-    uvicorn.run(app, host=config.listen_host, port=config.listen_port)
+    # proxy_headers=False: don't let uvicorn interpret X-Forwarded-For /
+    # X-Real-IP (it trusts loopback peers by default, which would apply a
+    # second, implicit forwarding rewrite on top of client_headers()).
+    # The proxy always appends the real TCP peer itself, which behaves the
+    # same behind a reverse proxy and when run directly.
+    uvicorn.run(app,
+                host=config.listen_host,
+                port=config.listen_port,
+                proxy_headers=False)
 
 
 def main():
