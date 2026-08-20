@@ -85,7 +85,7 @@
         "api_url": "https://ai-api.tiker.net/v1",
         "available_models": [
           {
-            "name": "nvidia/Gemma-4-26B-A4B-NVFP4",
+            "name": "Qwen/Qwen3.8-27B-FP8",
             "max_tokens": 524288,
             "capabilities": {
               "tools": true,
