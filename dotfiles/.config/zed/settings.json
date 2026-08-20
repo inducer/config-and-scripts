@@ -82,7 +82,7 @@
   "language_models": {
     "openai_compatible": {
       "GB10": {
-        "api_url": "http://10.33.1.4:8000/v1",
+        "api_url": "https://ai-api.tiker.net/v1",
         "available_models": [
           {
             "name": "nvidia/Gemma-4-26B-A4B-NVFP4",
@@ -157,7 +157,7 @@
     "open_ai_compatible_api": {
       "prompt_format": "zeta2_1",
       "model": "LeaderboardModel1/zeta-2.1-autoround-W4A16",
-      "api_url": "http://10.33.1.4:8000/v1/completions"
+      "api_url": "https://ai-api.tiker.net/v1/completions"
     },
     "mode": "eager"
   },
