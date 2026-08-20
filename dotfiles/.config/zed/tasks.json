@@ -42,6 +42,28 @@
         "use_new_terminal": true
     },
     {
+        "label": "Ruff",
+        "command": "ruff check",
+        "env": { "LANG": "" },
+        "hide": "on_success",
+        "reveal_target": "center",
+        "show_summary": false,
+        "show_command": false,
+        "allow_concurrent_runs": true,
+        "use_new_terminal": true
+    },
+    {
+        "label": "Ruff fix",
+        "command": "ruff check --fix",
+        "env": { "LANG": "" },
+        "hide": "on_success",
+        "reveal_target": "center",
+        "show_summary": false,
+        "show_command": false,
+        "allow_concurrent_runs": true,
+        "use_new_terminal": true
+    },
+    {
     "label": "Example task",
     "command": "for i in {1..5}; do echo \"Hello $i/5\"; sleep 1; done",
     //"args": [],
