@@ -9,10 +9,10 @@
 {
   "terminal": {
     "env": {
-      "EDITOR": "zed",
-      "VISUAL": "zed"
-      // "EDITOR": "zed --wait",
-      // "VISUAL": "zed --wait"
+      "EDITOR": "zeditor",
+      "VISUAL": "zeditor"
+      // "EDITOR": "zeditor --wait",
+      // "VISUAL": "zeditor --wait"
     }
   },
   "colorize_brackets": true,
