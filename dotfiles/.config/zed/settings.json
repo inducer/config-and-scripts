@@ -62,7 +62,7 @@
       "settings": {
         "texlab": {
           "build": {
-            "onSave": true,
+            "onSave": false,
             "forwardSearchAfter": true,
           },
           "forwardSearch": {
