@@ -200,6 +200,8 @@ if [[ -z "$SKIM_DEFAULT_COMMAND" ]]; then
   export SKIM_DEFAULT_COMMAND="fd --type f || rg --files || find ."
 fi
 
+SKIM_PREVIEW_COMMAND='(test -f {} && (bat --style=numbers --color=always {} || cat {})) || (test -d {} && ((command -v tree > /dev/null && tree -L 2 -a -C {} | head -200) || find {} -maxdepth 2 -mindepth 1 -print 2> /dev/null | head -200))'
+
 if [[ -z "$SKIM_DEFAULT_OPTIONS" ]]; then
   export SKIM_DEFAULT_OPTIONS="\
   --no-multi \
@@ -208,7 +210,7 @@ if [[ -z "$SKIM_DEFAULT_OPTIONS" ]]; then
   --tiebreak=index \
   --color='dark,fg:7,bg:-1,hl:6,fg+:15,bg+:4,hl+:15,info:6,prompt:6,pointer:15,marker:15,spinner:6,header:7,border:7' \
   --bind '?:toggle-preview' \
-  --preview '([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (tree -L 2 -a -C {} | less || echo {} 2> /dev/null | head -200))' \
+  --preview '$SKIM_PREVIEW_COMMAND' \
   "
 fi
 
