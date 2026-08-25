@@ -202,7 +202,6 @@ fi
 
 if [[ -z "$SKIM_DEFAULT_OPTIONS" ]]; then
   export SKIM_DEFAULT_OPTIONS="\
-  --inline-info \
   --no-multi \
   --cycle \
   --height=${SKIM_TMUX_HEIGHT:-40%} \
