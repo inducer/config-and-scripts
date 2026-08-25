@@ -13,6 +13,7 @@ ci --git https://github.com/tekumara/typos-lsp.git
 ci fclones
 ci tealdeer
 ci difftastic
+ci skim
 ci --git https://codeberg.org/mergiraf/mergiraf.git
 ci --git https://github.com/estin/cos-cli.git
 ci --git https://github.com/typst/typst typst-cli
