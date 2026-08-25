@@ -177,7 +177,7 @@ if test -d ~/shared/pack/skim; then
 elif test -d ~/pack/skim; then
   MY_SKIM_PATH=$HOME/pack/skim
 else
-  echo "fzf is missing: https://github.com/skim-rs/skim"
+  echo "skim is missing: https://github.com/skim-rs/skim"
 fi
 
 source_if_exists $MY_SKIM_PATH/shell/completion.zsh
