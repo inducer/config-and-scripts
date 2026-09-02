@@ -62,8 +62,18 @@
       "settings": {
         "texlab": {
           "build": {
-            "onSave": false,
+            "onSave": true,
             "forwardSearchAfter": true,
+            "executable": "tectonic",
+            "args": [
+              "-X",
+              "compile",
+              "%f",
+              "--untrusted",
+              "--synctex",
+              "--keep-logs",
+              "--keep-intermediates"
+            ]
           },
           "forwardSearch": {
             "executable": "zathura",
@@ -71,7 +81,7 @@
               "--synctex-forward",
               "%l:1:%f",
               "-x",
-              "zed %%{input}:%%{line}",
+              "zeditor %%{input}:%%{line}",
               "%p"
             ]
           }
