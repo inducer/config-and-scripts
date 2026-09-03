@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+"""Run tectonic, replacing/killing any ongoing older builds of the same TeX source.
+
+This intentionally keeps no on-disk state. Wrapper processes are identified via
+/proc and each one owns a separate process group, so replacing a build also
+terminates its tectonic child process.
+"""
+
+from __future__ import annotations
+
+import os
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+SCRIPT_PATH = os.path.realpath(__file__)
+
+# Options in tectonic's stable CLI that consume the following argument. Keeping
+# this list lets us distinguish their values from the one positional input.
+VALUE_OPTIONS = {
+    "-c",
+    "--chatter",
+    "--color",
+    "-f",
+    "--format",
+    "-b",
+    "--bundle",
+    "--outfmt",
+    "--makefile-rules",
+    "--pass",
+    "-r",
+    "--reruns",
+    "--hide",
+    "-o",
+    "--outdir",
+}
+
+
+def source_argument(arguments: list[str]) -> str | None:
+    """Return tectonic's .tex positional argument, if this is a file build."""
+    positional: list[str] = []
+    index = 0
+
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--":
+            positional.extend(arguments[index + 1 :])
+            break
+
+        if argument.startswith("--"):
+            option = argument.split("=", 1)[0]
+            if option in VALUE_OPTIONS and "=" not in argument:
+                index += 1
+            # Unknown options are forwarded untouched. Tectonic will report
+            # them; treating them as valueless is the least invasive choice.
+        elif argument.startswith("-") and argument != "-":
+            # Tectonic accepts both "-c value" and "-cvalue". -Z's value
+            # is commonly attached (for example, -Zhelp), but may be separate.
+            short_option = argument[:2]
+            if short_option in VALUE_OPTIONS and len(argument) == 2:
+                index += 1
+            elif short_option == "-Z" and len(argument) == 2:
+                index += 1
+        else:
+            positional.append(argument)
+        index += 1
+
+    tex_files = [argument for argument in positional if argument.lower().endswith(".tex")]
+    if len(tex_files) != 1:
+        return None
+    return tex_files[0]
+
+
+def canonical_source(argument: str, cwd: str) -> str | None:
+    if argument == "-":
+        return None
+    return os.path.realpath(os.path.join(cwd, argument))
+
+
+def process_start_time(pid: int) -> int | None:
+    """Return Linux's monotonic process-start tick, safely handling ')' in comm."""
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text()
+        fields = stat.rsplit(")", 1)[1].split()
+        return int(fields[19])  # Field 22, after state (field 3).
+    except (FileNotFoundError, IndexError, OSError, ValueError):
+        return None
+
+
+def process_command_line(pid: int) -> list[str] | None:
+    try:
+        data = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except (FileNotFoundError, OSError):
+        return None
+    return [os.fsdecode(part) for part in data.split(b"\0") if part]
+
+
+def wrapper_source(pid: int) -> str | None:
+    command_line = process_command_line(pid)
+    if not command_line:
+        return None
+
+    try:
+        script_index = next(
+            index
+            for index, argument in enumerate(command_line)
+            if os.path.realpath(argument) == SCRIPT_PATH
+        )
+        cwd = os.readlink(f"/proc/{pid}/cwd")
+    except (FileNotFoundError, OSError, StopIteration):
+        return None
+
+    argument = source_argument(command_line[script_index + 1 :])
+    return canonical_source(argument, cwd) if argument else None
+
+
+def stop_older_builds(source: str) -> None:
+    own_pid = os.getpid()
+    own_start = process_start_time(own_pid)
+
+    for name in os.listdir("/proc"):
+        if not name.isdecimal():
+            continue
+        pid = int(name)
+        if pid == own_pid or wrapper_source(pid) != source:
+            continue
+
+        # A simultaneous launch may see us. Only the newer process replaces an
+        # older one; PID is a deterministic tie-breaker for same-clock-tick starts.
+        started = process_start_time(pid)
+        if started is None or own_start is None or (started, pid) >= (own_start, own_pid):
+            continue
+
+        try:
+            # We only signal groups created by this wrapper. This prevents an
+            # accidental match from ever terminating an editor or shell group.
+            if os.getpgid(pid) != pid:
+                continue
+            os.killpg(pid, signal.SIGTERM)
+            time.sleep(0.05)
+            os.killpg(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        except PermissionError:
+            # Another user's process cannot be a build we can safely replace.
+            pass
+
+
+def main() -> int:
+    try:
+        os.setpgrp()
+    except OSError as error:
+        print(f"tectonic-debounced: cannot create process group: {error}", file=sys.stderr)
+        return 1
+
+    source = source_argument(sys.argv[1:])
+    if source:
+        canonical = canonical_source(source, os.getcwd())
+        if canonical:
+            stop_older_builds(canonical)
+
+    try:
+        process = subprocess.Popen(["tectonic", *sys.argv[1:]])
+    except FileNotFoundError:
+        print("tectonic-debounced: tectonic: command not found", file=sys.stderr)
+        return 127
+
+    def stopped(signum: int, _frame: object) -> None:
+        raise SystemExit(128 + signum)
+
+    signal.signal(signal.SIGTERM, stopped)
+    signal.signal(signal.SIGINT, stopped)
+    return process.wait()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

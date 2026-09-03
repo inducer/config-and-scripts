@@ -64,7 +64,7 @@
           "build": {
             "onSave": true,
             "forwardSearchAfter": true,
-            "executable": "tectonic",
+            "executable": "tectonic-latest",
             "args": [
               "-X",
               "compile",
