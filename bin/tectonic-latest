@@ -8,14 +8,38 @@ terminates its tectonic child process.
 
 from __future__ import annotations
 
+import json
 import os
 import signal
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
+
 SCRIPT_PATH = os.path.realpath(__file__)
+CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+LOG_PATH = CACHE_DIR / "tectonic-latest.log"
+
+
+def log_event(event: str, **details: object) -> None:
+    """Append an event without allowing logging failures to affect builds."""
+    record = {
+        "timestamp": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+        "pid": os.getpid(),
+        "event": event,
+        **details,
+    }
+    try:
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        with LOG_PATH.open("a", encoding="utf-8") as log_file:
+            log_file.write(
+                json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n"
+            )
+    except OSError:
+        pass
+
 
 # Options in tectonic's stable CLI that consume the following argument. Keeping
 # this list lets us distinguish their values from the one positional input.
@@ -59,15 +83,16 @@ def source_argument(arguments: list[str]) -> str | None:
             # Tectonic accepts both "-c value" and "-cvalue". -Z's value
             # is commonly attached (for example, -Zhelp), but may be separate.
             short_option = argument[:2]
-            if short_option in VALUE_OPTIONS and len(argument) == 2:
-                index += 1
-            elif short_option == "-Z" and len(argument) == 2:
+            takes_value = short_option in VALUE_OPTIONS or short_option == "-Z"
+            if len(argument) == 2 and takes_value:
                 index += 1
         else:
             positional.append(argument)
         index += 1
 
-    tex_files = [argument for argument in positional if argument.lower().endswith(".tex")]
+    tex_files = [
+        argument for argument in positional if argument.lower().endswith(".tex")
+    ]
     if len(tex_files) != 1:
         return None
     return tex_files[0]
@@ -80,7 +105,7 @@ def canonical_source(argument: str, cwd: str) -> str | None:
 
 
 def process_start_time(pid: int) -> int | None:
-    """Return Linux's monotonic process-start tick, safely handling ')' in comm."""
+    """Return Linux's monotonic process-start tick, handling ')' in comm."""
     try:
         stat = Path(f"/proc/{pid}/stat").read_text()
         fields = stat.rsplit(")", 1)[1].split()
@@ -130,49 +155,117 @@ def stop_older_builds(source: str) -> None:
         # A simultaneous launch may see us. Only the newer process replaces an
         # older one; PID is a deterministic tie-breaker for same-clock-tick starts.
         started = process_start_time(pid)
-        if started is None or own_start is None or (started, pid) >= (own_start, own_pid):
+        if (
+            started is None
+            or own_start is None
+            or (started, pid) >= (own_start, own_pid)
+        ):
             continue
 
         try:
             # We only signal groups created by this wrapper. This prevents an
             # accidental match from ever terminating an editor or shell group.
             if os.getpgid(pid) != pid:
+                log_event(
+                    "replacement_skipped",
+                    source=source,
+                    old_pid=pid,
+                    reason="unexpected_process_group",
+                )
                 continue
+            log_event(
+                "replacement_requested", source=source, old_pid=pid, signal="SIGTERM"
+            )
             os.killpg(pid, signal.SIGTERM)
             time.sleep(0.05)
-            os.killpg(pid, signal.SIGKILL)
+            try:
+                os.killpg(pid, signal.SIGKILL)
+            except ProcessLookupError:
+                log_event(
+                    "replacement_completed",
+                    source=source,
+                    old_pid=pid,
+                    outcome="stopped_after_SIGTERM",
+                )
+            else:
+                log_event(
+                    "replacement_completed",
+                    source=source,
+                    old_pid=pid,
+                    outcome="SIGKILL_sent",
+                )
         except ProcessLookupError:
-            pass
+            log_event(
+                "replacement_skipped",
+                source=source,
+                old_pid=pid,
+                reason="already_exited",
+            )
         except PermissionError:
             # Another user's process cannot be a build we can safely replace.
-            pass
+            log_event(
+                "replacement_skipped",
+                source=source,
+                old_pid=pid,
+                reason="permission_denied",
+            )
 
 
 def main() -> int:
+    source = source_argument(sys.argv[1:])
+    canonical = canonical_source(source, os.getcwd()) if source else None
+    log_event("start", source=canonical, cwd=os.getcwd(), arguments=sys.argv[1:])
+
     try:
         os.setpgrp()
     except OSError as error:
-        print(f"tectonic-debounced: cannot create process group: {error}", file=sys.stderr)
+        print(f"tectonic-latest: cannot create process group: {error}", file=sys.stderr)
+        log_event(
+            "end",
+            source=canonical,
+            outcome="failure",
+            reason="process_group_error",
+            error=str(error),
+        )
         return 1
 
-    source = source_argument(sys.argv[1:])
-    if source:
-        canonical = canonical_source(source, os.getcwd())
-        if canonical:
-            stop_older_builds(canonical)
+    if canonical:
+        stop_older_builds(canonical)
+    else:
+        log_event("replacement_skipped", reason="no_unique_tex_source")
 
     try:
         process = subprocess.Popen(["tectonic", *sys.argv[1:]])
     except FileNotFoundError:
-        print("tectonic-debounced: tectonic: command not found", file=sys.stderr)
+        print("tectonic-latest: tectonic: command not found", file=sys.stderr)
+        log_event(
+            "end", source=canonical, outcome="failure", reason="tectonic_not_found"
+        )
         return 127
 
+    log_event("tectonic_started", source=canonical, tectonic_pid=process.pid)
+
     def stopped(signum: int, _frame: object) -> None:
+        log_event(
+            "end",
+            source=canonical,
+            tectonic_pid=process.pid,
+            outcome="aborted",
+            signal=signal.Signals(signum).name,
+        )
         raise SystemExit(128 + signum)
 
     signal.signal(signal.SIGTERM, stopped)
     signal.signal(signal.SIGINT, stopped)
-    return process.wait()
+    return_code = process.wait()
+    log_event(
+        "end",
+        source=canonical,
+        tectonic_pid=process.pid,
+        outcome="success" if return_code == 0 else "failure",
+        return_code=return_code,
+    )
+    return return_code
 
 
 if __name__ == "__main__":
