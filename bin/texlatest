@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Run the latest TeX build or reconstruct its captured output.
+"""Run the latest TeX build or inspect its captured output.
 
 ``texlatest build ENGINE`` starts a detached ``tectonic`` or ``latexmk`` build
 and returns after scheduling it. ``texlatest log [ENGINE]`` prints captured
-output for the latest matching build. Worker processes are identified via
+output for the latest matching build; ``texlatest tail [ENGINE]`` follows new
+log records in a terminal-friendly form. Worker processes are identified via
 /proc and each owns a separate process group, so replacing a build also
 terminates its child processes.
 """
@@ -29,7 +30,7 @@ BACKGROUND_ENV = "TEXLATEST_BACKGROUND"
 ENGINES = frozenset({"tectonic", "latexmk"})
 USAGE = (
     "usage: texlatest {build {tectonic|latexmk} [options] file.tex|"
-    "log [tectonic|latexmk]}"
+    "log [tectonic|latexmk]|tail [tectonic|latexmk]}"
 )
 
 
@@ -337,6 +338,100 @@ def _json_record(line: str) -> dict[str, object] | None:
     return value if isinstance(value, dict) else None
 
 
+def record_timestamp(record: dict[str, object]) -> str:
+    """Format a record's UTC timestamp in the user's local time zone."""
+    timestamp = record.get("timestamp")
+    if not isinstance(timestamp, str):
+        return "unknown time"
+    try:
+        return datetime.fromisoformat(timestamp).astimezone().strftime("%H:%M:%S")
+    except ValueError:
+        return timestamp
+
+
+def format_log_record(record: dict[str, object]) -> str:
+    """Render one structured log record for an interactive terminal."""
+    timestamp = record_timestamp(record)
+    event = record.get("event")
+    engine = record.get("engine")
+    engine_label = engine if isinstance(engine, str) else "texlatest"
+
+    if event == "build_output" and isinstance(record.get("output"), str):
+        stream = record.get("stream")
+        stream_label = stream if isinstance(stream, str) else "output"
+        output = record["output"]
+        suffix = "" if output.endswith("\n") else "\n"
+        return f"[{timestamp}] {engine_label} {stream_label}: {output}{suffix}"
+
+    if event == "build_started":
+        source = record.get("source")
+        process_pid = record.get("process_pid")
+        details = f" (pid {process_pid})" if isinstance(process_pid, int) else ""
+        if isinstance(source, str):
+            details += f": {source}"
+        return f"[{timestamp}] {engine_label} build started{details}\n"
+
+    if event == "end":
+        outcome = record.get("outcome")
+        outcome_label = outcome if isinstance(outcome, str) else "finished"
+        process_pid = record.get("process_pid")
+        details = f" (pid {process_pid})" if isinstance(process_pid, int) else ""
+        return f"[{timestamp}] {engine_label} build {outcome_label}{details}\n"
+
+    details = {
+        key: value
+        for key, value in record.items()
+        if key not in {"timestamp", "pid", "event", "engine"}
+    }
+    suffix = f": {json.dumps(details, ensure_ascii=False, sort_keys=True)}" if details else ""
+    event_label = event if isinstance(event, str) else "log event"
+    return f"[{timestamp}] {engine_label} {event_label}{suffix}\n"
+
+
+def tail_log(engine: str | None) -> int:
+    """Follow newly appended complete log records, optionally by engine."""
+    try:
+        log_file = LOG_PATH.open(encoding="utf-8")
+    except OSError as error:
+        print(f"texlatest: cannot read log: {error}", file=sys.stderr)
+        return 1
+
+    try:
+        log_file.seek(0, os.SEEK_END)
+        log_identity = os.fstat(log_file.fileno()).st_ino
+        partial_line = ""
+        try:
+            while True:
+                line = log_file.readline()
+                if line:
+                    partial_line += line
+                    if not partial_line.endswith("\n"):
+                        continue
+                    record = _json_record(partial_line)
+                    partial_line = ""
+                    if record is not None and (
+                        engine is None or record.get("engine") == engine
+                    ):
+                        sys.stdout.write(format_log_record(record))
+                        sys.stdout.flush()
+                    continue
+
+                time.sleep(0.1)
+                try:
+                    path_stat = LOG_PATH.stat()
+                except OSError:
+                    continue
+                if path_stat.st_ino != log_identity or path_stat.st_size < log_file.tell():
+                    log_file.close()
+                    log_file = LOG_PATH.open(encoding="utf-8")
+                    log_identity = os.fstat(log_file.fileno()).st_ino
+                    partial_line = ""
+        except KeyboardInterrupt:
+            return 0
+    finally:
+        log_file.close()
+
+
 def start_background_worker() -> int:
     """Start a detached worker without retaining any caller file descriptors."""
     environment = os.environ.copy()
@@ -375,11 +470,14 @@ def main() -> int:
         return 2
 
     command = sys.argv[1]
-    if command == "log":
+    if command in {"log", "tail"}:
         if len(sys.argv) > 3 or (len(sys.argv) == 3 and sys.argv[2] not in ENGINES):
-            print("usage: texlatest log [tectonic|latexmk]", file=sys.stderr)
+            print(f"usage: texlatest {command} [tectonic|latexmk]", file=sys.stderr)
             return 2
-        return print_latest_build_log(sys.argv[2] if len(sys.argv) == 3 else None)
+        engine_filter = sys.argv[2] if len(sys.argv) == 3 else None
+        if command == "log":
+            return print_latest_build_log(engine_filter)
+        return tail_log(engine_filter)
     if command != "build" or len(sys.argv) < 3 or sys.argv[2] not in ENGINES:
         print(USAGE, file=sys.stderr)
         return 2
