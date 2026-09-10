@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Run the latest tectonic build or reconstruct its captured output.
+"""Run the latest TeX build or reconstruct its captured output.
 
-``tectonic-latest build`` starts a detached build and returns after scheduling
-it. ``tectonic-latest log`` prints the captured output of the latest build.
-Worker processes are identified via /proc and each one owns a separate process
-group, so replacing a build also terminates its tectonic child process.
+``texlatest build ENGINE`` starts a detached ``tectonic`` or ``latexmk`` build
+and returns after scheduling it. ``texlatest log [ENGINE]`` prints captured
+output for the latest matching build. Worker processes are identified via
+/proc and each owns a separate process group, so replacing a build also
+terminates its child processes.
 """
 
 from __future__ import annotations
@@ -23,9 +24,13 @@ from typing import BinaryIO
 
 SCRIPT_PATH = os.path.realpath(__file__)
 CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
-LOG_PATH = CACHE_DIR / "tectonic-latest.log"
-BACKGROUND_ENV = "TECTONIC_LATEST_BACKGROUND"
-USAGE = "usage: tectonic-latest {build [tectonic options] file.tex|log}"
+LOG_PATH = CACHE_DIR / "texlatest.log"
+BACKGROUND_ENV = "TEXLATEST_BACKGROUND"
+ENGINES = frozenset({"tectonic", "latexmk"})
+USAGE = (
+    "usage: texlatest {build {tectonic|latexmk} [options] file.tex|"
+    "log [tectonic|latexmk]}"
+)
 
 
 def log_event(event: str, **details: object) -> None:
@@ -46,9 +51,8 @@ def log_event(event: str, **details: object) -> None:
         pass
 
 
-# Options in tectonic's stable CLI that consume the following argument. Keeping
-# this list lets us distinguish their values from the one positional input.
-VALUE_OPTIONS = {
+# Options in Tectonic's stable CLI that consume the following argument.
+TECTONIC_VALUE_OPTIONS = {
     "-c",
     "--chatter",
     "--color",
@@ -66,9 +70,40 @@ VALUE_OPTIONS = {
     "--outdir",
 }
 
+# Latexmk accepts a broad set of options. These are the options that consume a
+# separate argument; = forms are handled independently by source_argument.
+LATEXMK_VALUE_OPTIONS = {
+    "-aux-directory",
+    "-auxdir",
+    "-deps-escape",
+    "-deps-out",
+    "-dF",
+    "-e",
+    "-jobname",
+    "-latex",
+    "-latexoption",
+    "-lualatex",
+    "-lualatexoption",
+    "-outdir",
+    "-output-directory",
+    "-pdflatex",
+    "-pdflatexoption",
+    "-pretex",
+    "-r",
+    "-rdeps",
+    "-rdeps-out",
+    "-usepretex",
+    "-view",
+    "-xelatex",
+    "-xelatexoption",
+}
 
-def source_argument(arguments: list[str]) -> str | None:
-    """Return tectonic's .tex positional argument, if this is a file build."""
+
+def source_argument(engine: str, arguments: list[str]) -> str | None:
+    """Return the one explicit .tex positional input for an engine invocation."""
+    value_options = (
+        TECTONIC_VALUE_OPTIONS if engine == "tectonic" else LATEXMK_VALUE_OPTIONS
+    )
     positional: list[str] = []
     index = 0
 
@@ -78,19 +113,20 @@ def source_argument(arguments: list[str]) -> str | None:
             positional.extend(arguments[index + 1 :])
             break
 
-        if argument.startswith("--"):
+        if argument.startswith("-") and argument != "-":
             option = argument.split("=", 1)[0]
-            if option in VALUE_OPTIONS and "=" not in argument:
+            if engine == "latexmk":
+                # Latexmk accepts either one or two leading dashes for options.
+                option = "-" + option.lstrip("-")
+            if option in value_options and "=" not in argument:
                 index += 1
-            # Unknown options are forwarded untouched. Tectonic will report
-            # them; treating them as valueless is the least invasive choice.
-        elif argument.startswith("-") and argument != "-":
-            # Tectonic accepts both "-c value" and "-cvalue". -Z's value
-            # is commonly attached (for example, -Zhelp), but may be separate.
-            short_option = argument[:2]
-            takes_value = short_option in VALUE_OPTIONS or short_option == "-Z"
-            if len(argument) == 2 and takes_value:
-                index += 1
+            elif engine == "tectonic":
+                # Tectonic accepts both "-c value" and "-cvalue". -Z's value
+                # is commonly attached (for example, -Zhelp), but may be separate.
+                short_option = argument[:2]
+                takes_value = short_option in value_options or short_option == "-Z"
+                if len(argument) == 2 and takes_value:
+                    index += 1
         else:
             positional.append(argument)
         index += 1
@@ -127,7 +163,8 @@ def process_command_line(pid: int) -> list[str] | None:
     return [os.fsdecode(part) for part in data.split(b"\0") if part]
 
 
-def wrapper_source(pid: int) -> str | None:
+def wrapper_build(pid: int) -> tuple[str, str] | None:
+    """Return a wrapper worker's engine and canonical source, if unambiguous."""
     command_line = process_command_line(pid)
     if not command_line:
         return None
@@ -143,13 +180,15 @@ def wrapper_source(pid: int) -> str | None:
         return None
 
     arguments = command_line[script_index + 1 :]
-    if arguments[:1] == ["build"]:
-        arguments = arguments[1:]
-    argument = source_argument(arguments)
-    return canonical_source(argument, cwd) if argument else None
+    if len(arguments) < 2 or arguments[0] != "build" or arguments[1] not in ENGINES:
+        return None
+    engine = arguments[1]
+    argument = source_argument(engine, arguments[2:])
+    canonical = canonical_source(argument, cwd) if argument else None
+    return (engine, canonical) if canonical else None
 
 
-def stop_older_builds(source: str) -> None:
+def stop_older_builds(engine: str, source: str) -> None:
     own_pid = os.getpid()
     own_start = process_start_time(own_pid)
 
@@ -157,7 +196,7 @@ def stop_older_builds(source: str) -> None:
         if not name.isdecimal():
             continue
         pid = int(name)
-        if pid == own_pid or wrapper_source(pid) != source:
+        if pid == own_pid or wrapper_build(pid) != (engine, source):
             continue
 
         # A simultaneous launch may see us. Only the newer process replaces an
@@ -176,13 +215,18 @@ def stop_older_builds(source: str) -> None:
             if os.getpgid(pid) != pid:
                 log_event(
                     "replacement_skipped",
+                    engine=engine,
                     source=source,
                     old_pid=pid,
                     reason="unexpected_process_group",
                 )
                 continue
             log_event(
-                "replacement_requested", source=source, old_pid=pid, signal="SIGTERM"
+                "replacement_requested",
+                engine=engine,
+                source=source,
+                old_pid=pid,
+                signal="SIGTERM",
             )
             os.killpg(pid, signal.SIGTERM)
             time.sleep(0.05)
@@ -191,6 +235,7 @@ def stop_older_builds(source: str) -> None:
             except ProcessLookupError:
                 log_event(
                     "replacement_completed",
+                    engine=engine,
                     source=source,
                     old_pid=pid,
                     outcome="stopped_after_SIGTERM",
@@ -198,6 +243,7 @@ def stop_older_builds(source: str) -> None:
             else:
                 log_event(
                     "replacement_completed",
+                    engine=engine,
                     source=source,
                     old_pid=pid,
                     outcome="SIGKILL_sent",
@@ -205,73 +251,78 @@ def stop_older_builds(source: str) -> None:
         except ProcessLookupError:
             log_event(
                 "replacement_skipped",
+                engine=engine,
                 source=source,
                 old_pid=pid,
                 reason="already_exited",
             )
         except PermissionError:
-            # Another user's process cannot be a build we can safely replace.
             log_event(
                 "replacement_skipped",
+                engine=engine,
                 source=source,
                 old_pid=pid,
                 reason="permission_denied",
             )
 
 
-def log_tectonic_output(
+def log_process_output(
     stream: str,
     pipe: BinaryIO,
+    engine: str,
     source: str | None,
-    tectonic_pid: int,
+    process_pid: int,
 ) -> None:
-    """Record a tectonic output stream without allowing it to fill its pipe."""
+    """Record an engine output stream without allowing it to fill its pipe."""
     try:
         for chunk in iter(pipe.readline, b""):
             log_event(
-                "tectonic_output",
+                "build_output",
+                engine=engine,
                 source=source,
                 stream=stream,
-                tectonic_pid=tectonic_pid,
+                process_pid=process_pid,
                 output=chunk.decode("utf-8", errors="replace"),
             )
     finally:
         pipe.close()
 
 
-def print_latest_build_log() -> int:
-    """Print captured output records belonging to the most recent build."""
+def print_latest_build_log(engine: str | None) -> int:
+    """Print captured output records belonging to the latest matching build."""
     try:
         with LOG_PATH.open(encoding="utf-8") as log_file:
             records = [
                 record
                 for line in log_file
-                if isinstance(
-                    record := _json_record(line),
-                    dict,
-                )
+                if isinstance(record := _json_record(line), dict)
             ]
     except OSError as error:
-        print(f"tectonic-latest: cannot read log: {error}", file=sys.stderr)
+        print(f"texlatest: cannot read log: {error}", file=sys.stderr)
         return 1
 
-    latest_pid = next(
+    latest = next(
         (
-            record.get("tectonic_pid")
+            record
             for record in reversed(records)
-            if record.get("event") == "tectonic_started"
+            if record.get("event") == "build_started"
+            and (engine is None or record.get("engine") == engine)
         ),
         None,
     )
-    if not isinstance(latest_pid, int):
-        print("tectonic-latest: no build log available", file=sys.stderr)
+    if latest is None or not isinstance(latest.get("process_pid"), int):
+        scope = f" for {engine}" if engine else ""
+        print(f"texlatest: no build log available{scope}", file=sys.stderr)
         return 1
 
+    process_pid = latest["process_pid"]
+    build_engine = latest.get("engine")
     for record in records:
         output = record.get("output")
         if (
-            record.get("event") == "tectonic_output"
-            and record.get("tectonic_pid") == latest_pid
+            record.get("event") == "build_output"
+            and record.get("process_pid") == process_pid
+            and record.get("engine") == build_engine
             and isinstance(output, str)
         ):
             sys.stdout.write(output)
@@ -293,10 +344,7 @@ def start_background_worker() -> int:
     try:
         worker_pid = os.fork()
     except OSError as error:
-        print(
-            f"tectonic-latest: cannot start background worker: {error}",
-            file=sys.stderr,
-        )
+        print(f"texlatest: cannot start background worker: {error}", file=sys.stderr)
         log_event("background_start_failed", error=str(error))
         return 1
 
@@ -328,18 +376,25 @@ def main() -> int:
 
     command = sys.argv[1]
     if command == "log":
-        if len(sys.argv) != 2:
-            print("usage: tectonic-latest log", file=sys.stderr)
+        if len(sys.argv) > 3 or (len(sys.argv) == 3 and sys.argv[2] not in ENGINES):
+            print("usage: texlatest log [tectonic|latexmk]", file=sys.stderr)
             return 2
-        return print_latest_build_log()
-    if command != "build":
+        return print_latest_build_log(sys.argv[2] if len(sys.argv) == 3 else None)
+    if command != "build" or len(sys.argv) < 3 or sys.argv[2] not in ENGINES:
         print(USAGE, file=sys.stderr)
         return 2
 
-    tectonic_arguments = sys.argv[2:]
-    source = source_argument(tectonic_arguments)
+    engine = sys.argv[2]
+    engine_arguments = sys.argv[3:]
+    source = source_argument(engine, engine_arguments)
     canonical = canonical_source(source, os.getcwd()) if source else None
-    log_event("start", source=canonical, cwd=os.getcwd(), arguments=tectonic_arguments)
+    log_event(
+        "start",
+        engine=engine,
+        source=canonical,
+        cwd=os.getcwd(),
+        arguments=engine_arguments,
+    )
 
     if os.environ.get(BACKGROUND_ENV) != "1":
         return start_background_worker()
@@ -352,6 +407,7 @@ def main() -> int:
     except OSError as error:
         log_event(
             "end",
+            engine=engine,
             source=canonical,
             outcome="failure",
             reason="process_group_error",
@@ -360,29 +416,37 @@ def main() -> int:
         return 1
 
     if canonical:
-        stop_older_builds(canonical)
+        stop_older_builds(engine, canonical)
     else:
-        log_event("replacement_skipped", reason="no_unique_tex_source")
+        log_event(
+            "replacement_skipped", engine=engine, reason="no_unique_tex_source"
+        )
 
     try:
         process = subprocess.Popen(
-            ["tectonic", *tectonic_arguments],
+            [engine, *engine_arguments],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
     except FileNotFoundError:
-        print("tectonic-latest: tectonic: command not found", file=sys.stderr)
+        print(f"texlatest: {engine}: command not found", file=sys.stderr)
         log_event(
-            "end", source=canonical, outcome="failure", reason="tectonic_not_found"
+            "end",
+            engine=engine,
+            source=canonical,
+            outcome="failure",
+            reason="engine_not_found",
         )
         return 127
 
-    log_event("tectonic_started", source=canonical, tectonic_pid=process.pid)
+    log_event(
+        "build_started", engine=engine, source=canonical, process_pid=process.pid
+    )
     output_threads = [
         threading.Thread(
-            target=log_tectonic_output,
-            args=(stream, pipe, canonical, process.pid),
+            target=log_process_output,
+            args=(stream, pipe, engine, canonical, process.pid),
             daemon=True,
         )
         for stream, pipe in (("stdout", process.stdout), ("stderr", process.stderr))
@@ -393,8 +457,9 @@ def main() -> int:
     def stopped(signum: int, _frame: object) -> None:
         log_event(
             "end",
+            engine=engine,
             source=canonical,
-            tectonic_pid=process.pid,
+            process_pid=process.pid,
             outcome="aborted",
             signal=signal.Signals(signum).name,
         )
@@ -407,8 +472,9 @@ def main() -> int:
         output_thread.join()
     log_event(
         "end",
+        engine=engine,
         source=canonical,
-        tectonic_pid=process.pid,
+        process_pid=process.pid,
         outcome="success" if return_code == 0 else "failure",
         return_code=return_code,
     )
