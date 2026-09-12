@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Convert LaTeX-style Markdown math delimiters to Pandoc delimiters."""
+
+from __future__ import annotations
+
+import argparse
+import re
+from pathlib import Path
+
+
+_DISPLAY_DELIMITER = re.compile(r"^(\s*)\\([\[\]])(\s*)$")
+
+
+def _replace_inline_delimiters(line: str) -> str:
+    """Replace inline delimiters outside inline-code spans."""
+    parts = re.split(r"(`+[^`]*`+)", line)
+    for index in range(0, len(parts), 2):
+        parts[index] = parts[index].replace(r"\(", "$").replace(r"\)", "$")
+    return "".join(parts)
+
+
+def convert(text: str) -> str:
+    """Convert ``\\[...\\]``/``\\(...\\)`` delimiters in Markdown text."""
+    lines = text.splitlines(keepends=True)
+    converted: list[str] = []
+    in_fenced_code = False
+    fence_marker = ""
+
+    for line in lines:
+        fence = re.match(r"^\s*(`{3,}|~{3,})", line)
+        if fence:
+            marker = fence.group(1)
+            if not in_fenced_code:
+                in_fenced_code = True
+                fence_marker = marker[0]
+            elif marker[0] == fence_marker:
+                in_fenced_code = False
+            converted.append(line)
+            continue
+
+        if in_fenced_code:
+            converted.append(line)
+            continue
+
+        content = line.rstrip("\r\n")
+        newline = line[len(content) :]
+        match = _DISPLAY_DELIMITER.match(content)
+        if match:
+            converted.append(f"{match.group(1)}$${newline}")
+        else:
+            converted.append(_replace_inline_delimiters(line))
+
+    return "".join(converted)
+
+
+def update_file(path: Path) -> bool:
+    """Update *path* in place and return whether its contents changed."""
+    with path.open("r", encoding="utf-8", newline="") as source:
+        original = source.read()
+    updated = convert(original)
+    if updated != original:
+        with path.open("w", encoding="utf-8", newline="") as target:
+            target.write(updated)
+        return True
+    return False
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Convert LaTeX-style Markdown math delimiters in place."
+    )
+    parser.add_argument("files", nargs="+", type=Path, help="Markdown files to update")
+    args = parser.parse_args()
+
+    for path in args.files:
+        changed = update_file(path)
+        print(f"{path}: {'updated' if changed else 'unchanged'}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
