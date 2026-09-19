@@ -165,5 +165,11 @@
     "unbind": {
       "ctrl-p": "file_finder::Toggle"
     }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-k ctrl-h": "call_hierarchy::ShowIncomingCalls"
+    }
   }
 ]
