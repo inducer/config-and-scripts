@@ -37,6 +37,7 @@
         "command": "basedpyright --writebaseline",
         "env": { "LANG": "" },
         "hide": "on_success",
+        "reveal_target": "center",
         "show_summary": false,
         "show_command": false,
         "allow_concurrent_runs": true,
