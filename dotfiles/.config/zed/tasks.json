@@ -4,6 +4,7 @@
         "label": "LazyGit",
         "command": "lazygit",
         "hide": "on_success",
+        "env": { "VISUAL": "zeditor --wait" },
         "reveal_target": "center",
         "show_summary": false,
         "show_command": false,
