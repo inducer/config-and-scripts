@@ -22,6 +22,8 @@ function addGlobalStyle(css)
 
 // Apply the font-family definition to code styles.
 addGlobalStyle(
-  '.blob-code-inner { font-family: ' + fontdef + ' !important; font-size: 100% !important; } ' +
-  '.file-info { font-family: ' + fontdef + '; font-size: 100% !important; } ' +
-  '');
+  'code { font-family: ' + fontdef + ' !important; font-size: 100% !important; }'
+);
+addGlobalStyle(
+  '.blob-code-inner { font-family: ' + fontdef + ' !important; font-size: 100% !important; }'
+);
