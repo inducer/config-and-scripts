@@ -409,6 +409,7 @@
 (setq-default indent-tabs-mode nil)
 
 ; Evil easymotion
+; Use C-m j/k to move
 (evilem-default-keybindings "C-m")
 
 ; (server-mode 1)
