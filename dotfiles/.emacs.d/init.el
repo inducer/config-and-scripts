@@ -220,6 +220,10 @@
 ; set up various stuff -----------------------------------------------------
 ; https://notmuchmail.org/emacstips/
 ; improve helm/notmuch interop
+(setq message-auto-save-directory
+      (expand-file-name "message-drafts/" user-emacs-directory))
+(make-directory message-auto-save-directory t)
+
 (setq notmuch-address-selection-function
   (lambda (prompt collection initial-input)
     (completing-read prompt (cons initial-input collection) nil t nil 'notmuch-address-history)))
