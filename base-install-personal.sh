@@ -57,7 +57,7 @@ PACKAGES=(
   ffmpeg ffmpegthumbnailer vlc
   ocl-icd-opencl-dev ocl-icd-libopencl1 oclgrind
   libtbb-dev
-  build-essential pkgconf ninja-build cmake cmake-curses-gui
+  build-essential pkgconf ninja-build cmake cmake-curses-gui just
   gcc-multilib
   llvm-dev libclang-dev ispc gdb strace ltrace valgrind
   libblas-dev liblapack-dev libopenblas-dev liblapack-doc
