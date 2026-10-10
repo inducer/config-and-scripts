@@ -66,6 +66,15 @@
         "use_new_terminal": true
     },
     {
+        "label": "Texlatest stop",
+        "command": "texlatest stop",
+        "hide": "on_success",
+        "show_summary": false,
+        "show_command": false,
+        "allow_concurrent_runs": true,
+        "use_new_terminal": true
+    },
+    {
     "label": "Example task",
     "command": "for i in {1..5}; do echo \"Hello $i/5\"; sleep 1; done",
     //"args": [],
