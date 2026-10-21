@@ -64,8 +64,11 @@
           "build": {
             "onSave": true,
             "forwardSearchAfter": true,
-            "executable": "tectonic-latest",
+            "executable": "texlatest",
             "args": [
+              "build",
+              //"buildwait",
+              "tectonic",
               "-X",
               "compile",
               "%f",
