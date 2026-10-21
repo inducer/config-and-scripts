@@ -187,7 +187,17 @@
     },
     "tool_permissions": {
       "tools": {
+        "create_directory": {
+          "default": "allow"
+        },
+        "delete_path": {
+          "default": "allow"
+        },
+        "fetch": {
+          "default": "allow"
+        },
         "terminal": {
+          "default": "allow",
           "always_allow": [
             {
               "pattern": "^ls\\b"
