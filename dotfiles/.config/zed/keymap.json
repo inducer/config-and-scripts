@@ -171,5 +171,11 @@
     "unbind": {
       "ctrl-k ctrl-h": "call_hierarchy::ShowIncomingCalls"
     }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "ctrl-j": "workspace::ToggleBottomDock"
+    }
   }
 ]
