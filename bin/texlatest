@@ -2,11 +2,12 @@
 """Run the latest TeX build or inspect its captured output.
 
 ``texlatest build ENGINE`` starts a detached ``tectonic`` or ``latexmk`` build
-and returns after scheduling it. ``texlatest log [ENGINE]`` prints captured
-output for the latest matching build; ``texlatest tail [ENGINE]`` follows new
-log records in a terminal-friendly form. Worker processes are identified via
-/proc and each owns a separate process group, so replacing a build also
-terminates its child processes.
+and returns after scheduling it. ``texlatest buildwait ENGINE`` runs the same
+build synchronously and returns its exit status. ``texlatest log [ENGINE]``
+prints captured output for the latest matching build; ``texlatest tail
+[ENGINE]`` follows new log records in a terminal-friendly form. Worker
+processes are identified via /proc and each owns a separate process group, so
+replacing a build also terminates its child processes.
 """
 
 from __future__ import annotations
@@ -29,8 +30,8 @@ LOG_PATH = CACHE_DIR / "texlatest.log"
 BACKGROUND_ENV = "TEXLATEST_BACKGROUND"
 ENGINES = frozenset({"tectonic", "latexmk"})
 USAGE = (
-    "usage: texlatest {build {tectonic|latexmk} [options] file.tex|"
-    "log [tectonic|latexmk]|tail [tectonic|latexmk]}"
+    "usage: texlatest {build|buildwait} {tectonic|latexmk} [options] file.tex|"
+    "stop|log [tectonic|latexmk]|tail [tectonic|latexmk]"
 )
 
 
@@ -164,8 +165,20 @@ def process_command_line(pid: int) -> list[str] | None:
     return [os.fsdecode(part) for part in data.split(b"\0") if part]
 
 
-def wrapper_build(pid: int) -> tuple[str, str] | None:
-    """Return a wrapper worker's engine and canonical source, if unambiguous."""
+def is_background_worker(pid: int) -> bool:
+    try:
+        environment = Path(f"/proc/{pid}/environ").read_bytes()
+    except (FileNotFoundError, OSError):
+        return False
+    marker = f"{BACKGROUND_ENV}=1".encode()
+    return marker in environment.split(b"\0")
+
+
+def wrapper_build(pid: int) -> tuple[str, str | None] | None:
+    """Return a wrapper worker's engine and canonical source, if available."""
+    if not is_background_worker(pid):
+        return None
+
     command_line = process_command_line(pid)
     if not command_line:
         return None
@@ -181,12 +194,16 @@ def wrapper_build(pid: int) -> tuple[str, str] | None:
         return None
 
     arguments = command_line[script_index + 1 :]
-    if len(arguments) < 2 or arguments[0] != "build" or arguments[1] not in ENGINES:
+    if (
+        len(arguments) < 2
+        or arguments[0] not in {"build", "buildwait"}
+        or arguments[1] not in ENGINES
+    ):
         return None
     engine = arguments[1]
     argument = source_argument(engine, arguments[2:])
     canonical = canonical_source(argument, cwd) if argument else None
-    return (engine, canonical) if canonical else None
+    return engine, canonical
 
 
 def stop_older_builds(engine: str, source: str) -> None:
@@ -265,6 +282,76 @@ def stop_older_builds(engine: str, source: str) -> None:
                 old_pid=pid,
                 reason="permission_denied",
             )
+
+
+def stop_latest_build() -> int:
+    """Stop the most recently started build that is still running."""
+    candidates: list[tuple[int, int, str, str | None]] = []
+    for name in os.listdir("/proc"):
+        if not name.isdecimal():
+            continue
+        pid = int(name)
+        build = wrapper_build(pid)
+        started = process_start_time(pid)
+        if build is None or started is None:
+            continue
+        try:
+            if os.getpgid(pid) != pid:
+                continue
+        except (ProcessLookupError, PermissionError):
+            continue
+        engine, source = build
+        candidates.append((started, pid, engine, source))
+
+    for _, pid, engine, source in sorted(candidates, reverse=True):
+        try:
+            log_event(
+                "stop_requested",
+                engine=engine,
+                source=source,
+                worker_pid=pid,
+                signal="SIGTERM",
+            )
+            os.killpg(pid, signal.SIGTERM)
+        except ProcessLookupError:
+            continue
+        except PermissionError:
+            log_event(
+                "stop_failed",
+                engine=engine,
+                source=source,
+                worker_pid=pid,
+                reason="permission_denied",
+            )
+            print(
+                f"texlatest: permission denied stopping build (pid {pid})",
+                file=sys.stderr,
+            )
+            return 1
+
+        time.sleep(0.05)
+        try:
+            os.killpg(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            outcome = "stopped_after_SIGTERM"
+        except PermissionError:
+            outcome = "SIGTERM_sent"
+        else:
+            outcome = "SIGKILL_sent"
+
+        log_event(
+            "stop_completed",
+            engine=engine,
+            source=source,
+            worker_pid=pid,
+            outcome=outcome,
+        )
+        source_label = f" for {source}" if source else ""
+        print(f"texlatest: stopped {engine} build{source_label}")
+        return 0
+
+    print("texlatest: no running build found", file=sys.stderr)
+    return 1
 
 
 def log_process_output(
@@ -432,8 +519,8 @@ def tail_log(engine: str | None) -> int:
         log_file.close()
 
 
-def start_background_worker() -> int:
-    """Start a detached worker without retaining any caller file descriptors."""
+def start_background_worker(wait: bool = False) -> int:
+    """Start a detached worker, optionally waiting for its exit status."""
     environment = os.environ.copy()
     environment[BACKGROUND_ENV] = "1"
     try:
@@ -444,8 +531,40 @@ def start_background_worker() -> int:
         return 1
 
     if worker_pid:
-        log_event("background_started", worker_pid=worker_pid)
-        return 0
+        if not wait:
+            log_event("background_started", worker_pid=worker_pid)
+            return 0
+
+        log_event("synchronous_started", worker_pid=worker_pid)
+
+        def forward_signal(signum: int, _frame: object) -> None:
+            try:
+                os.killpg(worker_pid, signum)
+            except (PermissionError, ProcessLookupError):
+                try:
+                    os.kill(worker_pid, signum)
+                except (PermissionError, ProcessLookupError):
+                    pass
+
+        previous_handlers = {
+            signum: signal.signal(signum, forward_signal)
+            for signum in (signal.SIGINT, signal.SIGTERM)
+        }
+        try:
+            while True:
+                try:
+                    _, status = os.waitpid(worker_pid, 0)
+                    break
+                except InterruptedError:
+                    continue
+        finally:
+            for signum, handler in previous_handlers.items():
+                signal.signal(signum, handler)
+        if os.WIFEXITED(status):
+            return os.WEXITSTATUS(status)
+        if os.WIFSIGNALED(status):
+            return 128 + os.WTERMSIG(status)
+        return 1
 
     try:
         os.setsid()
@@ -470,6 +589,11 @@ def main() -> int:
         return 2
 
     command = sys.argv[1]
+    if command == "stop":
+        if len(sys.argv) != 2:
+            print("usage: texlatest stop", file=sys.stderr)
+            return 2
+        return stop_latest_build()
     if command in {"log", "tail"}:
         if len(sys.argv) > 3 or (len(sys.argv) == 3 and sys.argv[2] not in ENGINES):
             print(f"usage: texlatest {command} [tectonic|latexmk]", file=sys.stderr)
@@ -478,10 +602,15 @@ def main() -> int:
         if command == "log":
             return print_latest_build_log(engine_filter)
         return tail_log(engine_filter)
-    if command != "build" or len(sys.argv) < 3 or sys.argv[2] not in ENGINES:
+    if (
+        command not in {"build", "buildwait"}
+        or len(sys.argv) < 3
+        or sys.argv[2] not in ENGINES
+    ):
         print(USAGE, file=sys.stderr)
         return 2
 
+    synchronous = command == "buildwait"
     engine = sys.argv[2]
     engine_arguments = sys.argv[3:]
     source = source_argument(engine, engine_arguments)
@@ -495,7 +624,7 @@ def main() -> int:
     )
 
     if os.environ.get(BACKGROUND_ENV) != "1":
-        return start_background_worker()
+        return start_background_worker(wait=synchronous)
 
     try:
         # The launcher creates the worker's session and process group. Retain
