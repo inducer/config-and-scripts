@@ -360,6 +360,31 @@ Please fund this out of my ICR startup account.
 
 Thank you in advance for your help!
 Andreas" nil 4)
+    ("cs555" "
+Thanks for reaching out, and for your interest in the
+course. Registration for the course is unfortunately caught up in the
+restrictions applied by the CS department.
+
+https://siebelschool.illinois.edu/academics/undergraduate/registration/cs-course-restrictions-enrollment-caps
+
+We (the sci comp area) have variously tried to get those lifted for
+CS555, unfortunately to little avail.
+
+A technique that has proven useful in the past is to try to register for
+the various cross-lists of the course (CSE510 and CS555), AFAIK those
+have different caps and rules.
+
+If none of that works, it may simply be true that you won't be able to
+register until a later date, as stipulated by the page linked above. I
+cannot promise that there will be seats left at that point, but I can,
+based on past experience, just about promise that the class will not
+stay full throughout the entire semester, and I can further promise that
+I would be happy to let you participate in course activities as the
+class starts, irrespective of registration status, and that I would be
+happy to help you late-add the class once spots become available.
+
+Hope that helps a bit, and I look forward to seeing you in January,
+Andreas" nil 4)
    ))
 
 (define-abbrev-table 'gnus-article-edit-mode-abbrev-table '())
@@ -431,4 +456,3 @@ Andreas" nil 4)
 (define-abbrev-table 'vc-git-region-history-mode-abbrev-table '())
 
 (define-abbrev-table 'xref--xref-buffer-mode-abbrev-table '())
-
