@@ -191,6 +191,9 @@
     },
     "tool_permissions": {
       "tools": {
+        "move_path": {
+          "default": "allow"
+        },
         "create_directory": {
           "default": "allow"
         },
