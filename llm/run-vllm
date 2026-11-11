@@ -165,7 +165,7 @@ if test "$INSTANCE" = 2; then
 fi
 
 ARGS=(
-    --enable-sleep-mode
+    # --enable-sleep-mode
     --api-key "${API_KEYS[@]}"
     --host 127.0.0.1
     --port "$PORT"
