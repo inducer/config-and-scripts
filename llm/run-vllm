@@ -81,9 +81,9 @@ if test "$INSTANCE" = 0; then
         --reasoning-parser qwen3
         --tool-call-parser qwen3_coder
         --enable-auto-tool-choice
-        --gpu-memory-utilization 0.35
+        --gpu-memory-utilization 0.47
         --enable-prefix-caching 
-        --kv-cache-dtype fp8
+        # --kv-cache-dtype fp8
         --speculative-config '{"method":"mtp","num_speculative_tokens":3}'
         # --max-num-batched-tokens 4096
         # --block-size 32
@@ -109,14 +109,14 @@ if test "$INSTANCE" = 1; then
     #     "Qwen/Qwen3.6-27B-FP8"
     # )
     MODEL_ARGS=(
-        --max-model-len 40000
-        # --max-model-len 262144
+        # --max-model-len 40000
+        --max-model-len 262144
         --reasoning-parser gemma4
         --tool-call-parser gemma4
         --enable-auto-tool-choice
         # --chat-template  ~/pack/vllm/examples/tool_chat_template_gemma4.jinja
-        --max-num-batched-tokens 4096
-        --gpu-memory-utilization 0.3
+        # --max-num-batched-tokens 4096
+        --gpu-memory-utilization 0.43
         --enable-prefix-caching 
         # --kv-cache-dtype fp8
         # --max-num-seqs 16
