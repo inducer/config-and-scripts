@@ -4,7 +4,7 @@ set -euo pipefail
 
 rm -Rf ~/vllm/.venv
 cd ~/vllm
-uv venv --python 3.12 --seed
+uv venv --python 3.13 --seed
 source .venv/bin/activate
 
 cd ~/pack
