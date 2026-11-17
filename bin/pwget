@@ -81,16 +81,11 @@ def get_password(uuid: str) -> str:
 
 
 def fuzzy_match(query: str, entry: PasswordEntry) -> bool:
-    """
-    Check if `query` fuzzy-matches any relevant field using rapidfuzz.
-
-    Combines name, user, and URIs into a single string and scores it
-    against the query using `fuzz.WRatio`. A score above 50 counts as a match.
-    """
     if not query:
         return True
+    query_words = query.split()
     combined = f"{entry.name} {entry.user or ''} {' '.join(entry.uris)}"
-    return fuzz.WRatio(query, combined) > 50
+    return all(word in combined for word in query_words)
 
 
 def match_score(query: str, entry: PasswordEntry) -> float:
