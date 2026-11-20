@@ -160,6 +160,8 @@ class PasswordApp:
             " copy user  ",
             ("key", "CTRL+D"),
             " copy id    ",
+            ("key", "/"),
+            " search  ",
             ("key", "ESC/Q"),
             " quit",
         ]
@@ -259,6 +261,10 @@ class PasswordApp:
         self.loop.set_alarm_in(1.5, remove_overlay)
 
     def unhandled_input(self, key):
+        if key == "/":
+            self.view.focus_position = "header"
+            return
+
         if key in ("q", "Q", "esc"):
             raise urwid.ExitMainLoop()
 
