@@ -14,6 +14,7 @@ ci fclones
 ci tealdeer
 ci difftastic
 ci skim
+ci rbw-ng
 ci --git https://codeberg.org/mergiraf/mergiraf.git
 ci --git https://github.com/estin/cos-cli.git
 ci --git https://github.com/typst/typst typst-cli
